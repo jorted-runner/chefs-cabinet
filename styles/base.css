@@ -44,3 +44,32 @@ nav a:hover {
     background-color: #8DBFB3;
     color: #5D4C52;
 }
+
+.colors {
+    width: 60%;
+    text-align: center;
+    margin: auto;
+}
+
+.color-box {
+    border-style: solid;
+    margin: 5px;
+}
+
+#first {
+    background-color: #F2EBC0;
+}
+#second {
+    background-color: #F06060;
+}
+#third {
+    background-color: #F3B462;
+}
+#fourth {
+    background-color: #8DBFB3;
+}
+#fifth {
+    background-color: #5D4C52;
+    color: white;
+    border-color: black;
+}
