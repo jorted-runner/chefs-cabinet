@@ -4,7 +4,15 @@ HEADINGS - font-family: 'Poppins', sans-serif;
 SUBHEADINGS - font-family: 'Montserrat', sans-serif;
 BODY TEXT - font-family: 'Roboto', sans-serif; 
 */
-header > h1 {
+#textLogo {
+    font-size: 3rem;
     font-family: 'Caveat', cursive;
-    font-size: 3.5rem;
+}
+#headingsText {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+}
+#subheadingsText {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
 }
