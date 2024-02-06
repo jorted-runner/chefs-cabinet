@@ -5,13 +5,42 @@ SUBHEADINGS - font-family: 'Montserrat', sans-serif;
 BODY TEXT - font-family: 'Roboto', sans-serif; 
 */
 
+/* 
+#F06060 - Logo
+#F3B462 - Light Orange
+#F2EBC0 - Background
+#8DBFB3 - Pale Blue
+#5D4C52 - PurpleBlack
+*/
+
 body {
     width: 55%;
     margin: auto;
+    background-color: #F2EBC0;
 }
 
 header > h1 {
     font-family: 'Caveat', cursive;
     font-size: 4rem;
     text-align: center;
+    color: #F06060;
+}
+nav {
+    display: flex;
+    flex-direction: row;
+    background-color: #5D4C52;
+    justify-content: space-evenly;
+}
+
+nav a {
+    color: #8DBFB3;
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    text-decoration: none;
+
+}
+nav a:hover {
+    background-color: #8DBFB3;
+    color: #5D4C52;
 }
