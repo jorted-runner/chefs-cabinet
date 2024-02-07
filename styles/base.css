@@ -16,7 +16,7 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 body {
     width: 55%;
     margin: auto;
-    background-color: #F2EBC0;
+    background-color: #fbf8ea;
 }
 
 header > h1 {
@@ -24,6 +24,11 @@ header > h1 {
     font-size: 4rem;
     text-align: center;
     color: #F06060;
+    text-decoration: none;
+}
+h1 {
+    text-decoration: underline;
+    text-decoration-color: #8DBFB3;
 }
 nav {
     display: flex;
@@ -33,7 +38,7 @@ nav {
 }
 
 nav a {
-    color: #8DBFB3;
+    color: #fbf8ea;
     width: 100%;
     text-align: center;
     text-decoration: none;
@@ -54,9 +59,12 @@ nav a:hover {
     border-style: solid;
     margin: 5px;
 }
-
+h4 {
+    text-decoration: underline;
+    text-decoration-color: #8DBFB3;
+}
 #first {
-    background-color: #F2EBC0;
+    background-color: #fbf8ea;
 }
 #second {
     background-color: #F06060;
@@ -71,4 +79,7 @@ nav a:hover {
     background-color: #5D4C52;
     color: white;
     border-color: black;
+}
+hr {
+    border-color: #F3B462;
 }
