@@ -19,6 +19,16 @@ body {
     background-color: #fbf8ea;
 }
 
+main {
+    width: 85%;
+    margin: auto;
+}
+
+main p {
+    width: 95%;
+    margin: auto;
+}
+
 header > h1 {
     font-family: 'Caveat', cursive;
     font-size: 4rem;
