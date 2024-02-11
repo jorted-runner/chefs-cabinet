@@ -12,3 +12,20 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 #8DBFB3 - Pale Blue
 #5D4C52 - PurpleBlack
 */
+
+.flex {
+    display: flex;
+    gap: var(--gap, 1rem);
+}
+
+.primary-navigation {
+    list-style: none;
+    padding: 0;
+    margin: auto;
+}
+
+.nav-icon {
+    max-width: 4rem;
+    width: 100%;
+    max-height: 4rem;
+}
