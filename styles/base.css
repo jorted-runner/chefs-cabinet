@@ -89,3 +89,13 @@ h4 {
 hr {
     border-color: #F3B462;
 }
+
+.wireframe {
+    display: block;
+    margin: auto;
+    width: 95%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-style: solid;
+    border-width: 1px;
+}
