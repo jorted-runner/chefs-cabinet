@@ -25,7 +25,13 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 }
 
 .nav-icon {
-    max-width: 4rem;
+    max-width: 2rem;
     width: 100%;
-    max-height: 4rem;
+    max-height: 2rem;
+    min-width: 1rem;
+    min-height: 1rem;
+}
+
+.header-h1 {
+    min-width: 290px;
 }
