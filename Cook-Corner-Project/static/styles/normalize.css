@@ -22,6 +22,6 @@ a {
     text-decoration: none;
 }
 
-p {
-    font-family: 'Roboto', sans-serif; 
+p, li {
+    font-family: 'Roboto', sans-serif;
 }
