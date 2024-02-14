@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="{{ url_for('static', filename='scripts/recipeType.js') }}"></script>
 </head>
 <body>
     <header class="flex">
@@ -26,5 +27,12 @@
             <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
         </ul>
     </nav>
+
+    <label for="recipeType">Recipe Type</label>
+    <select name="recipeType" id="recipeType">
+        <option value="">Select a Recipe Type</option>
+        <option value="aiAssisted">A.I. Assisted</option>
+        <option value="blankRecipe">Blank Recipe</option>
+    </select>
 </body>
 </html>
