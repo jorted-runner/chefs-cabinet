@@ -35,3 +35,7 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 .header-h1 {
     min-width: 290px;
 }
+
+hr {
+    border-color: #F3B462;
+}
