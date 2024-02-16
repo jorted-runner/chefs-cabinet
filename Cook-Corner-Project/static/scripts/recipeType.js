@@ -3,9 +3,10 @@ const formElmnt = document.querySelector(".form");
 
 recipeTypeElmnt.addEventListener("change", function(event) {
     const selectedValue = event.target.value;
-    if (selectedValue != "") {
-      console.log("User selected:", selectedValue);
-    }
+    if (selectedValue == "aiAssisted") {
+      aiRecipe();
+    } else if (selectedValue == "blankRecipe") {
+      blankRecipe();
   });
 
 function aiRecipe() {
