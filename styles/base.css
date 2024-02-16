@@ -99,3 +99,16 @@ hr {
     border-style: solid;
     border-width: 1px;
 }
+
+.preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: auto;
+    text-align: center;
+}
+
+.preview img {
+    border-style: solid;
+    margin: auto;
+    padding: 1rem;
+}
