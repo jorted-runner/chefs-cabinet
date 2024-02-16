@@ -27,6 +27,17 @@
     </header>
     <main>
         <section class="devPost">
+            <h1>February 15, 2024</h1>
+            <p>
+                Today I worked on the JavaScript to populate the new recipe page. Its going pretty well, nothing too crazy. I started wondering how to best pass the added ingredients to the server the user is ready to generate their recipe and I decided to create a list in JavaScript. Right now every time a user adds an ingredient it gets added to the list. But for some reason when they click the remove button it won't remove it from the list. Here is the JavaScript:
+                <br><br>
+                ingredientsInclude = ingredientsInclude.filter(item => item != ingredient.textContent);
+                <br><br>
+                I'm going to have to figure out why its not working, and its probably something simple but I don't have it in me today to figure it out.
+            </p>           
+        </section>
+        <hr>
+        <section class="devPost">
             <h1>February 13, 2024</h1>
             <p>
                 I began adding the new recipe process. And I found the main navigation icons I want to use. I can't decide if when the user presses the "+" for a new recipe if the menu should expand to show:
