@@ -338,11 +338,22 @@ function blankRecipe() {
   formElmnt.appendChild(instructionsInputElmnt);
   formElmnt.appendChild(instructionsButtonElmnt);
   formElmnt.appendChild(instructionsOL);
+
+  const imageGenButton = document.createElement('button');
+  imageGenButton.textContent = 'Generate Images';
+  imageGenButton.addEventListener('click', () => {
+    // add more parameters to account for instructions and ingredients
+    if (recipeTitleInput.value != '' && recipeDescInput.value != '') {
+      imageGeneration(recipeTitleInput.value, recipeDescInput.value);
+    } 
+  });
+  formElmnt.appendChild(imageGenButton);
 }
 
-function imageGeneration() {
-  const recipeTitle = document.getElementById('recipe_title').innerText;
-  const recipeDesc = document.getElementById('recipe_desc').innerText;
+// I need to make sure the ingredients and instructions are being stored before the image gen is called
+function imageGeneration(_title, _description, _instructions, _ingredients) {
+  const recipeTitle = _title;
+  const recipeDesc = _description;
   fetch('/regen_images', {
       method: 'POST',
       headers: {
