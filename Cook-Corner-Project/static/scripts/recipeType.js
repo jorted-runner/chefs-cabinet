@@ -1,7 +1,8 @@
 const recipeTypeElmnt = document.querySelector("#recipeType");
 const formElmnt = document.querySelector(".form");
-let ingredientsInclude = [];
-let ingredientsExclude = [];
+var ingredientsInclude = [];
+var ingredientsExclude = [];
+var instructions = [];
 
 recipeTypeElmnt.addEventListener("change", function(event) {
     const selectedValue = event.target.value;
@@ -243,7 +244,6 @@ function blankRecipe() {
       inputElmnt.focus();
     }
   });
-  // I also need to refactor this function. It shouldn't have different names for elements than the one above.
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
     if (keyPressed == "Enter" && inputElmnt.value != "") {
@@ -255,16 +255,16 @@ function blankRecipe() {
         newIngredient.append(deleteButton);
         ingredientsUL.appendChild(newIngredient);
         deleteButton.addEventListener("click", () => {
-            ingredientsUL.removeChild(newIngredient);
-            // I need to work on removing the element from the list
-            ingredientsInclude = ingredientsInclude.filter(item => item != newIngredient.textContent);
+          const ingredientText = event.target.parentNode.firstChild.textContent.trim();
+          ingredientsUL.removeChild(newIngredient);
+          const indexToRemove = ingredientsInclude.indexOf(ingredientText);
+          if (indexToRemove !== -1) {
+              ingredientsInclude.splice(indexToRemove, 1);
+          }
         });
         inputElmnt.focus();
         inputElmnt.value = '';
-    }// else if (keyPressed == "Enter" && inputElmnt.value == "") {
-      //  alert("Cannot add a blank ingredient. Add an ingredient and try again.");
-      //  inputElmnt.focus();
-    //}
+    }
   });
 
   formElmnt.appendChild(ingredients_H1);
@@ -303,11 +303,19 @@ function blankRecipe() {
       deleteButton.textContent = "❌";
       step.append(deleteButton);
       instructionsOL.appendChild(step);
-      deleteButton.addEventListener("click", () => {
+      instructions.push(instructionsInputElmnt.value);
+      deleteButton.addEventListener("click", (event) => {
+        const instructionText = event.target.parentNode.firstChild.textContent.trim();
         instructionsOL.removeChild(step);
+        const indexToRemove = instructions.indexOf(instructionText);
+        if (indexToRemove !== -1) {
+            instructions.splice(indexToRemove, 1);
+        }
+        console.log(instructions);
       });
       instructionsInputElmnt.value = '';
       instructionsInputElmnt.focus();
+      console.log(instructions);
     } else {
       alert("Cannot add a blank step. Add a step and try again.");
       instructionsInputElmnt.focus();
@@ -315,18 +323,26 @@ function blankRecipe() {
   });
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
-    if (keyPressed == "Enter" && inputElmnt.value != "") {
+    if (keyPressed == "Enter" && instructionsInputElmnt.value != "") {
         const step = document.createElement('li');
         const deleteButton = document.createElement('button')
         step.textContent = instructionsInputElmnt.value;
         deleteButton.textContent = "❌";
         step.append(deleteButton);
         instructionsOL.appendChild(step);
-        deleteButton.addEventListener("click", () => {
-            instructionsOL.removeChild(step);
+        instructions.push(instructionsInputElmnt.value);
+        deleteButton.addEventListener("click", (event) => {
+          const instructionsText = event.target.parentNode.firstChild.textContent.trim();
+          instructionsOL.removeChild(step);
+          const indexToRemove = instructions.indexOf(instructionsText);
+          if (indexToRemove !== -1) {
+              instructions.splice(indexToRemove, 1);
+          }
+          console.log(instructions);
         });
         instructionsInputElmnt.focus();
         instructionsInputElmnt.value = '';
+        console.log(instructions);
     } //else if (keyPressed == "Enter" && instructionsInputElmnt.value == "") {
        // alert("Cannot add a blank step. Add a step and try again.");
       //  instructionsInputElmnt.focus();
