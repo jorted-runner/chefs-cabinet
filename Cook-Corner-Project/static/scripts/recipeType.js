@@ -359,27 +359,30 @@ function blankRecipe() {
   imageGenButton.textContent = 'Generate Images';
   imageGenButton.addEventListener('click', () => {
     // add more parameters to account for instructions and ingredients
-    if (recipeTitleInput.value != '' && recipeDescInput.value != '') {
-      imageGeneration(recipeTitleInput.value, recipeDescInput.value);
+    if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredientsInclude != [] && instructions != []) {
+      const title = recipeTitleInput.value;
+      const description = recipeDescInput.value;
+      imageGeneration(title, description, ingredientsInclude, instructions);
     } 
   });
   formElmnt.appendChild(imageGenButton);
+  const imageContainer = document.createElement('div');
+  imageContainer.setAttribute('id', 'imageContainer');
+  formElmnt.appendChild(imageContainer);
 }
 
 // I need to make sure the ingredients and instructions are being stored before the image gen is called
 function imageGeneration(_title, _description, _instructions, _ingredients) {
-  const recipeTitle = _title;
-  const recipeDesc = _description;
-  fetch('/regen_images', {
+  fetch('/generate_images', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-          title: recipeTitle,
-          description: recipeDesc,
-          instructions: '{{ instructions | tojson }}',
-          ingredients_list: '{{ ingredients_list | tojson }}'
+          title: _title,
+          description: _description,
+          instructions: _instructions,
+          ingredients_list: _ingredients
       })
   })
       .then(response => {
