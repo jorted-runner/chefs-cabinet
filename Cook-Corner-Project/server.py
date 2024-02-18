@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-from chat_gpt import chatGPT
+from ai_interface import AI_tool
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
 
-RECIPE_AI = chatGPT()
+RECIPE_AI = AI_tool()
 
 @app.route("/")
 def home():
@@ -17,7 +17,7 @@ def new_recipe():
     return render_template('new-recipe.html')
 
 @app.route("/generate_images", methods=["POST"])
-def regen_images():
+def generate_images():
     try:
         data = request.get_json()
         title = data['title']
