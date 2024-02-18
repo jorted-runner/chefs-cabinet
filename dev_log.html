@@ -27,6 +27,15 @@
     </header>
     <main>
         <section class="devPost">
+            <h1>February 18, 2024</h1>
+            <p>
+                So today I spent some time working on getting image generation working again. OpenAI had made a few changes to their API that I had to work around, which were super easy to implement, but it didn't work after implementation. I spent probably an hour reading through the documentation, asking ChatGPT, reading stackoverflow, but nothing. Everything I was doing seemed to be set up right and should have been functioning, but it wasn't. Finally I started looking at my .env file and realized that it was saved as "env", rather than ".env". I changed it, and immediately it all worked. What it taught me was if the code isn't working, its probably an error I caused.
+                <br><br>
+                The next issue with the image generation is that OpenAI only allows for 5 requests a minute. Which while I'm just testing and using the site myself that should be plenty, but if we every get to a mass of users that may be an issue. I may need to look into other options for generating the images. I used to have it so that when the user requested images for their site it showed two options and they chose from the two, but with the updates to the API and Dall-E-3 it only allows for 1 image to be generated at a time. So I will probably just have to work with that. Show the user the one image, then allow them to request regeneration if they want to see a new image.
+            </p>                      
+        </section>
+        <hr>
+        <section class="devPost">
             <h1>February 17, 2024</h1>
             <p>
                 I touched up the new blank recipe form. Right now it's storing the data in lists, may change eventually. I also began working on image generation. I need to read the OpenAI api documentation again, I think they changed how to access the API since last time I used it. I think it will be a pretty easy to fix, but it'll have wait until tomorrow.
