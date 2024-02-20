@@ -39,3 +39,49 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 hr {
     border-color: #F3B462;
 }
+
+.spinner {
+    width: 64px;
+    height: 64px;
+    border: 8px solid;
+    border-color: #8DBFB3 transparent #8DBFB3 transparent;
+    border-radius: 50%;
+    animation: spin-anim 1.2s linear infinite;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+.spinner-text {
+    width: 100%;
+    font-size: 3rem;
+    text-align: center;
+    color: #8DBFB3;
+    position: fixed;
+    top: 47.5%;
+    z-index: 2;
+}
+
+.loader-container {
+    width: 100vw;
+    height: 100vh;
+    margin: auto;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+@keyframes spin-anim {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

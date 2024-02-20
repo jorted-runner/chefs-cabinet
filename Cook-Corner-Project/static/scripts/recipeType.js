@@ -1,8 +1,17 @@
 const recipeTypeElmnt = document.querySelector("#recipeType");
 const formElmnt = document.querySelector(".form");
+const loaderContainer = document.querySelector('.loader-container');
 var ingredientsInclude = [];
 var ingredientsExclude = [];
 var instructions = [];
+
+const displayLoading = () => {
+  loaderContainer.style.display = 'block';
+};
+
+const hideLoading = () => {
+  loaderContainer.style.display = 'none';
+};
 
 recipeTypeElmnt.addEventListener("change", function(event) {
     const selectedValue = event.target.value;
@@ -275,7 +284,7 @@ function blankRecipe() {
 
   const hrElmnt = document.createElement('hr');
   formElmnt.appendChild(hrElmnt);
-  /// ---------------------------------------------- ///
+
   const instructionsH1 = document.createElement('h1');
   instructionsH1.textContent = "Instructions";
   
@@ -343,10 +352,7 @@ function blankRecipe() {
         instructionsInputElmnt.focus();
         instructionsInputElmnt.value = '';
         console.log(instructions);
-    } //else if (keyPressed == "Enter" && instructionsInputElmnt.value == "") {
-       // alert("Cannot add a blank step. Add a step and try again.");
-      //  instructionsInputElmnt.focus();
-    //}
+    }
   });
 
   formElmnt.appendChild(instructionsH1);
@@ -358,10 +364,10 @@ function blankRecipe() {
   const imageGenButton = document.createElement('button');
   imageGenButton.textContent = 'Generate Images';
   imageGenButton.addEventListener('click', () => {
-    // add more parameters to account for instructions and ingredients
     if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredientsInclude != [] && instructions != []) {
       const title = recipeTitleInput.value;
       const description = recipeDescInput.value;
+      displayLoading();
       imageGeneration(title, description, ingredientsInclude, instructions);
     } 
   });
@@ -371,7 +377,6 @@ function blankRecipe() {
   formElmnt.appendChild(imageContainer);
 }
 
-// I need to make sure the ingredients and instructions are being stored before the image gen is called
 function imageGeneration(_title, _description, _instructions, _ingredients) {
   fetch('/generate_images', {
       method: 'POST',
@@ -395,6 +400,7 @@ function imageGeneration(_title, _description, _instructions, _ingredients) {
           }
       })
       .then(data => {
+          hideLoading();
           const imageContainer = document.getElementById('imageContainer');
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
