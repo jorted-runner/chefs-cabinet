@@ -36,6 +36,8 @@
                 I finished adding the spinner. It covers the whole display and then disappears when the image is generated. It took me a while to get it to actually cover the whole screen. But it now works. Right now I have it as a fairly transparent black background with the light blue color from the color pallette. I may change this but it functions, and that is what matters.
                 <br><br>
                 I've been working on the recipe generation. I keep getting this error:<br><br>[2024-02-20 21:47:21,093] ERROR in server: Error in generate recipe route: unhashable type: 'dict'<br><br>I'm not sure why. I've spent some time testing different variations, but keep getting the same error. It may be the way that they ingredients are being stored or maybe the way that they are being passed to the server.
+                <br><br>
+                Okay I didn't actually get off... I went in and figured out what the issue was. The issue actually originated from AI_tool class. I hadn't refactored the message being sent to the API. It was trying to format it like a dictionary like the API used to want. So now I have the recipe generation working. Tomorrow I'll work on populating the data into the website and generating an image for the user to see.
             </p>
         </section>
         <hr>
