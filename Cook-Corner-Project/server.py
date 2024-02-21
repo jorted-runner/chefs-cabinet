@@ -33,12 +33,12 @@ def generate_images():
 def generate_recipe():
     try:
         data = request.get_json()
-        include = data['include']
-        exclude = data['exclude']
-        image_urls = RECIPE_AI.recipe_generation(include, exclude)
+        includeIngredients = data['includeIngredients'].split(", ")
+        excludeIngredients = data['excludeIngredients'].split(", ")
+        image_urls = RECIPE_AI.recipe_generation(includeIngredients, excludeIngredients)
         return jsonify(images=image_urls)
     except Exception as e:
-        app.logger.error(f"Error in generate Images route: {e}")
+        app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
 
 if __name__ == "__main__":

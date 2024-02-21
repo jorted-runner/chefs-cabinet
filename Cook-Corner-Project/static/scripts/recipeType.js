@@ -177,8 +177,10 @@ function aiRecipe() {
   const generateButton = document.createElement('button');
   generateButton.textContent = 'Generate Recipe';
   generateButton.addEventListener('click', () => {
-    displayLoading();
-    recipeGeneration(ingredientsInclude, ingredientsExclude);
+    if (ingredientsInclude != [], ingredientsExclude != []) {
+      displayLoading();
+      recipeGeneration();
+    }
   });
   
   formElmnt.appendChild(ingredients_exclude_H1);
@@ -377,15 +379,17 @@ function blankRecipe() {
   formElmnt.appendChild(imageContainer);
 }
 
-function recipeGeneration(_ingredientsInclude, _ingredientsExclude) {
+function recipeGeneration() {
+  var toInclude = ingredientsInclude.join(", ");
+  var toExclude = ingredientsExclude.join(", ");
   fetch('/generate_recipe', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-          include: _ingredientsInclude,
-          exclude: _ingredientsExclude,
+          includeIngredients: toInclude,
+          excludeIngredients: toExclude
       })
   })
       .then(response => {
@@ -394,7 +398,6 @@ function recipeGeneration(_ingredientsInclude, _ingredientsExclude) {
               return response.json();
           } else {
               hideLoading();
-              console.log(response);
               alert('Error with Generation');
               throw new Error('Error triggering recipe regeneration.');
           }
