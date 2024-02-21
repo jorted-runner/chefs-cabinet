@@ -370,10 +370,14 @@ function blankRecipe() {
       const title = recipeTitleInput.value;
       const description = recipeDescInput.value;
       displayLoading();
-      imageGeneration(title, description, ingredientsInclude, instructions);
+      imageGeneration(title, description);
     } 
   });
   formElmnt.appendChild(imageGenButton);
+  createImageContainer();
+}
+
+function createImageContainer() {
   const imageContainer = document.createElement('div');
   imageContainer.setAttribute('id', 'imageContainer');
   formElmnt.appendChild(imageContainer);
@@ -404,21 +408,52 @@ function recipeGeneration() {
       })
       .then(data => {
           hideLoading();
-          const imageContainer = document.getElementById('imageContainer');
-          imageContainer.innerHTML = '';
-          data.images.forEach(imageUrl => {
-              const buttonElement = document.createElement('button');
-              const imgElement = document.createElement('img');
-              imgElement.src = imageUrl;
-              imgElement.alt = 'Recipe Image';
-              buttonElement.appendChild(imgElement);
-              imageContainer.appendChild(buttonElement);
+          const recipe = JSON.parse(data.recipe);
+          const _title = recipe.Title;
+          const _desc = recipe.Description;
+          const _ingredients = recipe.Ingredients;
+          const _instructions = recipe.Instructions;
+
+          const recipeDiv = document.createElement('div');
+          recipeDiv.setAttribute('id', 'recipe');
+
+          const _titleElmnt = document.createElement('h1');
+          _titleElmnt.setAttribute('id', 'recipeTitle');
+          _titleElmnt.textContent = _title;
+
+          const _descElmnt = document.createElement('p');
+          _descElmnt.setAttribute('id', 'recipeDesc');
+          _descElmnt.textContent = _desc;
+
+          const ingredientsH1 = document.createElement('h4');
+          ingredientsH1.textContent = "Ingredients";
+
+          const ingredientsElmnt = document.createElement('ul');
+          _ingredients.forEach(ingredient => {
+            const ingredientLi = document.createElement('li');
+            ingredientLi.textContent(ingredient);
+            ingredientsElmnt.appendChild(ingredientLi);
           });
+          const instructionsH1 = document.createElement('h4');
+          instructionsH1.textContent = "Instructions";
+          
+          const instructionsElmnt = document.createElement('ol');
+          // _instructions.forEach(step => {
+          //   const instructionLi = document.createElement('li');
+          //   instructionLi.textContent(step);
+          //   instructionsElmnt.appendChild(instructionLi);
+          // });
+          recipeDiv.appendChild(_titleElmnt);
+          recipeDiv.appendChild(_descElmnt);
+          recipeDiv.appendChild(ingredientsElmnt);
+          recipeDiv.appendChild(instructionsElmnt);
+          formElmnt.appendChild(recipeDiv);
+
       })
       .catch(error => console.error(error));
 }
 
-function imageGeneration(_title, _description, _instructions, _ingredients) {
+function imageGeneration(_title, _description) {
   fetch('/generate_images', {
       method: 'POST',
       headers: {
@@ -426,9 +461,7 @@ function imageGeneration(_title, _description, _instructions, _ingredients) {
       },
       body: JSON.stringify({
           title: _title,
-          description: _description,
-          instructions: _instructions,
-          ingredients_list: _ingredients
+          description: _description
       })
   })
       .then(response => {

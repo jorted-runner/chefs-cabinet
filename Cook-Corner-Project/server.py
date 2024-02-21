@@ -35,8 +35,8 @@ def generate_recipe():
         data = request.get_json()
         includeIngredients = data['includeIngredients']
         excludeIngredients = data['excludeIngredients']
-        image_urls = RECIPE_AI.recipe_generation(includeIngredients, excludeIngredients)
-        return jsonify(images=image_urls)
+        recipe = RECIPE_AI.recipe_generation(includeIngredients, excludeIngredients)
+        return jsonify(recipe=recipe)
     except Exception as e:
         app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
