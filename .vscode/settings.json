@@ -3,6 +3,7 @@
         "Dall",
         "jsonify",
         "openai",
-        "stackoverflow"
+        "stackoverflow",
+        "unhashable"
     ]
 }
