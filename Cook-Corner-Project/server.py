@@ -26,7 +26,7 @@ def generate_images():
         image_urls = RECIPE_AI.image_generation(prompt)
         return jsonify(images=image_urls)
     except Exception as e:
-        app.logger.error(f"Error in regen_images route: {e}")
+        app.logger.error(f"Error in generate Images route: {e}")
         return jsonify(error=str(e)), 400
 
 if __name__ == "__main__":
