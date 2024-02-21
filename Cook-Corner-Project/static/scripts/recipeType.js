@@ -177,8 +177,8 @@ function aiRecipe() {
   const generateButton = document.createElement('button');
   generateButton.textContent = 'Generate Recipe';
   generateButton.addEventListener('click', () => {
-    console.log(ingredientsInclude);
-    console.log(ingredientsExclude);
+    displayLoading();
+    recipeGeneration(ingredientsInclude, ingredientsExclude);
   });
   
   formElmnt.appendChild(ingredients_exclude_H1);
@@ -377,6 +377,44 @@ function blankRecipe() {
   formElmnt.appendChild(imageContainer);
 }
 
+function recipeGeneration(_ingredientsInclude, _ingredientsExclude) {
+  fetch('/generate_recipe', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          include: _ingredientsInclude,
+          exclude: _ingredientsExclude,
+      })
+  })
+      .then(response => {
+          if (response.ok) {
+              console.log('Recipe generation started.');
+              return response.json();
+          } else {
+              hideLoading();
+              console.log(response);
+              alert('Error with Generation');
+              throw new Error('Error triggering recipe regeneration.');
+          }
+      })
+      .then(data => {
+          hideLoading();
+          const imageContainer = document.getElementById('imageContainer');
+          imageContainer.innerHTML = '';
+          data.images.forEach(imageUrl => {
+              const buttonElement = document.createElement('button');
+              const imgElement = document.createElement('img');
+              imgElement.src = imageUrl;
+              imgElement.alt = 'Recipe Image';
+              buttonElement.appendChild(imgElement);
+              imageContainer.appendChild(buttonElement);
+          });
+      })
+      .catch(error => console.error(error));
+}
+
 function imageGeneration(_title, _description, _instructions, _ingredients) {
   fetch('/generate_images', {
       method: 'POST',
@@ -392,10 +430,12 @@ function imageGeneration(_title, _description, _instructions, _ingredients) {
   })
       .then(response => {
           if (response.ok) {
-              console.log('Image regeneration started.');
+              console.log('Image generation started.');
               return response.json();
           } else {
-              console.log('Error triggering image regeneration.');
+              hideLoading();
+              console.log(response);
+              alert('Error with Generation');
               throw new Error('Error triggering image regeneration.');
           }
       })

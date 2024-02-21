@@ -20,14 +20,13 @@ class AI_tool():
       quality='hd',
       n=1,
     )
-    print(response)
     urls = []
     urls.append(response.data[0].url)
     return urls
     
 
   def recipe_generation(self, include, exclude):
-    prompt = f"Write a recipe with a descriptive name that includes {include} and any other needed ingredients but does not contain {exclude}. Output the Title, Description, Ingredients, and Instructions. Format the output using html tags, tagging the title with the <h2> tag." 
+    prompt = f"Write a recipe with a descriptive name that includes {include} and any other needed ingredients but does not contain {exclude}. Output the Title, Description, Ingredients, and Instructions. Format the output in a JSON." 
     response = self.client.chat.completions.create(
       model="gpt-3.5-turbo-0125",
       response_format={"type":"json_object"},
@@ -38,14 +37,9 @@ class AI_tool():
         }
       ]
     )
+    print(response)
+    print("--------------------")
     recipe = response.choices[0].message.content
-    # recipe_parts = recipe.split("Ingredients:")
-    # header = recipe_parts[0].strip()
-    # header_parts = header.split("Description:")
-    # title = header_parts[0].strip().split("Title:")[1]
-    # description = header_parts[1]
-    # ingredients = recipe_parts[1].split("Instructions:")[0].strip()
-    # instructions = recipe_parts[1].split("Instructions:")[1].strip()
-    # ingredients_list = ingredients.split("- ")
+    print(recipe)
     return recipe
     
