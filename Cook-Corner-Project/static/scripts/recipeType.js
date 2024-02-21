@@ -427,7 +427,8 @@ function recipeGeneration() {
 
           const ingredientsH1 = document.createElement('h4');
           ingredientsH1.textContent = "Ingredients";
-
+          // There is some sort of issue adding the ingredients and the instructions I'll work on this later
+          
           const ingredientsElmnt = document.createElement('ul');
           _ingredients.forEach(ingredient => {
             const ingredientLi = document.createElement('li');
