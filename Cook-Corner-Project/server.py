@@ -33,8 +33,8 @@ def generate_images():
 def generate_recipe():
     try:
         data = request.get_json()
-        includeIngredients = data['includeIngredients'].split(", ")
-        excludeIngredients = data['excludeIngredients'].split(", ")
+        includeIngredients = data['includeIngredients']
+        excludeIngredients = data['excludeIngredients']
         image_urls = RECIPE_AI.recipe_generation(includeIngredients, excludeIngredients)
         return jsonify(images=image_urls)
     except Exception as e:
