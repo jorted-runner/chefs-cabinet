@@ -68,7 +68,6 @@ function aiRecipe() {
       inputElmnt.focus();
     }
   });
-  // I also need to refactor this function. It shouldn't have different names for elements than the one above.
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
     if (keyPressed == "Enter" && inputElmnt.value != "") {
@@ -89,10 +88,7 @@ function aiRecipe() {
         });
         inputElmnt.focus();
         inputElmnt.value = '';
-    } // else if (keyPressed == "Enter" && inputElmnt.value == "") {
-    //     alert("Cannot add a blank ingredient. Add an ingredient and try again.");
-    //     inputElmnt.focus();
-    // }
+    }
   });
 
   formElmnt.appendChild(ingredients_H1);
@@ -147,7 +143,6 @@ function aiRecipe() {
       inputElmnt_2.focus();
     }
   });
-  // I also need to refactor this function. It shouldn't have different names for elements than the one above.
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
     if (keyPressed == "Enter" && inputElmnt_2.value != "") {
@@ -168,10 +163,7 @@ function aiRecipe() {
         });
         inputElmnt_2.focus();
         inputElmnt_2.value = '';
-    } // else if (keyPressed == "Enter" && inputElmnt_2.value == "") {
-      // alert("Cannot add a blank ingredient. Add an ingredient and try again.");
-      // inputElmnt_2.focus();
-    //}
+      }
 });
 
   const generateButton = document.createElement('button');
@@ -191,7 +183,6 @@ function aiRecipe() {
   formElmnt.appendChild(generateButton);
 }
 
-// In Blank Recipe I need to update the delete button to actually work
 function blankRecipe() {
   const recipeTitleLabel = document.createElement('label');
   recipeTitleLabel.setAttribute('for', 'recipeTitle');
@@ -364,7 +355,8 @@ function blankRecipe() {
   formElmnt.appendChild(instructionsOL);
 
   const imageGenButton = document.createElement('button');
-  imageGenButton.textContent = 'Generate Images';
+  imageGenButton.setAttribute('id', 'imageGenBTN');
+  imageGenButton.textContent = 'Generate Image';
   imageGenButton.addEventListener('click', () => {
     if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredientsInclude != [] && instructions != []) {
       const title = recipeTitleInput.value;
@@ -427,7 +419,6 @@ function recipeGeneration() {
 
           const ingredientsH1 = document.createElement('h4');
           ingredientsH1.textContent = "Ingredients";
-          // There is some sort of issue adding the ingredients and the instructions I'll work on this later
           
           const ingredientsElmnt = document.createElement('ul');
           _ingredients.forEach(ingredient => {
@@ -454,15 +445,25 @@ function recipeGeneration() {
           formElmnt.appendChild(recipeDiv);
 
           const regenRecipe = document.createElement('button');
-          regenRecipe.textContent = 'Regenerate Recipes';
+          regenRecipe.textContent = 'Regenerate Recipe';
           regenRecipe.addEventListener('click', () => {
             displayLoading();
             recipeDiv.innerHTML = '';
             recipeGeneration();
           });
           formElmnt.appendChild(regenRecipe);
+
           const imageGenButton = document.createElement('button');
-          imageGenButton.textContent = 'Generate Images';
+          imageGenButton.setAttribute('id', 'imageGenBTN');
+          imageGenButton.textContent = 'Generate Image';
+          imageGenButton.addEventListener('click', () => {
+            const title = _title;
+            const description = _desc;
+            displayLoading();
+            imageGeneration(title, description);
+          });
+          formElmnt.appendChild(imageGenButton);
+          createImageContainer();
       })
       .catch(error => console.error(error));
 }
@@ -492,6 +493,8 @@ function imageGeneration(_title, _description) {
       .then(data => {
           hideLoading();
           const imageContainer = document.getElementById('imageContainer');
+          const imageGenBTN = document.querySelector('#imageGenBTN');
+          imageGenBTN.textContent = 'Regenerate Image';
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
               const buttonElement = document.createElement('button');
