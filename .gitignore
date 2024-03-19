@@ -2,3 +2,4 @@
 .pem
 .PEM
 udemyDeploy.pem
+*.pyc
