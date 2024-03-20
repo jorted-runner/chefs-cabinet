@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet home page. This serve as a landing page for Chefs Cabinet as well as the main recipe feed.">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="static/images/favicon.ico">
+    <link rel="stylesheet" href="static/styles/normalize.css">
+    <link rel="stylesheet" href="static/styles/base.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="flex">
+        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
+    </header>
+    <nav>
+        {% if not current_user.is_authenticated: %}
+            <a href="#">Home</a>
+            <a href="#">Login</a>
+            <a href="#">Register</a>
+        {% else: %}
+            <ul class="primary-navigation flex">
+                <li><a href="#"><img src="static\images\search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
+                <li><a href="{{ url_for('new_recipe') }}"><img src="static\images\plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
+                <li><a href="#"><img src="static\images\notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
+                <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
+                <li><a href="#">Log Out</a></li>
+            </ul>
+        {% endif %}
+        
+    </nav>
+    <main>
+        <h3>User Registration</h3>
+
+        <div class="form">
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "secondary"}) }}
+        </div>
+    </main>
+</body>
+</html>

@@ -1,12 +1,18 @@
-from flask import Flask, render_template, request, jsonify
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
 from flask_sqlalchemy import SQLAlchemy
-from ai_interface import AI_tool
-from dotenv import load_dotenv
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-import os
+from dotenv import load_dotenv
+from datetime import date
+from functools import wraps
+from bs4 import BeautifulSoup
+
+import os 
+
+from forms import NewUser, UserLogin
+from ai_interface import AI_tool
 
 load_dotenv()
 
@@ -59,6 +65,26 @@ def load_user(user_id):
 @app.route("/")
 def home():
     return render_template('index.html')
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    login_form = UserLogin()
+    if login_form.validate_on_submit():
+        if not User.query.filter_by(email=login_form.email.data).first():
+            flash("No user associated with that email, try registering!")
+            return redirect(url_for('login'))
+        email = request.form.get("email")
+        user = User.query.filter_by(email = email).first()
+        if user:
+            password = request.form.get('password')
+            if check_password_hash(user.password, password):
+                login_user(user)
+                return redirect(url_for('main_feed'))
+            else:
+                flash("Incorrect Password, try again!")
+                return render_template("login.html", form = login_form)
+    else:
+        return render_template("login.html", form = login_form, current_user=current_user)
 
 @app.route("/new-recipe")
 @login_required
