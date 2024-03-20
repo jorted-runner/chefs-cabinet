@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -21,7 +22,7 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recipe-db.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
+Bootstrap(app)
 
 RECIPE_AI = AI_tool()
 
@@ -85,7 +86,26 @@ def login():
                 return render_template("login.html", form = login_form)
     else:
         return render_template("login.html", form = login_form, current_user=current_user)
-
+    
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    new_user = NewUser()
+    if new_user.validate_on_submit():
+        if User.query.filter_by(email=new_user.email.data).first():
+            flash("You've already signed up with that email, log in instead!")
+            return redirect(url_for('login'))
+        new_user_name = request.form.get('name')
+        new_user_email = request.form.get('email')
+        new_user_username = request.form.get('username')
+        new_user_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
+        new_user = User(email = new_user_email, username = new_user_username, password = new_user_password, name = new_user_name)
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for("main_feed"))
+    else:
+        return render_template("register.html", form = new_user, current_user=current_user)
+    
 @app.route("/new-recipe")
 @login_required
 def new_recipe():
