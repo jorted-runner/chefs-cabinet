@@ -1,12 +1,58 @@
 from flask import Flask, render_template, request, jsonify
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_sqlalchemy import SQLAlchemy
 from ai_interface import AI_tool
 from dotenv import load_dotenv
+
+import os
 
 load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recipe-db.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 
 RECIPE_AI = AI_tool()
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(250), unique=True, nullable=False)
+    username = db.Column(db.String(250), unique=True, nullable=False)
+    password = db.Column(db.String(250), nullable=False)
+    recipes = db.relationship("Recipe", backref='user')
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    ingredients = db.Column(db.Text, nullable=False)
+    instructions = db.Column(db.Text, nullable=False)
+    img_url = db.Column(db.String(250), nullable=True)
+    date_posted = db.Column(db.String(250), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        admin_email = os.environ.get("ADMIN_EMAIL")
+        if current_user.email != admin_email:
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route("/")
 def home():
