@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Recipe</title>
+    <title>Chefs Cabinet</title>
     <meta name="author" content="Danny Ellis">
-    <meta name="description" content="This page allows users to create a new recipe.">
-    <meta property="og:title" content="Chefs Cabinet New Recipe">
+    <meta name="description" content="Chefs Cabinet Main Feed. This page will be the main feed of new recipes submitted by users">
+    <meta property="og:title" content="Chefs Cabinet">
     <link rel="icon" href="static/images/favicon.ico">
     <link rel="stylesheet" href="static/styles/normalize.css">
     <link rel="stylesheet" href="static/styles/base.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <script defer src="{{ url_for('static', filename='scripts/recipeType.js') }}"></script>
 </head>
 <body>
     <header class="flex">
@@ -27,20 +26,12 @@
             <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
         </ul>
     </nav>
-    <div class="loader-container">
-        <div class="spinner"></div>
-        <p class="spinner-text">Generating, this may take up to one minute</p>
-    </div>
-
     <main>
-        <label for="recipeType">Recipe Type</label>
-        <select name="recipeType" id="recipeType">
-            <option value="">Select a Recipe Type</option>
-            <option value="aiAssisted">A.I. Assisted</option>
-            <option value="blankRecipe">Blank Recipe</option>
-        </select>
-        <div class="form"></div>
+        <section class="recipe-card front">
+            <h1>Example Recipe</h1>
+            <img src="#" alt="Place Holder IMG">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam sapiente laborum commodi, architecto quae maiores omnis in itaque ratione optio quasi sequi odio nemo? At!</p>
+        </section>
     </main>
-    
 </body>
 </html>

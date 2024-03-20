@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cooks Corner</title>
+    <title>Chefs Cabinet</title>
     <meta name="author" content="Danny Ellis">
-    <meta name="description" content="Cooks Corner home page. This serve as a landing page for Cooks Corner as well as the main recipe feed.">
-    <meta property="og:title" content="Cooks Corner">
+    <meta name="description" content="Chefs Cabinet home page. This serve as a landing page for Chefs Cabinet as well as the main recipe feed.">
+    <meta property="og:title" content="Chefs Cabinet">
     <link rel="icon" href="static/images/favicon.ico">
     <link rel="stylesheet" href="static/styles/normalize.css">
     <link rel="stylesheet" href="static/styles/base.css">
@@ -16,22 +16,36 @@
 </head>
 <body>
     <header class="flex">
-        <a href="{{ url_for('home') }}"><h1 class="header-h1">Cooks Corner</h1></a>
+        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
     </header>
     <nav>
-        <ul class="primary-navigation flex">
-            <li><a href="#"><img src="static\images\search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
-            <li><a href="{{ url_for('new_recipe') }}"><img src="static\images\plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
-            <li><a href="#"><img src="static\images\notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
-            <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
-        </ul>
+        {% if not current_user.is_authenticated: %}
+            <a href="#">Home</a>
+            <a href="#">Login</a>
+            <a href="#">Register</a>
+        {% else: %}
+            <ul class="primary-navigation flex">
+                <li><a href="#"><img src="static\images\search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
+                <li><a href="{{ url_for('new_recipe') }}"><img src="static\images\plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
+                <li><a href="#"><img src="static\images\notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
+                <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
+                <li><a href="#">Log Out</a></li>
+            </ul>
+        {% endif %}
+        
     </nav>
     <main>
-        <section class="recipe-card front">
-            <h1>Example Recipe</h1>
-            <img src="#" alt="Place Holder IMG">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam sapiente laborum commodi, architecto quae maiores omnis in itaque ratione optio quasi sequi odio nemo? At!</p>
-        </section>
+        <div class="about">
+            <div class="what-is-cc">
+                <h3>What is Chefs Cabinet?</h3>
+            </div>
+            <div class="what-cc-does">
+                <h3>Shows what Chefs Cabinet Does.</h3>
+            </div>
+            <div class="cc-social-media">
+                <h3>Shows Social Media Aspect</h3>
+            </div>
+        </div>
     </main>
 </body>
 </html>

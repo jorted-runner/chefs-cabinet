@@ -3,6 +3,8 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from flask_sqlalchemy import SQLAlchemy
 from ai_interface import AI_tool
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 import os
 
@@ -59,10 +61,12 @@ def home():
     return render_template('index.html')
 
 @app.route("/new-recipe")
+@login_required
 def new_recipe():
     return render_template('new-recipe.html')
 
 @app.route("/generate_images", methods=["POST"])
+@login_required
 def generate_images():
     try:
         data = request.get_json()
@@ -76,6 +80,7 @@ def generate_images():
         return jsonify(error=str(e)), 400
     
 @app.route("/generate_recipe", methods=["POST"])
+@login_required
 def generate_recipe():
     try:
         data = request.get_json()
