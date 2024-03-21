@@ -69,6 +69,8 @@ def home():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        print("posted")
     login_form = UserLogin()
     if login_form.validate_on_submit():
         if not User.query.filter_by(email=login_form.email.data).first():
