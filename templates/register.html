@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% import "bootstrap/wtf.html" as wtf %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chefs Cabinet</title>
@@ -37,10 +36,11 @@
     </nav>
     <main>
         <h3>User Registration</h3>
-
-        <div class="form">
-            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "secondary"}) }}
-        </div>
+        <form class="form" id="register" method="post" action="{{url_for('register')}}">
+            <fieldset>
+                <legend>Name</legend>
+            </fieldset>
+        </form>
     </main>
 </body>
 </html>
