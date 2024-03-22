@@ -38,8 +38,14 @@
         <h3>User Registration</h3>
         <form class="form" id="register" method="post" action="{{url_for('register')}}">
             <fieldset>
-                <legend>Name</legend>
+                <legend>Registration Information</legend>
+                <label>First Name* <input type="text" name="fname" required autocomplete="given-name"></label>
+                <label>Last Name* <input type="text" name="lname" required autocomplete="family-name"></label>
+                <label>Email Address* <input type="email" name="email" required placeholder="chef@chefscabinet.com"></label>
+                <label>Username* <input type="text" name="username" required></label>
+                <label>Password* <input type="password" name="password" required></label>
             </fieldset>
+            <input type="submit" value="Register">
         </form>
     </main>
 </body>
