@@ -71,24 +71,24 @@ def home():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        print("posted")
-    login_form = UserLogin()
-    if login_form.validate_on_submit():
-        if not User.query.filter_by(email=login_form.email.data).first():
+        if not User.query.filter_by(email=request.form.get('email')).first():
             flash("No user associated with that email, try registering!")
             return redirect(url_for('login'))
+        else:
+            print(request.form.get('email'))
+            print(User.query.filter_by(email=request.form.get('email')).first())
         email = request.form.get("email")
         user = User.query.filter_by(email = email).first()
         if user:
             password = request.form.get('password')
             if check_password_hash(user.password, password):
                 login_user(user)
-                return redirect(url_for('main_feed'))
+                return redirect(url_for('home'))
             else:
                 flash("Incorrect Password, try again!")
-                return render_template("login.html", form = login_form)
+                return render_template("login.html")
     else:
-        return render_template("login.html", form = login_form, current_user=current_user)
+        return render_template("login.html", current_user=current_user)
     
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -113,6 +113,31 @@ def register():
 @login_required
 def new_recipe():
     return render_template('new-recipe.html')
+
+@app.route("/save-recipe", methods=["POST"])
+@login_required
+def save_recipe():
+    print("Recipe Saved")
+    # if request.method == "POST":
+    #     recipe_title = request.form.get("recipe_title")
+    #     recipe_image = request.form.get("recipe_image")
+    #     recipe_desc = request.form.get("recipe_desc")
+    #     ingredients = request.form.get("ingredients_list")
+    #     instructions = request.form.get("instructions")
+    #     file_name = download_image(recipe_image, recipe_title)
+    #     file_url = upload_file(file_name)
+    #     new_recipe = Recipe(
+    #         title=recipe_title,
+    #         description=recipe_desc,
+    #         ingredients=ingredients,
+    #         instructions=instructions,
+    #         img_url=file_url,
+    #         date_posted=date.today().strftime("%B %d, %Y"),
+    #         user_id=current_user.id        
+    #     )
+    #     db.session.add(new_recipe)
+    #     db.session.commit()
+    return redirect(url_for("home"))
 
 @app.route("/generate_images", methods=["POST"])
 @login_required
@@ -140,6 +165,11 @@ def generate_recipe():
     except Exception as e:
         app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
+    
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port = 8080, debug=True)

@@ -18,22 +18,7 @@
     <header class="flex">
         <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
     </header>
-    <nav>
-        {% if not current_user.is_authenticated: %}
-            <a href="{{ url_for('home')}}">Home</a>
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
-        {% else: %}
-            <ul class="primary-navigation flex">
-                <li><a href="#"><img src="static\images\search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
-                <li><a href="{{ url_for('new_recipe') }}"><img src="static\images\plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
-                <li><a href="#"><img src="static\images\notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
-                <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
-                <li><a href="#">Log Out</a></li>
-            </ul>
-        {% endif %}
-        
-    </nav>
+    {% include "navigation.html" %}
     <main>
         <h3>User Login</h3>
         <form class="form" id="login" method="post" action="{{url_for('login')}}">

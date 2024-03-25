@@ -19,14 +19,7 @@
     <header class="flex">
         <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
     </header>
-    <nav>
-        <ul class="primary-navigation flex">
-            <li><a href="#"><img src="static\images\search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
-            <li><a href="{{ url_for('new_recipe') }}"><img src="static\images\plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
-            <li><a href="#"><img src="static\images\notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
-            <li><a href="#"><img src="static\images\temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
-        </ul>
-    </nav>
+    {% include "navigation.html" %}
     <div class="loader-container">
         <div class="spinner"></div>
         <p class="spinner-text">Generating, this may take up to one minute</p>
