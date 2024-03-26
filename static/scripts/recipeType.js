@@ -494,15 +494,18 @@ function imageGeneration(_title, _description) {
           hideLoading();
           const imageContainer = document.getElementById('imageContainer');
           const imageGenBTN = document.querySelector('#imageGenBTN');
+          const saveButton = document.createElement('button');
+          saveButton.textContent = 'Save Recipe';
+          formElmnt.appendChild(saveButton);
           imageGenBTN.textContent = 'Regenerate Image';
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
-              const buttonElement = document.createElement('button');
               const imgElement = document.createElement('img');
               imgElement.src = imageUrl;
               imgElement.alt = 'Recipe Image';
-              buttonElement.appendChild(imgElement);
-              imageContainer.appendChild(buttonElement);
+              imgElement.setAttribute('width', 300);
+              imgElement.setAttribute('height', 300);
+              imageContainer.appendChild(imgElement);
           });
       })
       .catch(error => console.error(error));

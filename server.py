@@ -72,11 +72,9 @@ def home():
 def login():
     if request.method == "POST":
         if not User.query.filter_by(email=request.form.get('email')).first():
-            flash("No user associated with that email, try registering!")
-            return redirect(url_for('register'))
-        else:
-            print(request.form.get('email'))
-            print(User.query.filter_by(email=request.form.get('email')).first())
+            flash("No user associated with that email, try <a href='" + url_for('register') + "'>registering</a>!")
+
+            return redirect(url_for('login'))
         email = request.form.get("email")
         user = User.query.filter_by(email = email).first()
         if user:
@@ -94,8 +92,8 @@ def login():
 def register():
     if request.method == "POST":
         if User.query.filter_by(email=request.form.get('email')).first():
-            flash("You've already signed up with that email, log in instead!")
-            return redirect(url_for('login'))
+            flash("You've already signed up with that email, <a href='" + url_for('login') + "'>log in</a> instead!")
+            return redirect(url_for('register'))
         new_user_fName = request.form.get('fname')
         new_user_lName = request.form.get('lname')
         new_user_email = request.form.get('email')
