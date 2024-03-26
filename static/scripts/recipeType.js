@@ -1,3 +1,4 @@
+// Global Variables
 const recipeTypeElmnt = document.querySelector("#recipeType");
 const formElmnt = document.querySelector(".form");
 const loaderContainer = document.querySelector('.loader-container');
@@ -5,14 +6,15 @@ var ingredientsInclude = [];
 var ingredientsExclude = [];
 var instructions = [];
 
+// Loading display-hide
 const displayLoading = () => {
   loaderContainer.style.display = 'block';
 };
-
 const hideLoading = () => {
   loaderContainer.style.display = 'none';
 };
 
+// Recipe Type Drop Down Listener - Trigger Form Building
 recipeTypeElmnt.addEventListener("change", function(event) {
     const selectedValue = event.target.value;
     if (selectedValue == "aiAssisted") {
@@ -24,7 +26,9 @@ recipeTypeElmnt.addEventListener("change", function(event) {
     }
 });
 
+// Build Form for AI Recipe Generation
 function aiRecipe() {
+  // Ingredients to Include Element Creation
   const ingredients_H1 = document.createElement('h1');
   ingredients_H1.textContent = "Ingredients to Include";
   
@@ -43,7 +47,7 @@ function aiRecipe() {
 
   const ingredientsUL = document.createElement('ul');
   ingredientsUL.setAttribute('id', 'ingredients');
-
+  // Add button event listener
   buttonElmnt.addEventListener('click', () => {
     if (inputElmnt.value != '') {
       const ingredient = document.createElement('li');
@@ -53,6 +57,7 @@ function aiRecipe() {
       deleteButton.textContent = "❌";
       ingredient.append(deleteButton);
       ingredientsUL.appendChild(ingredient);
+      // Delete button event listener
       deleteButton.addEventListener("click", (event) => {
         const ingredientText = event.target.parentNode.firstChild.textContent.trim();
         ingredientsUL.removeChild(ingredient);
@@ -68,6 +73,7 @@ function aiRecipe() {
       inputElmnt.focus();
     }
   });
+  // Key press event listener
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
     if (keyPressed == "Enter" && inputElmnt.value != "") {
@@ -78,6 +84,7 @@ function aiRecipe() {
         deleteButton.textContent = "❌";
         newIngredient.append(deleteButton);
         ingredientsUL.appendChild(newIngredient);
+        // Delete Button event listener
         deleteButton.addEventListener("click", (event) => {
           const ingredientText = event.target.parentNode.firstChild.textContent.trim();
           ingredientsUL.removeChild(newIngredient);
@@ -90,7 +97,7 @@ function aiRecipe() {
         inputElmnt.value = '';
     }
   });
-
+  // Add Include Ingredients elements to the form
   formElmnt.appendChild(ingredients_H1);
   formElmnt.appendChild(labelElmnt);
   formElmnt.appendChild(inputElmnt);
@@ -100,6 +107,7 @@ function aiRecipe() {
   const hrElmnt = document.createElement('hr');
   formElmnt.appendChild(hrElmnt);
 
+  // Exlcude Ingredients Element Creation
   const ingredients_exclude_H1 = document.createElement('h1');
   ingredients_exclude_H1.textContent = "Ingredients to Exclude";
   
@@ -118,7 +126,7 @@ function aiRecipe() {
 
   const ingredientsUL_2 = document.createElement('ul');
   ingredientsUL_2.setAttribute('id', 'ingredientsExclude');
-
+  // Exclude Button Event Listener
   buttonElmnt_2.addEventListener('click', () => {
     if (inputElmnt_2.value != '') {
       const ingredient = document.createElement('li');
@@ -128,6 +136,7 @@ function aiRecipe() {
       deleteButton.textContent = "❌";
       ingredient.append(deleteButton);
       ingredientsUL_2.appendChild(ingredient);
+      // Delete Button Event Listener
       deleteButton.addEventListener("click", (event) => {
         const ingredientText = event.target.parentNode.firstChild.textContent.trim();
         ingredientsUL_2.removeChild(ingredient);
@@ -143,6 +152,7 @@ function aiRecipe() {
       inputElmnt_2.focus();
     }
   });
+  // Exclude Key Press Event Listener
   document.addEventListener('keypress', function(event) {
     let keyPressed = event.key;
     if (keyPressed == "Enter" && inputElmnt_2.value != "") {
@@ -153,6 +163,7 @@ function aiRecipe() {
         deleteButton.textContent = "❌";
         newIngredient.append(deleteButton);
         ingredientsUL_2.appendChild(newIngredient);
+      // Delete Button Event Listener
         deleteButton.addEventListener("click", (event) => {
           const ingredientText = event.target.parentNode.firstChild.textContent.trim();
           ingredientsUL_2.removeChild(newIngredient);
@@ -165,7 +176,7 @@ function aiRecipe() {
         inputElmnt_2.value = '';
       }
 });
-
+  // Recipe Generation Button Creaton
   const generateButton = document.createElement('button');
   generateButton.textContent = 'Generate Recipe';
   generateButton.addEventListener('click', () => {
@@ -174,7 +185,7 @@ function aiRecipe() {
       recipeGeneration();
     }
   });
-  
+  // Add Exlcude Elements and Generate Recipe Button to Form 
   formElmnt.appendChild(ingredients_exclude_H1);
   formElmnt.appendChild(labelElmnt_2);
   formElmnt.appendChild(inputElmnt_2);
