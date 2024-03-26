@@ -4,8 +4,11 @@ const formElmnt = document.querySelector(".form");
 const loaderContainer = document.querySelector('.loader-container');
 var ingredientsInclude = [];
 var ingredientsExclude = [];
-var instructions = [];
-var ingredients = [];
+var TITLE = '';
+var DESC = '';
+var INSTRUCTIONS = [];
+var INGREDIENTS = [];
+var IMAGE_URL = '';
 
 // Loading display-hide
 const displayLoading = () => {
@@ -232,12 +235,12 @@ function blankRecipe() {
       const ingredient = document.createElement('li');
       const deleteButton = document.createElement('button');
       ingredient.textContent = inputElmnt.value;
-      ingredients.push(inputElmnt.value);
+      INGREDIENTS.push(inputElmnt.value);
       deleteButton.textContent = "❌";
       ingredient.append(deleteButton);
       ingredientsUL.appendChild(ingredient);
       deleteButton.addEventListener("click", (event) => {
-        deleteEvent(event, ingredientsUL, ingredient, ingredients);
+        deleteEvent(event, ingredientsUL, ingredient, INGREDIENTS);
       });
       inputElmnt.value = '';
       inputElmnt.focus();
@@ -252,12 +255,12 @@ function blankRecipe() {
         const newIngredient = document.createElement('li');
         const deleteButton = document.createElement('button')
         newIngredient.textContent = inputElmnt.value;
-        ingredients.push(inputElmnt.value);
+        INGREDIENTS.push(inputElmnt.value);
         deleteButton.textContent = "❌";
         newIngredient.append(deleteButton);
         ingredientsUL.appendChild(newIngredient);
         deleteButton.addEventListener("click", (event) => {
-          deleteEvent(event, ingredientsUL, newIngredient, ingredients);
+          deleteEvent(event, ingredientsUL, newIngredient, INGREDIENTS);
         });
         inputElmnt.focus();
         inputElmnt.value = '';
@@ -300,13 +303,13 @@ function blankRecipe() {
       deleteButton.textContent = "❌";
       step.append(deleteButton);
       instructionsOL.appendChild(step);
-      instructions.push(instructionsInputElmnt.value);
+      INSTRUCTIONS.push(instructionsInputElmnt.value);
       deleteButton.addEventListener("click", (event) => {
-        deleteEvent(event, instructionsOL, step, instructions);
+        deleteEvent(event, instructionsOL, step, INSTRUCTIONS);
       });
       instructionsInputElmnt.value = '';
       instructionsInputElmnt.focus();
-      console.log(instructions);
+      console.log(INSTRUCTIONS);
     } else {
       alert("Cannot add a blank step. Add a step and try again.");
       instructionsInputElmnt.focus();
@@ -321,13 +324,13 @@ function blankRecipe() {
         deleteButton.textContent = "❌";
         step.append(deleteButton);
         instructionsOL.appendChild(step);
-        instructions.push(instructionsInputElmnt.value);
+        INSTRUCTIONS.push(instructionsInputElmnt.value);
         deleteButton.addEventListener("click", (event) => {
-          deleteEvent(event, instructionsOL, step, instructions);
+          deleteEvent(event, instructionsOL, step, INSTRUCTIONS);
         });
         instructionsInputElmnt.focus();
         instructionsInputElmnt.value = '';
-        console.log(instructions);
+        console.log(INSTRUCTIONS);
     }
   });
 
@@ -341,7 +344,7 @@ function blankRecipe() {
   imageGenButton.setAttribute('id', 'imageGenBTN');
   imageGenButton.textContent = 'Generate Image';
   imageGenButton.addEventListener('click', () => {
-    if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredients != [] && instructions != []) {
+    if (recipeTitleInput.value != '' && recipeDescInput.value != '' && INGREDIENTS != [] && INSTRUCTIONS != []) {
       const title = recipeTitleInput.value;
       const description = recipeDescInput.value;
       displayLoading();
@@ -359,7 +362,7 @@ function createImageContainer() {
 }
 
 function recipeGeneration() {
-  var toInclude = ingredients.join(", ");
+  var toInclude = INGREDIENTS.join(", ");
   var toExclude = ingredientsExclude.join(", ");
   fetch('/generate_recipe', {
       method: 'POST',
@@ -395,10 +398,12 @@ function recipeGeneration() {
           const _titleElmnt = document.createElement('h1');
           _titleElmnt.setAttribute('id', 'recipeTitle');
           _titleElmnt.textContent = _title;
+          TITLE = _title;
 
           const _descElmnt = document.createElement('p');
           _descElmnt.setAttribute('id', 'recipeDesc');
           _descElmnt.textContent = _desc;
+          DESC = _desc;
 
           const ingredientsH1 = document.createElement('h4');
           ingredientsH1.textContent = "Ingredients";
@@ -408,6 +413,7 @@ function recipeGeneration() {
             const ingredientLi = document.createElement('li');
             ingredientLi.textContent = ingredient;
             ingredientsElmnt.appendChild(ingredientLi);
+            INGREDIENTS.push(ingredient);
           });
           const instructionsH1 = document.createElement('h4');
           instructionsH1.textContent = "Instructions";
@@ -417,6 +423,7 @@ function recipeGeneration() {
             const instructionLi = document.createElement('li');
             instructionLi.textContent = step;
             instructionsElmnt.appendChild(instructionLi);
+            INSTRUCTIONS.push(step);
           });
           formElmnt.innerHTML = '';
           recipeDiv.appendChild(_titleElmnt);
@@ -477,9 +484,36 @@ function imageGeneration(_title, _description) {
           hideLoading();
           const imageContainer = document.getElementById('imageContainer');
           const imageGenBTN = document.querySelector('#imageGenBTN');
-          const saveButton = document.createElement('button');
-          saveButton.textContent = 'Save Recipe';
-          formElmnt.appendChild(saveButton);
+          // Creating form to save recipe
+          const hiddenForm = document.createElement('form');
+          hiddenForm.setAttribute('class', 'form');
+          hiddenForm.setAttribute('method', 'post');
+          hiddenForm.setAttribute('action', saveRecipeURL);
+          const hiddenTitle = document.createElement('input');
+          hiddenTitle.setAttribute('type', 'hidden');
+          hiddenTitle.setAttribute('name', 'title');
+          hiddenTitle.setAttribute('value', TITLE);
+          const hiddenDesc = document.createElement('input');
+          hiddenDesc.setAttribute('type', 'hidden');
+          hiddenDesc.setAttribute('name', 'desc');
+          hiddenDesc.setAttribute('value', DESC);
+          const hiddenIngredients = document.createElement('input');
+          hiddenIngredients.setAttribute('type', 'hidden');
+          hiddenIngredients.setAttribute('name', 'ingredients');
+          hiddenIngredients.setAttribute('value', INGREDIENTS);
+          const hiddenInstructions = document.createElement('input');
+          hiddenInstructions.setAttribute('type', 'hidden');
+          hiddenInstructions.setAttribute('name', 'instructions');
+          hiddenInstructions.setAttribute('value', INSTRUCTIONS);
+          const submitButton = document.createElement('input');
+          submitButton.setAttribute('type', 'submit');
+          submitButton.setAttribute('value', 'Save Recipe');
+          hiddenForm.appendChild(hiddenTitle);
+          hiddenForm.appendChild(hiddenDesc);
+          hiddenForm.appendChild(hiddenIngredients);
+          hiddenForm.appendChild(hiddenInstructions);
+          hiddenForm.appendChild(submitButton);
+          formElmnt.appendChild(hiddenForm);
           imageGenBTN.textContent = 'Regenerate Image';
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {

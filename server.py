@@ -112,9 +112,12 @@ def register():
 def new_recipe():
     return render_template('new-recipe.html')
 
-@app.route("/save-recipe", methods=["POST"])
+@app.route("/save_recipe", methods=["POST"])
 @login_required
 def save_recipe():
+    if request.method == 'post':
+        print(request.form.get('title'))
+        print(request.form.get('desc'))
     print("Recipe Saved")
     # if request.method == "POST":
     #     recipe_title = request.form.get("recipe_title")
