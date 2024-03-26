@@ -9,6 +9,7 @@ var DESC = '';
 var INSTRUCTIONS = [];
 var INGREDIENTS = [];
 var IMAGE_URL = '';
+const saveRecipeURL = "/save_recipe";
 
 // Loading display-hide
 const displayLoading = () => {
@@ -512,8 +513,7 @@ function imageGeneration(_title, _description) {
           hiddenForm.appendChild(hiddenDesc);
           hiddenForm.appendChild(hiddenIngredients);
           hiddenForm.appendChild(hiddenInstructions);
-          hiddenForm.appendChild(submitButton);
-          formElmnt.appendChild(hiddenForm);
+          
           imageGenBTN.textContent = 'Regenerate Image';
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
@@ -523,7 +523,14 @@ function imageGeneration(_title, _description) {
               imgElement.setAttribute('width', 300);
               imgElement.setAttribute('height', 300);
               imageContainer.appendChild(imgElement);
+              const hiddenIMG = document.createElement('input');
+              hiddenIMG.setAttribute('type', 'hidden');
+              hiddenIMG.setAttribute('name', 'image_url');
+              hiddenIMG.setAttribute('value', imageUrl);
+              hiddenForm.appendChild(hiddenIMG);
           });
+          hiddenForm.appendChild(submitButton);
+          formElmnt.appendChild(hiddenForm);
       })
       .catch(error => console.error(error));
 }

@@ -12,8 +12,8 @@ from bs4 import BeautifulSoup
 
 import os 
 
-from forms import NewUser, UserLogin
 from ai_interface import AI_tool
+from image_processing import download_image, upload_file
 
 load_dotenv()
 
@@ -115,29 +115,25 @@ def new_recipe():
 @app.route("/save_recipe", methods=["POST"])
 @login_required
 def save_recipe():
-    if request.method == 'post':
-        print(request.form.get('title'))
-        print(request.form.get('desc'))
-    print("Recipe Saved")
-    # if request.method == "POST":
-    #     recipe_title = request.form.get("recipe_title")
-    #     recipe_image = request.form.get("recipe_image")
-    #     recipe_desc = request.form.get("recipe_desc")
-    #     ingredients = request.form.get("ingredients_list")
-    #     instructions = request.form.get("instructions")
-    #     file_name = download_image(recipe_image, recipe_title)
-    #     file_url = upload_file(file_name)
-    #     new_recipe = Recipe(
-    #         title=recipe_title,
-    #         description=recipe_desc,
-    #         ingredients=ingredients,
-    #         instructions=instructions,
-    #         img_url=file_url,
-    #         date_posted=date.today().strftime("%B %d, %Y"),
-    #         user_id=current_user.id        
-    #     )
-    #     db.session.add(new_recipe)
-    #     db.session.commit()
+    if request.method == "POST":
+        recipe_title = request.form.get("title")
+        recipe_image = request.form.get("image_url")
+        recipe_desc = request.form.get("desc")
+        ingredients = request.form.get("ingredients")
+        instructions = request.form.get("instructions")
+        file_name = download_image(recipe_image, recipe_title)
+        file_url = upload_file(file_name)
+        new_recipe = Recipe(
+            title=recipe_title,
+            description=recipe_desc,
+            ingredients=ingredients,
+            instructions=instructions,
+            img_url=file_url,
+            date_posted=date.today().strftime("%B %d, %Y"),
+            user_id=current_user.id        
+        )
+        db.session.add(new_recipe)
+        db.session.commit()
     return redirect(url_for("home"))
 
 @app.route("/generate_images", methods=["POST"])
