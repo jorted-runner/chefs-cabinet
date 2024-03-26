@@ -26,6 +26,24 @@ recipeTypeElmnt.addEventListener("change", function(event) {
     }
 });
 
+function deleteEvent (event, buttonType) {
+  const ingredientText = event.target.parentNode.firstChild.textContent.trim();
+  if (buttonType == 'ingredientInclude') {
+    ingredientsUL.removeChild(ingredient);
+    const indexToRemove = ingredientsInclude.indexOf(ingredientText);
+    if (indexToRemove !== -1) {
+        ingredientsInclude.splice(indexToRemove, 1);
+    }
+  } else if (buttonType == 'ingredientExclude') {
+    const ingredientText = event.target.parentNode.firstChild.textContent.trim();
+    ingredientsUL_2.removeChild(ingredient);
+    const indexToRemove = ingredientsExclude.indexOf(ingredientText);
+    if (indexToRemove !== -1) {
+        ingredientsExclude.splice(indexToRemove, 1);
+    }
+  }
+}
+
 // Build Form for AI Recipe Generation
 function aiRecipe() {
   // Ingredients to Include Element Creation
@@ -59,12 +77,7 @@ function aiRecipe() {
       ingredientsUL.appendChild(ingredient);
       // Delete button event listener
       deleteButton.addEventListener("click", (event) => {
-        const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-        ingredientsUL.removeChild(ingredient);
-        const indexToRemove = ingredientsInclude.indexOf(ingredientText);
-        if (indexToRemove !== -1) {
-            ingredientsInclude.splice(indexToRemove, 1);
-        }
+        deleteEvent(event, 'ingredientInclude');
       });
       inputElmnt.value = '';
       inputElmnt.focus();
@@ -86,12 +99,7 @@ function aiRecipe() {
         ingredientsUL.appendChild(newIngredient);
         // Delete Button event listener
         deleteButton.addEventListener("click", (event) => {
-          const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-          ingredientsUL.removeChild(newIngredient);
-          const indexToRemove = ingredientsInclude.indexOf(ingredientText);
-          if (indexToRemove !== -1) {
-              ingredientsInclude.splice(indexToRemove, 1);
-          }
+          deleteEvent(event, 'ingredientInclude');
         });
         inputElmnt.focus();
         inputElmnt.value = '';
@@ -107,7 +115,7 @@ function aiRecipe() {
   const hrElmnt = document.createElement('hr');
   formElmnt.appendChild(hrElmnt);
 
-  // Exlcude Ingredients Element Creation
+  // Exclude Ingredients Element Creation
   const ingredients_exclude_H1 = document.createElement('h1');
   ingredients_exclude_H1.textContent = "Ingredients to Exclude";
   
@@ -138,12 +146,7 @@ function aiRecipe() {
       ingredientsUL_2.appendChild(ingredient);
       // Delete Button Event Listener
       deleteButton.addEventListener("click", (event) => {
-        const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-        ingredientsUL_2.removeChild(ingredient);
-        const indexToRemove = ingredientsExclude.indexOf(ingredientText);
-        if (indexToRemove !== -1) {
-            ingredientsExclude.splice(indexToRemove, 1);
-        }
+        deleteEvent(event, 'ingredientExclude');
       });
       inputElmnt_2.value = '';
       inputElmnt_2.focus();
@@ -165,18 +168,13 @@ function aiRecipe() {
         ingredientsUL_2.appendChild(newIngredient);
       // Delete Button Event Listener
         deleteButton.addEventListener("click", (event) => {
-          const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-          ingredientsUL_2.removeChild(newIngredient);
-          const indexToRemove = ingredientsExclude.indexOf(ingredientText);
-          if (indexToRemove !== -1) {
-              ingredientsExclude.splice(indexToRemove, 1);
-        }
+          deleteEvent(event, 'ingredientExclude');
         });
         inputElmnt_2.focus();
         inputElmnt_2.value = '';
       }
 });
-  // Recipe Generation Button Creaton
+  // Recipe Generation Button Creation
   const generateButton = document.createElement('button');
   generateButton.textContent = 'Generate Recipe';
   generateButton.addEventListener('click', () => {
@@ -185,7 +183,7 @@ function aiRecipe() {
       recipeGeneration();
     }
   });
-  // Add Exlcude Elements and Generate Recipe Button to Form 
+  // Add Exclude Elements and Generate Recipe Button to Form 
   formElmnt.appendChild(ingredients_exclude_H1);
   formElmnt.appendChild(labelElmnt_2);
   formElmnt.appendChild(inputElmnt_2);
