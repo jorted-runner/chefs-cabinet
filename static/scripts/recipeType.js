@@ -5,6 +5,7 @@ const loaderContainer = document.querySelector('.loader-container');
 var ingredientsInclude = [];
 var ingredientsExclude = [];
 var instructions = [];
+var ingredients = [];
 
 // Loading display-hide
 const displayLoading = () => {
@@ -231,12 +232,12 @@ function blankRecipe() {
       const ingredient = document.createElement('li');
       const deleteButton = document.createElement('button');
       ingredient.textContent = inputElmnt.value;
-      ingredientsInclude.push(inputElmnt.value);
+      ingredients.push(inputElmnt.value);
       deleteButton.textContent = "❌";
       ingredient.append(deleteButton);
       ingredientsUL.appendChild(ingredient);
       deleteButton.addEventListener("click", (event) => {
-        deleteEvent(event, ingredientsUL, ingredient, ingredientsInclude);
+        deleteEvent(event, ingredientsUL, ingredient, ingredients);
       });
       inputElmnt.value = '';
       inputElmnt.focus();
@@ -251,12 +252,12 @@ function blankRecipe() {
         const newIngredient = document.createElement('li');
         const deleteButton = document.createElement('button')
         newIngredient.textContent = inputElmnt.value;
-        ingredientsInclude.push(inputElmnt.value);
+        ingredients.push(inputElmnt.value);
         deleteButton.textContent = "❌";
         newIngredient.append(deleteButton);
         ingredientsUL.appendChild(newIngredient);
         deleteButton.addEventListener("click", (event) => {
-          deleteEvent(event, ingredientsUL, newIngredient, ingredientsInclude);
+          deleteEvent(event, ingredientsUL, newIngredient, ingredients);
         });
         inputElmnt.focus();
         inputElmnt.value = '';
@@ -340,7 +341,7 @@ function blankRecipe() {
   imageGenButton.setAttribute('id', 'imageGenBTN');
   imageGenButton.textContent = 'Generate Image';
   imageGenButton.addEventListener('click', () => {
-    if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredientsInclude != [] && instructions != []) {
+    if (recipeTitleInput.value != '' && recipeDescInput.value != '' && ingredients != [] && instructions != []) {
       const title = recipeTitleInput.value;
       const description = recipeDescInput.value;
       displayLoading();
@@ -358,7 +359,7 @@ function createImageContainer() {
 }
 
 function recipeGeneration() {
-  var toInclude = ingredientsInclude.join(", ");
+  var toInclude = ingredients.join(", ");
   var toExclude = ingredientsExclude.join(", ");
   fetch('/generate_recipe', {
       method: 'POST',
