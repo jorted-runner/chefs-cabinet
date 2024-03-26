@@ -73,7 +73,7 @@ def login():
     if request.method == "POST":
         if not User.query.filter_by(email=request.form.get('email')).first():
             flash("No user associated with that email, try registering!")
-            return redirect(url_for('login'))
+            return redirect(url_for('register'))
         else:
             print(request.form.get('email'))
             print(User.query.filter_by(email=request.form.get('email')).first())
