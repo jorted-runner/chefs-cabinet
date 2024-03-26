@@ -235,9 +235,8 @@ function blankRecipe() {
       deleteButton.textContent = "❌";
       ingredient.append(deleteButton);
       ingredientsUL.appendChild(ingredient);
-      deleteButton.addEventListener("click", () => {
-        ingredientsUL.removeChild(ingredient);
-        ingredientsInclude = ingredientsInclude.filter(item => item != ingredient.textContent);
+      deleteButton.addEventListener("click", (event) => {
+        deleteEvent(event, ingredientsUL, ingredient, ingredientsInclude);
       });
       inputElmnt.value = '';
       inputElmnt.focus();
@@ -256,13 +255,8 @@ function blankRecipe() {
         deleteButton.textContent = "❌";
         newIngredient.append(deleteButton);
         ingredientsUL.appendChild(newIngredient);
-        deleteButton.addEventListener("click", () => {
-          const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-          ingredientsUL.removeChild(newIngredient);
-          const indexToRemove = ingredientsInclude.indexOf(ingredientText);
-          if (indexToRemove !== -1) {
-              ingredientsInclude.splice(indexToRemove, 1);
-          }
+        deleteButton.addEventListener("click", (event) => {
+          deleteEvent(event, ingredientsUL, newIngredient, ingredientsInclude);
         });
         inputElmnt.focus();
         inputElmnt.value = '';
@@ -307,13 +301,7 @@ function blankRecipe() {
       instructionsOL.appendChild(step);
       instructions.push(instructionsInputElmnt.value);
       deleteButton.addEventListener("click", (event) => {
-        const instructionText = event.target.parentNode.firstChild.textContent.trim();
-        instructionsOL.removeChild(step);
-        const indexToRemove = instructions.indexOf(instructionText);
-        if (indexToRemove !== -1) {
-            instructions.splice(indexToRemove, 1);
-        }
-        console.log(instructions);
+        deleteEvent(event, instructionsOL, step, instructions);
       });
       instructionsInputElmnt.value = '';
       instructionsInputElmnt.focus();
@@ -334,13 +322,7 @@ function blankRecipe() {
         instructionsOL.appendChild(step);
         instructions.push(instructionsInputElmnt.value);
         deleteButton.addEventListener("click", (event) => {
-          const instructionsText = event.target.parentNode.firstChild.textContent.trim();
-          instructionsOL.removeChild(step);
-          const indexToRemove = instructions.indexOf(instructionsText);
-          if (indexToRemove !== -1) {
-              instructions.splice(indexToRemove, 1);
-          }
-          console.log(instructions);
+          deleteEvent(event, instructionsOL, step, instructions);
         });
         instructionsInputElmnt.focus();
         instructionsInputElmnt.value = '';
