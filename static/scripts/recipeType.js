@@ -26,21 +26,12 @@ recipeTypeElmnt.addEventListener("change", function(event) {
     }
 });
 
-function deleteEvent (event, buttonType) {
-  const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-  if (buttonType == 'ingredientInclude') {
-    ingredientsUL.removeChild(ingredient);
-    const indexToRemove = ingredientsInclude.indexOf(ingredientText);
-    if (indexToRemove !== -1) {
-        ingredientsInclude.splice(indexToRemove, 1);
-    }
-  } else if (buttonType == 'ingredientExclude') {
-    const ingredientText = event.target.parentNode.firstChild.textContent.trim();
-    ingredientsUL_2.removeChild(ingredient);
-    const indexToRemove = ingredientsExclude.indexOf(ingredientText);
-    if (indexToRemove !== -1) {
-        ingredientsExclude.splice(indexToRemove, 1);
-    }
+function deleteEvent (event, ul, li, list) {
+  const eventText = event.target.parentNode.firstChild.textContent.trim();
+  ul.removeChild(li);
+  const indexToRemove = list.indexOf(eventText);
+  if (indexToRemove !== -1) {
+      list.splice(indexToRemove, 1);
   }
 }
 
@@ -77,7 +68,7 @@ function aiRecipe() {
       ingredientsUL.appendChild(ingredient);
       // Delete button event listener
       deleteButton.addEventListener("click", (event) => {
-        deleteEvent(event, 'ingredientInclude');
+        deleteEvent(event, ingredientsUL, ingredient, ingredientsInclude);
       });
       inputElmnt.value = '';
       inputElmnt.focus();
@@ -99,7 +90,7 @@ function aiRecipe() {
         ingredientsUL.appendChild(newIngredient);
         // Delete Button event listener
         deleteButton.addEventListener("click", (event) => {
-          deleteEvent(event, 'ingredientInclude');
+          deleteEvent(event, ingredientsUL, newIngredient, ingredientsInclude);
         });
         inputElmnt.focus();
         inputElmnt.value = '';
@@ -146,7 +137,7 @@ function aiRecipe() {
       ingredientsUL_2.appendChild(ingredient);
       // Delete Button Event Listener
       deleteButton.addEventListener("click", (event) => {
-        deleteEvent(event, 'ingredientExclude');
+        deleteEvent(event, ingredientsUL_2, ingredient, ingredientsExclude);
       });
       inputElmnt_2.value = '';
       inputElmnt_2.focus();
@@ -168,7 +159,7 @@ function aiRecipe() {
         ingredientsUL_2.appendChild(newIngredient);
       // Delete Button Event Listener
         deleteButton.addEventListener("click", (event) => {
-          deleteEvent(event, 'ingredientExclude');
+          deleteEvent(event, ingredientsUL_2, newIngredient, ingredientsExclude);
         });
         inputElmnt_2.focus();
         inputElmnt_2.value = '';
