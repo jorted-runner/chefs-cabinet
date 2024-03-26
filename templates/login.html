@@ -21,6 +21,11 @@
     {% include "navigation.html" %}
     <main>
         <h3>User Login</h3>
+        {% if get_flashed_messages %}
+                {% for message in get_flashed_messages() %}
+                    <h4>{{ message | safe }}</h4>
+                {% endfor %}
+        {% endif %}
         <form class="form" id="login" method="post" action="{{url_for('login')}}">
             <fieldset>
                 <label>Email <input type="email" name="email" id="email" required placeholder="chef@chefscabinet.com"></label>
