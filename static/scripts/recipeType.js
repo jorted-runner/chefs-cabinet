@@ -363,7 +363,7 @@ function createImageContainer() {
 }
 
 function recipeGeneration() {
-  var toInclude = INGREDIENTS.join(", ");
+  var toInclude = ingredientsInclude.join(", ");
   var toExclude = ingredientsExclude.join(", ");
   fetch('/generate_recipe', {
       method: 'POST',
@@ -439,6 +439,8 @@ function recipeGeneration() {
           regenRecipe.textContent = 'Regenerate Recipe';
           regenRecipe.addEventListener('click', () => {
             displayLoading();
+            INGREDIENTS = [];
+            INSTRUCTIONS = [];
             recipeDiv.innerHTML = '';
             recipeGeneration();
           });

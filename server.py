@@ -66,7 +66,8 @@ def load_user(user_id):
 
 @app.route("/")
 def home():
-    return render_template('index.html')
+    all_recipes = Recipe.query.all()
+    return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -122,13 +123,12 @@ def save_recipe():
         ingredients = request.form.get("ingredients")
         instructions = request.form.get("instructions")
         file_name = download_image(recipe_image, recipe_title)
-        file_url = upload_file(file_name)
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
             ingredients=ingredients,
             instructions=instructions,
-            img_url=file_url,
+            img_url=file_name,
             date_posted=date.today().strftime("%B %d, %Y"),
             user_id=current_user.id        
         )

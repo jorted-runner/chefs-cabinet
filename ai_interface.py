@@ -26,7 +26,8 @@ class AI_tool():
     
 
   def recipe_generation(self, include, exclude):
-    prompt = f"Write a recipe with a descriptive name that includes {include} and any other needed ingredients but does not contain {exclude}. Output the Title, Description, Ingredients, and Instructions. Format the output in a JSON where each ingredient is a single item within the 'Ingredients' and each step within 'Instructions' the same way." 
+    print(include)
+    prompt = f"Write a recipe with a descriptive name that must include {include} and any other needed ingredients but does not contain {exclude}. Output the Title, Description, Ingredients, and Instructions. Format the output in a JSON where each ingredient is a single item within the 'Ingredients' and each step within 'Instructions' the same way." 
     response = self.client.chat.completions.create(
       model="gpt-3.5-turbo-0125",
       response_format={"type":"json_object"},
