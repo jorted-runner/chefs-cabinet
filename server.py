@@ -129,12 +129,13 @@ def save_recipe():
         ingredients = request.form.get("ingredients")
         instructions = request.form.get("instructions")
         file_name = download_image(recipe_image, recipe_title)
+        file_url = upload_file(file_name)
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
             ingredients=ingredients,
             instructions=instructions,
-            img_url=file_name,
+            img_url=file_url,
             date_posted=date.today().strftime("%B %d, %Y"),
             user_id=current_user.id        
         )
