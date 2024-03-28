@@ -10,6 +10,7 @@ from datetime import date
 from functools import wraps
 from bs4 import BeautifulSoup
 
+import json
 import os 
 
 from ai_interface import AI_tool
@@ -63,6 +64,11 @@ def admin_only(f):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+@app.template_filter('custom_split')
+def custom_split(list):
+    clean_data = json.loads(list)
+    return clean_data
 
 @app.route("/")
 def home():

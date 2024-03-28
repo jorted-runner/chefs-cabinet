@@ -59,23 +59,25 @@
                             <br>
                             <div class="card__body">
                                 <div class="ingredients">
-                                    <h4>Ingredients:</h4>    
-                                    {% for item in recipe.ingredients %}
-                                        {{ item | safe }}
-                                    {% endfor %}
+                                    <h4>Ingredients:</h4>
+                                    {% set ingredients = recipe.ingredients | custom_split %}
+                                    <ul>
+                                        {% for item in ingredients %}
+                                            <li>{{ item | safe }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    
                                 </div>
                                 <br>
                                 <div class="instructions">
                                     <h4>Instructions:</h4>
-                                    {% set instructions = recipe.instructions %}
-            
-                                    {% for step in instructions %}
-                                        {% if step|safe == ',' %}
-                                            {{ pass }}
-                                        {% else %}
-                                            {{ step|safe }}
-                                        {% endif %}
-                                    {% endfor %}
+                                    {% set instructions = recipe.instructions | custom_split %}
+                                    <ol>
+                                        {% for step in instructions %}
+                                            <li>{{ step | safe }}</li>
+                                        {% endfor %}
+                                    </ol>
+                                    
                                 </div>
                                 <br>
                                 {% if current_user.id == recipe.user.id %}

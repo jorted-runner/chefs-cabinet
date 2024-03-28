@@ -310,7 +310,6 @@ function blankRecipe() {
       });
       instructionsInputElmnt.value = '';
       instructionsInputElmnt.focus();
-      console.log(INSTRUCTIONS);
     } else {
       alert("Cannot add a blank step. Add a step and try again.");
       instructionsInputElmnt.focus();
@@ -331,7 +330,6 @@ function blankRecipe() {
         });
         instructionsInputElmnt.focus();
         instructionsInputElmnt.value = '';
-        console.log(INSTRUCTIONS);
     }
   });
 
@@ -346,10 +344,10 @@ function blankRecipe() {
   imageGenButton.textContent = 'Generate Image';
   imageGenButton.addEventListener('click', () => {
     if (recipeTitleInput.value != '' && recipeDescInput.value != '' && INGREDIENTS != [] && INSTRUCTIONS != []) {
-      const title = recipeTitleInput.value;
-      const description = recipeDescInput.value;
+      TITLE = recipeTitleInput.value;
+      DESC = recipeDescInput.value;
       displayLoading();
-      imageGeneration(title, description);
+      imageGeneration(TITLE, DESC);
     } 
   });
   formElmnt.appendChild(imageGenButton);
@@ -377,7 +375,6 @@ function recipeGeneration() {
   })
       .then(response => {
           if (response.ok) {
-              console.log('Recipe generation started.');
               return response.json();
           } else {
               hideLoading();
@@ -474,7 +471,6 @@ function imageGeneration(_title, _description) {
   })
       .then(response => {
           if (response.ok) {
-              console.log('Image generation started.');
               return response.json();
           } else {
               hideLoading();
@@ -503,11 +499,11 @@ function imageGeneration(_title, _description) {
           const hiddenIngredients = document.createElement('input');
           hiddenIngredients.setAttribute('type', 'hidden');
           hiddenIngredients.setAttribute('name', 'ingredients');
-          hiddenIngredients.setAttribute('value', INGREDIENTS);
+          hiddenIngredients.setAttribute('value', JSON.stringify(INGREDIENTS));
           const hiddenInstructions = document.createElement('input');
           hiddenInstructions.setAttribute('type', 'hidden');
           hiddenInstructions.setAttribute('name', 'instructions');
-          hiddenInstructions.setAttribute('value', INSTRUCTIONS);
+          hiddenInstructions.setAttribute('value', JSON.stringify(INSTRUCTIONS));
           const submitButton = document.createElement('input');
           submitButton.setAttribute('type', 'submit');
           submitButton.setAttribute('value', 'Save Recipe');
