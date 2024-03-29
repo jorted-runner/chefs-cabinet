@@ -38,59 +38,43 @@
                     <div class="card__face card__face--front">
                         <div class="front-title-div">
                             <h2 class="front-title">{{ recipe.title | safe }}</h2>
-                        </div>
-                        <div class="front-user-div">
                             <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
                         </div>
                         <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" width="400" height="400" loading="lazy">
                         <div class="front-desc-div">
-                            <p class="front-desc">
-                                {{ recipe.description | safe }}
-                            </p>
+                            <p class="front-desc">{{recipe.description | safe}}</p>
                         </div>
-                        
                     </div>
                     <div class="card__face card__face--back">
-                        <div class="card__content">
-                            <div class="card__header">
-                                <h2 class="back-title">{{ recipe.title | safe }}</h2>
-                                <h5>{{ recipe.user.username  | safe }}</h5>
-                                <br>
-                                <p class="recipe-desc">
-                                    {{ recipe.description | safe }}
-                                </p>
+                        <div class="card_header">
+                            <h2 class="back-title">{{ recipe.title | safe }}</h2>
+                            <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
+                            <p class="recipe-desc">{{ recipe.description | safe }}</p>
+                        </div>
+                        <div class="card__body">
+                            <div class="ingredients">
+                                <h4>Ingredients:</h4>
+                                {% set ingredients = recipe.ingredients | custom_split %}
+                                <ul>
+                                    {% for item in ingredients %}
+                                        <li>{{ item | safe }}</li>
+                                    {% endfor %}
+                                </ul>   
                             </div>
-                            <br>
-                            <div class="card__body">
-                                <div class="ingredients">
-                                    <h4>Ingredients:</h4>
-                                    {% set ingredients = recipe.ingredients | custom_split %}
-                                    <ul>
-                                        {% for item in ingredients %}
-                                            <li>{{ item | safe }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    
-                                </div>
-                                <br>
-                                <div class="instructions">
-                                    <h4>Instructions:</h4>
-                                    {% set instructions = recipe.instructions | custom_split %}
-                                    <ol>
-                                        {% for step in instructions %}
-                                            <li>{{ step | safe }}</li>
-                                        {% endfor %}
-                                    </ol>
-                                    
-                                </div>
-                                <br>
-                                {% if current_user.id == recipe.user.id %}
-                                    <a href="#">Edit Recipe</a>
-        
-                                    <button>Delete Recipe</button>
-                                {% endif %}
+                            <div class="instructions">
+                                <h4>Instructions:</h4>
+                                {% set instructions = recipe.instructions | custom_split %}
+                                <ol>
+                                    {% for step in instructions %}
+                                        <li>{{ step | safe }}</li>
+                                    {% endfor %}
+                                </ol>
                             </div>
                         </div>
+                        {% if current_user.id == recipe.user.id %}
+                            <a href="#">Edit Recipe</a>
+                            <button>Delete Recipe</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>

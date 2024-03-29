@@ -89,7 +89,7 @@ hr {
 .card {
     margin: 25px auto 25px;
     width: 400px;
-    height: 650px;
+    height: 600px;
     perspective: 1000px;
 }
 
@@ -119,63 +119,53 @@ hr {
 
 .card__face--front {
     background-color: var(--light);
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: center;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
 }
 .card__face--back {
     background-color: var(--light);
     transform: rotateY(180deg);
     overflow: scroll;
+    display: flex;
+    flex-direction: column;
 }
-
-.card__content {
-    width: 100%;
-    height: 100%;
-}
-
-.card_header {
-    position: relative;
-    padding: 30px 30px 40px;
-}
-
-.card__header:after {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: 0 0 50% 0;
-    background-color: var(--light);
-}
-
 .front-title-div {
-    margin-left: 1rem;
-    margin-bottom: -1rem;
+    padding: 1rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .front-title {
     margin-bottom: 0;
     margin-top: 0;
 }
 
-.front-user-div {
-    margin-left: 1rem;
-    margin-top: -1rem;
-}
 .front-user {
     font-size: .75rem;
     margin: 0;
 }
-
 .front-desc-div {
-    margin: 1rem;
-    margin-top: -2rem;
-
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 .front-desc {
+    padding: .2rem 1rem;
     margin: 0;
+}
+/* Back of Recipe Card */
+.card_header {
+    height: 100%;
+    padding: 1rem;
+}
+.back-title {
+    margin: 0;
+}
+.recipe-desc {
+    margin: 0;
+    padding-top: .5rem;
 }
