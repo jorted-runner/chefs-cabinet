@@ -1,3 +1,5 @@
+// TODO - Add max length to title and description
+
 // Global Variables
 const recipeTypeElmnt = document.querySelector("#recipeType");
 const formElmnt = document.querySelector(".form");

@@ -89,7 +89,7 @@ hr {
 .card {
     margin: 25px auto 25px;
     width: 400px;
-    height: 600px;
+    height: 650px;
     perspective: 1000px;
 }
 
@@ -119,12 +119,11 @@ hr {
 
 .card__face--front {
     background-color: var(--light);
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: center;
     justify-content: center;
 }
-
 .card__face--back {
     background-color: var(--light);
     transform: rotateY(180deg);
@@ -152,4 +151,31 @@ hr {
     z-index: -1;
     border-radius: 0 0 50% 0;
     background-color: var(--light);
+}
+
+.front-title-div {
+    margin-left: 1rem;
+    margin-bottom: -1rem;
+}
+.front-title {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.front-user-div {
+    margin-left: 1rem;
+    margin-top: -1rem;
+}
+.front-user {
+    font-size: .75rem;
+    margin: 0;
+}
+
+.front-desc-div {
+    margin: 1rem;
+    margin-top: -2rem;
+
+}
+.front-desc {
+    margin: 0;
 }

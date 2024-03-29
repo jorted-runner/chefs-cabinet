@@ -24,12 +24,9 @@
         <div class="about">
             <div class="what-is-cc">
                 <h3>What is Chefs Cabinet?</h3>
-            </div>
-            <div class="what-cc-does">
-                <h3>Shows what Chefs Cabinet Does.</h3>
-            </div>
-            <div class="cc-social-media">
-                <h3>Shows Social Media Aspect</h3>
+                <p>
+                    Chefs Cabinet stands as a vibrant hub for culinary enthusiasts, offering a unique and interactive recipe-sharing experience. Serving as the go-to platform for both novice and seasoned cooks, our site empowers users to seamlessly craft and share their favorite recipes. Leveraging the cutting-edge capabilities of Artificial Intelligence, Chefs Cabinet enables users to generate personalized recipes by inputting their available ingredients and specifying ingredients to avoid. Beyond the creation of delectable recipes, our advanced A.I. enhances each culinary masterpiece by generating visually appealing images to accompany every shared recipe on the site. Chefs Cabinet is set to redefine the way food enthusiasts connect, create, and inspire in the realm of online culinary exploration.
+                </p>
             </div>
         </div>
         {% else %}
@@ -39,12 +36,19 @@
             <div class="card">
                 <div class="card__inner">
                     <div class="card__face card__face--front">
-                        <h2 class="front-title">{{ recipe.title | safe }}</h2>
-                        <h3>{{ recipe.user.username | safe }}</h3>
+                        <div class="front-title-div">
+                            <h2 class="front-title">{{ recipe.title | safe }}</h2>
+                        </div>
+                        <div class="front-user-div">
+                            <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
+                        </div>
                         <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" width="400" height="400" loading="lazy">
-                        <p class="recipe-desc">
-                            {{ recipe.description | safe }}
-                        </p>
+                        <div class="front-desc-div">
+                            <p class="front-desc">
+                                {{ recipe.description | safe }}
+                            </p>
+                        </div>
+                        
                     </div>
                     <div class="card__face card__face--back">
                         <div class="card__content">

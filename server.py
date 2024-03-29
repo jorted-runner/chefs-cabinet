@@ -1,3 +1,12 @@
+# TODO - Improve Image Processing - Convert to webp. Scale down to appropriate size. Reduce image quality
+# TODO - Card Styling - Hand Draw and possible redo layout
+# TODO - Form Styling
+# TODO - Change Colors?
+# TODO - Comments
+# TODO - Following/Follow
+# TODO - Search for content
+# TODO - User Uploaded Photos
+
 from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
