@@ -51,29 +51,31 @@
                             <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
                             <p class="recipe-desc">{{ recipe.description | safe }}</p>
                         </div>
-                        <div class="card__body">
+                        <div class="card_body">
                             <div class="ingredients">
                                 <h4>Ingredients:</h4>
                                 {% set ingredients = recipe.ingredients | custom_split %}
                                 <ul>
-                                    {% for item in ingredients %}
-                                        <li>{{ item | safe }}</li>
-                                    {% endfor %}
+                                {% for item in ingredients %}
+                                    <li>{{ item | safe }}</li>
+                                {% endfor %}
                                 </ul>   
                             </div>
                             <div class="instructions">
                                 <h4>Instructions:</h4>
                                 {% set instructions = recipe.instructions | custom_split %}
                                 <ol>
-                                    {% for step in instructions %}
-                                        <li>{{ step | safe }}</li>
-                                    {% endfor %}
+                                {% for step in instructions %}
+                                    <li>{{ step | safe }}</li>
+                                {% endfor %}
                                 </ol>
                             </div>
                         </div>
                         {% if current_user.id == recipe.user.id %}
-                            <a href="#">Edit Recipe</a>
-                            <button>Delete Recipe</button>
+                        <div class="back_buttons">
+                            <button class='card_btn' id="edit">Edit Recipe</button>
+                            <button class='card_btn' id="delete">Delete Recipe</button>
+                        </div>    
                         {% endif %}
                     </div>
                 </div>

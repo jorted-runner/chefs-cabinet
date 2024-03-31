@@ -161,6 +161,7 @@ hr {
 .card_header {
     height: 100%;
     padding: 1rem;
+    padding-bottom: 0;
 }
 .back-title {
     margin: 0;
@@ -168,4 +169,14 @@ hr {
 .recipe-desc {
     margin: 0;
     padding-top: .5rem;
+}
+.card_body {
+    height: fit-content;
+    padding: 0 1rem;
+    padding-top: 0;
+}
+.back_buttons {
+    height: fit-content;
+    padding: 1rem;
+    padding-top: 0;
 }
