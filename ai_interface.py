@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
-import requests
 from openai import OpenAI
-import os
 
 load_dotenv()
 
