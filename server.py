@@ -1,5 +1,4 @@
 # TODO - Improve Image Processing - Convert to webp. Scale down to appropriate size. Reduce image quality
-# TODO - Card Styling - Hand Draw and possible redo layout
 # TODO - Form Styling
 # TODO - Change Colors?
 # TODO - Comments
