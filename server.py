@@ -1,4 +1,3 @@
-# TODO - Improve Image Processing - Convert to webp. Scale down to appropriate size. Reduce image quality
 # TODO - Form Styling
 # TODO - Change Colors?
 # TODO - Comments
@@ -22,7 +21,7 @@ import json
 import os 
 
 from ai_interface import AI_tool
-from image_processing import download_image, upload_file
+from image_processing import ImageProcessing
 
 load_dotenv()
 
@@ -34,6 +33,7 @@ db = SQLAlchemy(app)
 Bootstrap(app)
 
 RECIPE_AI = AI_tool()
+IMAGE_PROCESSOR = ImageProcessing()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -136,8 +136,8 @@ def save_recipe():
         recipe_desc = request.form.get("desc")
         ingredients = request.form.get("ingredients")
         instructions = request.form.get("instructions")
-        file_name = download_image(recipe_image, recipe_title)
-        file_url = upload_file(file_name)
+        file_name = IMAGE_PROCESSOR.download_image(recipe_image)
+        file_url = IMAGE_PROCESSOR.upload_file(file_name)
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
