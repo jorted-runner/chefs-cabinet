@@ -1,3 +1,4 @@
+# TODO - Add footer to help with styling
 # TODO - Form Styling
 # TODO - Change Colors?
 # TODO - Comments
