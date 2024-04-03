@@ -187,7 +187,38 @@ hr {
     display: flex;
     flex-direction: column;
 }
+fieldset {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+
+}
 #imageContainer {
     margin: 0 auto;
     text-align: center;
+}
+
+footer {
+    width: 100%;
+    max-width: 100%;
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    flex-direction: row;
+    background-color: #5D4C52;
+    color: #fbf8ea;
+    justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+}
+footer div {
+    padding: 1rem;
+}
+#footer-links {
+    display: flex;
+    flex-direction: column;
+}
+#footer-links a {
+    text-decoration: underline;
+    color: #fbf8ea;
 }
