@@ -518,10 +518,11 @@ function imageGeneration(_title, _description) {
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
               const imgElement = document.createElement('img');
+              imgElement.setAttribute('class', 'formImg');
               imgElement.src = imageUrl;
               imgElement.alt = 'Recipe Image';
-              imgElement.setAttribute('width', 300);
-              imgElement.setAttribute('height', 300);
+              imgElement.setAttribute('width', 400);
+              imgElement.setAttribute('height', 400);
               imageContainer.appendChild(imgElement);
               const hiddenIMG = document.createElement('input');
               hiddenIMG.setAttribute('type', 'hidden');

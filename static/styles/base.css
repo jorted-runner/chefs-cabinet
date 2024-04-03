@@ -180,3 +180,14 @@ hr {
     padding: 1rem;
     padding-top: 0;
 }
+
+.form {
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+#imageContainer {
+    margin: 0 auto;
+    text-align: center;
+}
