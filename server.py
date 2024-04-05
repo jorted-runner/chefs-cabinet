@@ -23,6 +23,9 @@ import os
 from ai_interface import AI_tool
 from image_processing import ImageProcessing
 
+from config import Config
+config = Config()
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -184,4 +187,4 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port = 8080, debug=True)
+    app.run(host=config.app_host,port=config.app_port,debug=config.debug_on)
