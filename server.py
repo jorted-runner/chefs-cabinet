@@ -10,13 +10,12 @@ from flask import Flask, render_template, redirect, url_for, request, jsonify, a
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from flask_bootstrap import Bootstrap
+
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 
 from dotenv import load_dotenv
 from datetime import date
 from functools import wraps
-from bs4 import BeautifulSoup
 
 import json
 import os 
