@@ -24,7 +24,7 @@ from ai_interface import AI_tool
 from image_processing import ImageProcessing
 
 from config import Config
-config = Config()
+configCLASS = Config()
 
 load_dotenv()
 
@@ -187,4 +187,4 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    app.run(host=config.app_host,port=config.app_port,debug=config.debug_on)
+    app.run(host=configCLASS.app_host,port=configCLASS.app_port,debug=configCLASS.debug_on)
