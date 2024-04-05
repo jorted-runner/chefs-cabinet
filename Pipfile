@@ -13,6 +13,10 @@ flask_bootstrap = "*"
 python-dotenv = "*"
 flask-wtf = "*"
 wtforms = "*"
+requests = "*"
+boto3 = "*"
+Pillow = "*"
+openai = "*"
 
 [requires]
 python_version = "3.8"
