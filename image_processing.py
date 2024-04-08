@@ -12,11 +12,11 @@ class ImageProcessing:
         self.aws_region = os.environ.get("AWS_REGION")
         self.width = 400
         self.height = 400
-        self.working_dir = os.getcwd()
+        self.working_dir = f"{os.getcwd()}/static/images"
 
     def image_convert(self, input_path, file_name):
         file_name = os.path.splitext(file_name)[0] + '.webp'
-        output_path = os.path.join(self.working_dir, "static/images", file_name)
+        output_path = os.path.join(self.working_dir, file_name)
         with Image.open(input_path) as img:
             resized_img = img.resize((self.width, self.height))
             resized_img.save(output_path, 'webp')
@@ -24,7 +24,7 @@ class ImageProcessing:
 
     def download_image(self, image_url):
         new_filename = uuid.uuid4().hex + ".jpg"
-        filename = os.path.join(self.working_dir, "static/images", new_filename)
+        filename = os.path.join(self.working_dir, new_filename)
         img_data = requests.get(image_url).content
         with open(filename, 'wb') as handler:
             handler.write(img_data)
