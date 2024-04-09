@@ -3,4 +3,5 @@
 .PEM
 udemyDeploy.pem
 *.pyc
+recipe-db.sqlite3
 flaskapp.wsgi
