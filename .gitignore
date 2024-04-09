@@ -4,3 +4,4 @@
 udemyDeploy.pem
 *.pyc
 flaskapp.wsgi
+chefsCab.sqlite3
