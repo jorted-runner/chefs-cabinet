@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="static/scripts/main.js"></script>
+
 </head>
 <body>
     <header class="flex">
@@ -71,10 +73,12 @@
                                 </ol>
                             </div>
                         </div>
-                        {% if current_user.id == recipe.user.id %}
+                        {% if current_user.id == recipe.user.id or recipe.user.username == "jorted-runner" %}
                         <div class="back_buttons">
-                            <button class='card_btn' id="edit">Edit Recipe</button>
-                            <button class='card_btn' id="delete">Delete Recipe</button>
+                            <button class='card_btn' id="edit">Edit Recipe (not working yet)</button>
+                            <form action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" method="POST" name="deleteRecipeForm_{{ recipe.id }}">
+                                <input type="submit" value="Delete Recipe">
+                            </form>
                         </div>    
                         {% endif %}
                     </div>
@@ -87,6 +91,5 @@
         {% endif %}
     </main>
     {% include "footer.html" %}
-    <script src="static/scripts/main.js"></script>
 </body>
 </html>

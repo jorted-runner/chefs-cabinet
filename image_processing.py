@@ -12,7 +12,10 @@ class ImageProcessing:
         self.aws_region = os.environ.get("AWS_REGION")
         self.width = 400
         self.height = 400
-        self.working_dir = "/var/www/chefs-cab/static/images"
+        if (os.environ.get("PROD")) == "True":
+            self.working_dir = "/var/www/chefs-cab/static/images"
+        else:
+            self.working_dir = "static\images"
 
     def image_convert(self, input_path, file_name):
         file_name = os.path.splitext(file_name)[0] + '.webp'

@@ -180,7 +180,15 @@ def generate_recipe():
     except Exception as e:
         app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
-    
+
+@app.route("/delete-recipe/<recipe_id>", methods=["GET", "POST"])
+@login_required
+def delete_recipe(recipe_id):
+    recipe_to_delete = Recipe.query.filter_by(id=recipe_id).first()
+    db.session.delete(recipe_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+
 @app.route('/logout')
 def logout():
     logout_user()
