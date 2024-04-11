@@ -1,16 +1,21 @@
-@media (max-width: 450px) {
+@media (max-width: 500px) {
     body {
         width: 90%;
         margin: 0 5%;
     }
     .card {
         margin: 25px auto 25px;
-        width: 350px;
+        width: 375px;
         height: 600px;
         perspective: 1000px;
     }
     .card img {
-        width: 350px;
+        width: 375px;
     }
-    
+    .primary-navigation {
+        flex-direction: row; 
+    }
+    header {
+        width: 80%;
+    }
 }
