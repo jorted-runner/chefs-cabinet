@@ -5,6 +5,7 @@
 # TODO - Following/Follow
 # TODO - Search for content
 # TODO - User Uploaded Photos
+# TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
 
 from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -89,13 +90,13 @@ def home():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if not User.query.filter_by(email=request.form.get('email')).first():
-            flash("No user associated with that email, try <a href='" + url_for('register') + "'>registering</a>!")
-
+        email_or_username = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter((User.email == email_or_username) | (User.username == email_or_username)).first()
+        if not user:
+            flash("No user associated with that email or username, try <a href='" + url_for('register') + "'>registering</a>!")
             return redirect(url_for('login'))
-        email = request.form.get("email")
-        user = User.query.filter_by(email = email).first()
-        if user:
+        else:
             password = request.form.get('password')
             if check_password_hash(user.password, password):
                 login_user(user)
@@ -111,6 +112,12 @@ def register():
     if request.method == "POST":
         if User.query.filter_by(email=request.form.get('email')).first():
             flash("You've already signed up with that email, <a href='" + url_for('login') + "'>log in</a> instead!")
+            return redirect(url_for('register'))
+        elif User.query.filter_by(username=request.form.get('username')).first():
+            flash("User with username " + request.form.get('username') + " already exists. Try again.")
+            return redirect(url_for('register'))
+        elif request.form.get('username') == request.form.get('email'):
+            flash('Username and Email cannot match. Please choose a unique username.')
             return redirect(url_for('register'))
         new_user_fName = request.form.get('fname')
         new_user_lName = request.form.get('lname')

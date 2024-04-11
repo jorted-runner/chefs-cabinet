@@ -28,7 +28,7 @@
         {% endif %}
         <form class="form" id="login" method="post" action="{{url_for('login')}}">
             <fieldset>
-                <label>Email <input type="email" name="email" id="email" required placeholder="chef@chefscabinet.com"></label>
+                <label>Email or Username <input type="text" name="email" id="email" required placeholder="chef@chefscabinet.com"></label>
                 <label>Password <input type="password" name="password" id="password" required></label>
             </fieldset>
             <input type="submit" value="Login">
