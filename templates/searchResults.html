@@ -21,7 +21,11 @@
     {% include "header.html" %}
     <main>
         <div class="recipe_feed">
-            <h1>Search Results</h1>
+            {% if searchTerm %}
+                <h1>Search Results: {{searchTerm}}</h1>
+            {% else %}
+                <h1>Search Results</h1>
+            {% endif %}
             <form class="form" id="search" method="POST" action="{{ url_for('search') }}">
                 {% if searchTerm %}
                     <label class="search-container">
