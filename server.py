@@ -199,8 +199,9 @@ def delete_recipe(recipe_id):
 @app.route('/profile/<userID>', methods=['POST', 'GET'])
 @login_required
 def user_profile(userID):
+    user = User.query.filter_by(id=userID).first()
     user_recipes = Recipe.query.filter_by(user_id=userID).all()
-    return render_template('profileHome.html', all_recipes=reversed(user_recipes), current_user=current_user)
+    return render_template('profileHome.html', all_recipes=reversed(user_recipes), user=user, current_user=current_user)
 
 @app.route('/logout')
 def logout():

@@ -10,6 +10,7 @@
     <link rel="icon" href="/static/images/favicon.ico">
     <link rel="stylesheet" href="/static/styles/normalize.css">
     <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
@@ -17,31 +18,27 @@
 
 </head>
 <body>
-    <header class="flex">
-        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
-    </header>
-    {% include "navigation.html" %}
+    {% include "header.html" %}
     <main>
+        <h1>{{ user.username }}</h1>
+        <p>{{ user.fname }} {{ user.lname }}</p>
         <div class="recipe_feed">
             {% for recipe in all_recipes %}
-        
             <div class="card">
                 <div class="card__inner">
                     <div class="card__face card__face--front">
                         <div class="front-title-div">
-                            <h2 class="front-title">{{ recipe.title | safe }}</h2>
-                            <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
+                            <h2 class="front-title">{{ recipe.title }}</h2>
                         </div>
                         <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" width="400" height="400" loading="lazy">
                         <div class="front-desc-div">
-                            <p class="front-desc">{{recipe.description | safe}}</p>
+                            <p class="front-desc">{{recipe.description }}</p>
                         </div>
                     </div>
                     <div class="card__face card__face--back">
                         <div class="card_header">
-                            <h2 class="back-title">{{ recipe.title | safe }}</h2>
-                            <h3 class="front-user">{{ recipe.user.username | safe }}</h3>
-                            <p class="recipe-desc">{{ recipe.description | safe }}</p>
+                            <h2 class="back-title">{{ recipe.title }}</h2>
+                            <p class="recipe-desc">{{ recipe.description }}</p>
                         </div>
                         <div class="card_body">
                             <div class="ingredients">
@@ -49,7 +46,7 @@
                                 {% set ingredients = recipe.ingredients | custom_split %}
                                 <ul>
                                 {% for item in ingredients %}
-                                    <li>{{ item | safe }}</li>
+                                    <li>{{ item }}</li>
                                 {% endfor %}
                                 </ul>   
                             </div>
@@ -58,7 +55,7 @@
                                 {% set instructions = recipe.instructions | custom_split %}
                                 <ol>
                                 {% for step in instructions %}
-                                    <li>{{ step | safe }}</li>
+                                    <li>{{ step }}</li>
                                 {% endfor %}
                                 </ol>
                             </div>

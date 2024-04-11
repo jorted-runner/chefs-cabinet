@@ -7,19 +7,17 @@
     <meta name="author" content="Danny Ellis">
     <meta name="description" content="This page allows users to create a new recipe.">
     <meta property="og:title" content="Chefs Cabinet New Recipe">
-    <link rel="icon" href="static/images/favicon.ico">
-    <link rel="stylesheet" href="static/styles/normalize.css">
-    <link rel="stylesheet" href="static/styles/base.css">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="{{ url_for('static', filename='scripts/recipeType.js') }}"></script>
 </head>
 <body>
-    <header class="flex">
-        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
-    </header>
-    {% include "navigation.html" %}
+    {% include "header.html" %}
     <div class="loader-container">
         <div class="spinner"></div>
         <p class="spinner-text">Generating, this may take up to one minute</p>

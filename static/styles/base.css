@@ -12,18 +12,45 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 #8DBFB3 - Pale Blue
 #5D4C52 - PurpleBlack
 */
-
-.flex {
+header {
     display: flex;
+    flex-direction: row;
     gap: var(--gap, 1rem);
+    justify-content: space-between;
 }
+
+@media (max-width: 1200px) {
+    header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap, 1rem);
+        width: 55%;
+        margin: 0 auto;
+        min-width: 400px;
+    }
+    header h1 {
+        margin-bottom: 0;
+    }
+}
+
+
 
 .primary-navigation {
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap, 1rem);
+    justify-content: space-between;
     list-style: none;
     padding: 0;
-    margin: auto;
+    margin: 0;  
 }
 
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1rem;
+}
 .nav-icon {
     max-width: 2rem;
     width: 100%;
