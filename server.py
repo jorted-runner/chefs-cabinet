@@ -210,13 +210,19 @@ def user_profile(userID):
 def search():
     if request.method == 'POST':
         searchTerm = request.form.get('searchTerm')
-        user = User.query.filter_by(username=searchTerm).first()
-        if user:
-            return redirect(url_for('user_profile', userID = user.id))
-        else:
-            results = Recipe.query.filter(Recipe.title.like(f"%{searchTerm}%") | Recipe.description.like(f"%{searchTerm}%") | Recipe.ingredients.like(f"%{searchTerm}%")).all()
-        return render_template('searchResults.html', results = results, searchTerm = searchTerm)
+        users = User.query.filter(
+            User.username.like(f"%{searchTerm}%") | 
+            User.fname.like(f"%{searchTerm}%") | 
+            User.lname.like(f"%{searchTerm}%")
+            ).all()
+        results = Recipe.query.filter(
+            Recipe.title.like(f"%{searchTerm}%") | 
+            Recipe.description.like(f"%{searchTerm}%") | 
+            Recipe.ingredients.like(f"%{searchTerm}%")
+        ).all()
+        return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm)
     return render_template('searchResults.html')
+
 
 @app.route('/logout')
 def logout():
