@@ -233,3 +233,27 @@ footer div {
     text-decoration: underline;
     color: #fbf8ea;
 }
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.searchInput {
+    width: calc(100% - 32px); /* Adjust as needed */
+    height: 2rem;
+    border-radius: 1rem; /* Adjust the radius as needed */
+    padding-left: 32px; /* Space for the icon */
+}
+
+.search-button {
+    position: absolute;
+    top: 50%;
+    left: 8px; /* Adjust as needed */
+    transform: translateY(-50%);
+    width: 24px;
+    height: auto;
+    cursor: pointer;
+}
+
+

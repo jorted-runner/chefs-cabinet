@@ -6,6 +6,7 @@
 # TODO - Search for content
 # TODO - User Uploaded Photos
 # TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
+# Nav HTML for Notifications <li><a href="#"><img src="/static/images/notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
 
 from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from datetime import date
 from functools import wraps
+from sqlalchemy import func
 
 import json
 import os 
@@ -202,6 +204,19 @@ def user_profile(userID):
     user = User.query.filter_by(id=userID).first()
     user_recipes = Recipe.query.filter_by(user_id=userID).all()
     return render_template('profileHome.html', all_recipes=reversed(user_recipes), user=user, current_user=current_user)
+
+@app.route('/search', methods=['POST', 'GET'])
+@login_required
+def search():
+    if request.method == 'POST':
+        searchTerm = request.form.get('searchTerm')
+        user = User.query.filter_by(username=searchTerm).first()
+        if user:
+            results = Recipe.query.filter_by(user_id=user.id).all()
+        else:
+            results = Recipe.query.filter(Recipe.title.like(f"%{searchTerm}%") | Recipe.description.like(f"%{searchTerm}%") | Recipe.ingredients.like(f"%{searchTerm}%")).all()
+        return render_template('searchResults.html', results = results, searchTerm = searchTerm)
+    return render_template('searchResults.html')
 
 @app.route('/logout')
 def logout():
