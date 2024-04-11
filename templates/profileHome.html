@@ -22,7 +22,6 @@
     {% include "header.html" %}
     <main>
         <h1>{{ user.username }}</h1>
-        <p>{{ user.fname }} {{ user.lname }}</p>
         <div class="recipe_feed">
             {% for recipe in all_recipes %}
             <div class="card">

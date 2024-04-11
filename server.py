@@ -212,7 +212,7 @@ def search():
         searchTerm = request.form.get('searchTerm')
         user = User.query.filter_by(username=searchTerm).first()
         if user:
-            results = Recipe.query.filter_by(user_id=user.id).all()
+            return redirect(url_for('user_profile', userID = user.id))
         else:
             results = Recipe.query.filter(Recipe.title.like(f"%{searchTerm}%") | Recipe.description.like(f"%{searchTerm}%") | Recipe.ingredients.like(f"%{searchTerm}%")).all()
         return render_template('searchResults.html', results = results, searchTerm = searchTerm)
