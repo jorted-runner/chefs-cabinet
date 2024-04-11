@@ -37,7 +37,7 @@
                     <div class="card__face card__face--front">
                         <div class="front-title-div">
                             <h2 class="front-title">{{ recipe.title }}</h2>
-                            <h3 class="front-user">{{ recipe.user.username }}</h3>
+                            <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
                         </div>
                         <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" width="400" height="400" loading="lazy">
                         <div class="front-desc-div">
@@ -47,7 +47,7 @@
                     <div class="card__face card__face--back">
                         <div class="card_header">
                             <h2 class="back-title">{{ recipe.title }}</h2>
-                            <h3 class="front-user">{{ recipe.user.username }}</h3>
+                            <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
                             <p class="recipe-desc">{{ recipe.description }}</p>
                         </div>
                         <div class="card_body">

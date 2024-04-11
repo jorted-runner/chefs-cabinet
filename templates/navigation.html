@@ -1,8 +1,10 @@
 <nav>
     {% if not current_user.is_authenticated: %}
-        <a href="{{ url_for('home')}}">Home</a>
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
+        <ul class="primary-navigation">
+            <li><a href="{{ url_for('home')}}">Home</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+        </ul>
     {% else: %}
         <ul class="primary-navigation">
             <li><a href="#"><img src="/static/images/search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
