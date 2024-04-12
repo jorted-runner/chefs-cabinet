@@ -206,6 +206,37 @@ def user_profile(userID):
     user_recipes = Recipe.query.filter_by(user_id=userID).all()
     return render_template('profileHome.html', all_recipes=reversed(user_recipes), user=user, current_user=current_user)
 
+@app.route('/edit_profile/<userID>', methods=['POST', 'GET'])
+@login_required
+def edit_profile(userID):
+    print('loaded edit function')
+    if current_user.id == int(userID) or current_user.username == 'jorted-runner':
+        print('allowed to edit user')
+        user = User.query.filter_by(id=userID).first()
+        if request.method == "POST":
+            print('post')
+            updated_Fname = request.form.get('fname')
+            updated_lName = request.form.get('lname')
+            updated_email = request.form.get('email')
+            updated_username = request.form.get('username')
+            if user.username != updated_username:
+                if User.query.filter_by(username=updated_username).first():
+                    flash("User with username " + request.form.get('username') + " already exists. Try again.")
+                    return redirect(url_for('edit_profile', userID=userID))
+            elif updated_email == updated_username:
+                flash('Username and Email cannot match. Please choose a unique username.')
+                return redirect(url_for('edit_profile', userID=userID))
+            user.fname = updated_Fname
+            user.lName = updated_lName
+            user.email = updated_email
+            user.username = updated_username
+            db.session.commit()
+            return redirect(url_for('user_profile', userID = userID))
+        print('get')
+        return render_template("editProfile.html", user = user)
+    else:
+        return redirect(url_for('home'))
+
 @app.route('/search', methods=['POST', 'GET'])
 @login_required
 def search():
