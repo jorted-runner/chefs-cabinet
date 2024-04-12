@@ -12,6 +12,33 @@ BODY TEXT - font-family: 'Roboto', sans-serif;
 #8DBFB3 - Pale Blue
 #5D4C52 - PurpleBlack
 */
+body {
+    width: 55%;
+    margin: 0 auto;
+    background-color: #fbf8ea;
+}
+h1 {
+    font-family: 'Poppins', sans-serif;
+}
+.header-h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 4rem;
+    text-align: center;
+    color: #F06060;
+    text-decoration: none;
+}
+h3, h4 {
+    font-family: 'Montserrat', sans-serif; 
+}
+
+a {
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+}
+
+p, li {
+    font-family: 'Roboto', sans-serif;
+}
 header {
     display: flex;
     flex-direction: row;
