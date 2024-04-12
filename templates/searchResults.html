@@ -30,20 +30,24 @@
                 {% if searchTerm %}
                     <label class="search-container">
                         <input class="searchInput" type="text" name="searchTerm" required value="{{ searchTerm }}">
-                        <input type="image" src="/static/images/search-icon.svg" alt="Search" class="search-button" id="search-button">
+                        <input type="image" src="/static/images/search-icon.svg" alt="Search" class="search-button">
                     </label>
                 {% else %}
                     <label class="search-container">
                         <input class="searchInput" type="text" name="searchTerm" required>
-                        <input type="image" src="/static/images/search-icon.svg" alt="Search" class="search-button" id="search-button">
+                        <input type="image" src="/static/images/search-icon.svg" alt="Search" class="search-button">
                     </label>
                 {% endif %}
             </form>
             {% if users %}
+                <h2>Users Found:</h2>
                 {% for user in users %}
                     <h3><a href="{{ url_for('user_profile', userID = user.id)}}">{{ user.username }}</a></h3>
                 {% endfor %}
-            {% else %}
+            {% endif %}
+            {% if results %}
+                <hr>
+                <h2>Recipes Found:</h2>
                 {% for recipe in results %}
                 <div class="card">
                     <div class="card__inner">

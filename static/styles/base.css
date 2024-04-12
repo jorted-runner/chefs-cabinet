@@ -267,16 +267,16 @@ footer div {
 }
 
 .searchInput {
-    width: calc(100% - 32px); /* Adjust as needed */
+    width: calc(100% - 32px);
     height: 2rem;
-    border-radius: 1rem; /* Adjust the radius as needed */
-    padding-left: 32px; /* Space for the icon */
+    border-radius: 1rem;
+    padding-left: 32px;
 }
 
 .search-button {
     position: absolute;
     top: 50%;
-    left: 8px; /* Adjust as needed */
+    left: 8px;
     transform: translateY(-50%);
     width: 24px;
     height: auto;
