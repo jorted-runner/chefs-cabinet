@@ -22,7 +22,12 @@
     {% include "header.html" %}
     <main>
         <h1>Edit Profile:</h1>
-        <form class="form" id="register" method="POST" action="{{ url_for('user_profile', userID = user.id) }}">
+        {% if get_flashed_messages %}
+                {% for message in get_flashed_messages() %}
+                    <h4>{{ message | safe }}</h4>
+                {% endfor %}
+        {% endif %}
+        <form class="form" id="editProfile" method="POST" action="{{ url_for('edit_profile', userID = user.id) }}">
             <fieldset>
                 <legend>Profile Information</legend>
                 <label>First Name* <input type="text" name="fname" required autocomplete="given-name" value="{{ user.fname }}"></label>
