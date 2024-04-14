@@ -50,6 +50,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
     recipes = db.relationship("Recipe", backref='user')
+    comments = db.relationship("Comment", backref='user')
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +61,13 @@ class Recipe(db.Model):
     img_url = db.Column(db.String(250), nullable=True)
     date_posted = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    comments = db.relationship("Comment", backref='recipe')
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -252,6 +260,9 @@ def search():
         return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm)
     return render_template('searchResults.html')
 
+@app.route('comment/<userID>/<recipeID>', methods=['POST'])
+def comment(userID, recipeID):
+    ...
 
 @app.route('/logout')
 def logout():
