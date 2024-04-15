@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet home page. This serve as a landing page for Chefs Cabinet as well as the main recipe feed.">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include "header.html" %}
+    <main>
+        <div class="recipe">
+            <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
+            <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
+            <p class="front-desc">{{recipe.description }}</p>
+            <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
+            <div class="ingredients">
+                <h4>Ingredients:</h4>
+                {% set ingredients = recipe.ingredients | custom_split %}
+                <ul>
+                {% for item in ingredients %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+                </ul>   
+            </div>
+            <div class="instructions">
+                <h4>Instructions:</h4>
+                {% set instructions = recipe.instructions | custom_split %}
+                <ol>
+                {% for step in instructions %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="comments">
+            {% if recipe.comments %}
+                <h3>Comments</h3>
+                {% for comment in recipe.comments %}
+                    <div>
+                        <p><strong>{{ comment.user.username }}</strong> {{ comment.comment }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="reviews">
+            {% if recipe.reviews %}
+                <h3>Reviews</h3>
+                {% for review in recipe.reviews %}
+                <div>
+                    <p><strong>{{ review.user.username }}</strong> {{ review.rating }} {{ review.review }}</p>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <form action="{{ url_for('comment', userID=current_user.id, recipeID=recipe.id) }}#recipe_{{ recipe.id }}" method="POST" name="comment_{{ recipe.id }}">
+            <label>Comment <input type="text" name="comment" id="comment" required></label>
+            <input type="submit" value="Comment">
+        </form>
+        <form action="{{ url_for('review', recipeID=recipe.id, userID = current_user.id) }}" method="GET" name="review_{{ recipe.id }}">
+            <input type="submit" value="Rate and Review">
+        </form>
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>

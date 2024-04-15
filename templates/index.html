@@ -43,9 +43,11 @@
                         <div class="front-desc-div">
                             <p class="front-desc">{{recipe.description }}</p>
                         </div>
-                        <div>
-                            <p><strong>{{ recipe.comments[-1].user.username }}</strong> {{ recipe.comments[-1].comment }}</p>
-                        </div>
+                        {% if recipe.comments %}
+                            <div>
+                                <p><strong>{{ recipe.comments[-1].user.username }}</strong> {{ recipe.comments[-1].comment }}</p>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="card__face card__face--back">
                         <div class="close-icon">&times;</div>
@@ -82,18 +84,20 @@
                             </form>
                         </div>    
                         {% endif %}
-                        <h3 id="comments_{{ recipe.id }}">Comments</h3>
-                        {% for comment in recipe.comments %}
-                            <div>
-                                <p><strong>{{ comment.user.username }}</strong> {{ comment.comment }}</p>
-                            </div>
-                            
-                        {% endfor %}
-                        <form action="{{ url_for('comment', userID=current_user.id, recipeID=recipe.id) }}#recipe_{{ recipe.id }}" method="POST" name="comment_{{ recipe.id }}">
-                            <label>Comment <input type="text" name="comment" id="comment" required></label>
-                            <input type="submit" value="Comment">
+                        {% if recipe.comments %}
+                            <h3 id="comments_{{ recipe.id }}">Comments</h3>
+                            {% for comment in recipe.comments[-5:] %}
+                                <div>
+                                    <p><strong>{{ comment.user.username }}</strong> {{ comment.comment }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form action="{{ url_for('view_recipe', recipeID=recipe.id) }}" method="GET" name="seeMore_{{ recipe.id }}">
+                            <input type="submit" value="See More">
                         </form>
-                        
+                        <form action="{{ url_for('review', recipeID=recipe.id, userID = current_user.id) }}" method="GET" name="review_{{ recipe.id }}">
+                            <input type="submit" value="Rate and Review">
+                        </form> 
                     </div>
                 </div>
             </div>

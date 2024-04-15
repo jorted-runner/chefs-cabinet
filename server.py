@@ -1,3 +1,4 @@
+# TODO - Show avg rating on card and view recipe
 # TODO - Admin Edit DB page
 # TODO - Add footer to help with styling
 # TODO - Form Styling
@@ -62,10 +63,18 @@ class Recipe(db.Model):
     date_posted = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comments = db.relationship("Comment", backref='recipe')
+    reviews = db.relationship('Review', backref='recipe')
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    review = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
@@ -114,7 +123,7 @@ def login():
                 return redirect(url_for('home'))
             else:
                 flash("Incorrect Password, try again!")
-                return render_template("login.html")
+                return render_template("login.html", current_user=current_user)
     else:
         return render_template("login.html", current_user=current_user)
     
@@ -146,7 +155,7 @@ def register():
 @app.route("/new-recipe")
 @login_required
 def new_recipe():
-    return render_template('new-recipe.html')
+    return render_template('new-recipe.html', current_user=current_user)
 
 @app.route("/save_recipe", methods=["POST"])
 @login_required
@@ -227,20 +236,20 @@ def edit_profile(userID):
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
-                    return render_template("editProfile.html", user = user)
+                    return render_template("editProfile.html", user = user, current_user=current_user)
             if updated_email == updated_username:
                 flash('Username and Email cannot match. Please choose a unique username.')
-                return render_template("editProfile.html", user = user)
+                return render_template("editProfile.html", user = user, current_user=current_user)
             user.fname = updated_Fname
             user.fname = updated_Fname
             user.lName = updated_lName
             user.email = updated_email
             user.username = updated_username
             db.session.commit()
-            return redirect(url_for('user_profile', userID = userID))
-        return render_template("editProfile.html", user = user)
+            return redirect(url_for('user_profile', userID = userID, current_user=current_user))
+        return render_template("editProfile.html", user = user, current_user=current_user)
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('home', current_user=current_user))
 
 @app.route('/search', methods=['POST', 'GET'])
 @login_required
@@ -257,19 +266,42 @@ def search():
             Recipe.description.like(f"%{searchTerm}%") | 
             Recipe.ingredients.like(f"%{searchTerm}%")
         ).all()
-        return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm)
-    return render_template('searchResults.html')
+        return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm, current_user=current_user)
+    return render_template('searchResults.html', current_user=current_user)
 
 @app.route('/comment/<userID>/<recipeID>', methods=['POST'])
 @login_required
 def comment(userID, recipeID):
     comment = request.form.get('comment')
     new_comment = Comment(comment=comment,
-                          user_id=userID,
-                          recipe_id = recipeID)
+                          user_id=int(userID),
+                          recipe_id = int(recipeID))
     db.session.add(new_comment)
     db.session.commit()
     return redirect(url_for('home') + '#recipe_' + recipeID)
+
+@app.route('/review/<userID>/<recipeID>', methods=['POST', 'GET'])
+@login_required
+def review(userID, recipeID):
+    recipe = Recipe.query.filter_by(id=recipeID).first()
+    if request.method == 'GET':
+        return render_template('review.html', recipe=recipe, current_user=current_user)
+    else:
+        review = request.form.get('review')
+        rating = request.form.get('rating')
+        new_recipe = Review(review=review,
+                            rating=int(rating),
+                            user_id=int(userID),
+                            recipe_id = int(recipeID))
+        db.session.add(new_recipe)
+        db.session.commit()
+        return redirect(url_for('view_recipe', recipeID=recipeID, current_user=current_user))
+
+@app.route('/view_recipe/<recipeID>', methods=['GET', 'POST'])
+def view_recipe(recipeID):
+    recipe = Recipe.query.filter_by(id=recipeID).first()
+    if request.method == 'GET':
+        return render_template('viewRecipe.html', recipe=recipe, current_user=current_user)
 
 @app.route('/logout')
 def logout():
