@@ -260,9 +260,16 @@ def search():
         return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm)
     return render_template('searchResults.html')
 
-@app.route('comment/<userID>/<recipeID>', methods=['POST'])
+@app.route('/comment/<userID>/<recipeID>', methods=['POST'])
+@login_required
 def comment(userID, recipeID):
-    ...
+    comment = request.form.get('comment')
+    new_comment = Comment(comment=comment,
+                          user_id=userID,
+                          recipe_id = recipeID)
+    db.session.add(new_comment)
+    db.session.commit()
+    return redirect(url_for('home') + '#recipe_' + recipeID)
 
 @app.route('/logout')
 def logout():

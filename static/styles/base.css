@@ -130,6 +130,15 @@ hr {
     height: 600px;
     perspective: 1000px;
 }
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 50px;
+    font-weight: bolder;
+    color: #000;
+}
 
 .card__inner {
     width: 100%;

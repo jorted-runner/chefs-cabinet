@@ -36,15 +36,19 @@
                 <div class="card__inner">
                     <div class="card__face card__face--front">
                         <div class="front-title-div">
-                            <h2 class="front-title">{{ recipe.title }}</h2>
+                            <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                             <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
                         </div>
-                        <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" width="400" height="400" loading="lazy">
+                        <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
                         <div class="front-desc-div">
                             <p class="front-desc">{{recipe.description }}</p>
                         </div>
+                        <div>
+                            <p><strong>{{ recipe.comments[-1].user.username }}</strong> {{ recipe.comments[-1].comment }}</p>
+                        </div>
                     </div>
                     <div class="card__face card__face--back">
+                        <div class="close-icon">&times;</div>
                         <div class="card_header">
                             <h2 class="back-title">{{ recipe.title }}</h2>
                             <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
@@ -78,6 +82,18 @@
                             </form>
                         </div>    
                         {% endif %}
+                        <h3 id="comments_{{ recipe.id }}">Comments</h3>
+                        {% for comment in recipe.comments %}
+                            <div>
+                                <p><strong>{{ comment.user.username }}</strong> {{ comment.comment }}</p>
+                            </div>
+                            
+                        {% endfor %}
+                        <form action="{{ url_for('comment', userID=current_user.id, recipeID=recipe.id) }}#recipe_{{ recipe.id }}" method="POST" name="comment_{{ recipe.id }}">
+                            <label>Comment <input type="text" name="comment" id="comment" required></label>
+                            <input type="submit" value="Comment">
+                        </form>
+                        
                     </div>
                 </div>
             </div>
