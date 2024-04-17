@@ -1,5 +1,3 @@
-# TODO - Show avg rating on card and view recipe
-# TODO - Admin Edit DB page
 # TODO - Add footer to help with styling
 # TODO - Form Styling
 # TODO - Change Colors?
