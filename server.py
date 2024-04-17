@@ -289,30 +289,25 @@ def comment(userID, recipeID):
                           recipe_id = int(recipeID))
     db.session.add(new_comment)
     db.session.commit()
-    return redirect(url_for('home') + '#recipe_' + recipeID)
+    return redirect(url_for('view_recipe', recipeID=recipeID) + '#commentDiv')
 
-@app.route('/review/<userID>/<recipeID>', methods=['POST', 'GET'])
+@app.route('/review/<userID>/<recipeID>', methods=['POST'])
 @login_required
 def review(userID, recipeID):
-    recipe = Recipe.query.filter_by(id=recipeID).first()
-    if request.method == 'GET':
-        return render_template('review.html', recipe=recipe, current_user=current_user)
-    else:
-        review = request.form.get('review')
-        rating = request.form.get('rating')
-        new_recipe = Review(review=review,
-                            rating=rating,
-                            user_id=int(userID),
-                            recipe_id = int(recipeID))
-        db.session.add(new_recipe)
-        db.session.commit()
-        return redirect(url_for('view_recipe', recipeID=recipeID))
+    review = request.form.get('review')
+    rating = request.form.get('rating')
+    new_recipe = Review(review=review,
+                        rating=rating,
+                        user_id=int(userID),
+                        recipe_id=int(recipeID))
+    db.session.add(new_recipe)
+    db.session.commit()
+    return redirect(url_for('view_recipe', recipeID=recipeID)+ '#reviewDiv')
 
 @app.route('/view_recipe/<recipeID>', methods=['GET', 'POST'])
 def view_recipe(recipeID):
     recipe = Recipe.query.filter_by(id=recipeID).first()
-    if request.method == 'GET':
-        return render_template('viewRecipe.html', recipe=recipe, current_user=current_user)
+    return render_template('viewRecipe.html', recipe=recipe, current_user = current_user)
 
 @app.route('/logout')
 def logout():

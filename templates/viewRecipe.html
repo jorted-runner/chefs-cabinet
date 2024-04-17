@@ -20,8 +20,13 @@
     {% include "header.html" %}
     <main>
         <div class="recipe">
-            <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
-            <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
+            <div class="front-title-div">
+                <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
+                <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                {% if recipe.reviews %}
+                    <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
+                {% endif %}
+            </div>
             <p class="front-desc">{{recipe.description }}</p>
             <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
             <div class="ingredients">
@@ -43,7 +48,7 @@
                 </ol>
             </div>
         </div>
-        <div class="comments">
+        <div class="comments" id="commentDiv">
             {% if recipe.comments %}
                 <h3>Comments</h3>
                 {% for comment in recipe.comments %}
@@ -53,7 +58,12 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="reviews">
+        <button id="commentBtn">Comment</button>
+        <form action="{{ url_for('comment', userID=current_user.id, recipeID=recipe.id) }}#recipe_{{ recipe.id }}" method="POST" name="comment_{{ recipe.id }}" class="hiddenForm" id="commentForm">
+            <label>Comment <input type="text" name="comment" id="comment" required></label>
+            <input type="submit" value="Comment">
+        </form>
+        <div class="reviews" id="reviewDiv">
             {% if recipe.reviews %}
                 <h3>Reviews</h3>
                 {% for review in recipe.reviews %}
@@ -63,14 +73,22 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <form action="{{ url_for('comment', userID=current_user.id, recipeID=recipe.id) }}#recipe_{{ recipe.id }}" method="POST" name="comment_{{ recipe.id }}">
-            <label>Comment <input type="text" name="comment" id="comment" required></label>
-            <input type="submit" value="Comment">
-        </form>
-        <form action="{{ url_for('review', recipeID=recipe.id, userID = current_user.id) }}" method="GET" name="review_{{ recipe.id }}">
+        <form action="{{ url_for('review', recipeID = recipe.id, userID = current_user.id) }}" method="POST" name="review_{{recipe.id}}" id="reviewForm" class="hiddenForm">
+            <label for="rating">Select Rating:</label>
+            <select id="rating" name="rating">
+                <option value="⭐">⭐</option>
+                <option value="⭐⭐">⭐⭐</option>
+                <option value="⭐⭐⭐">⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+            </select>
+            <label>Review: <input type="textarea" name="review" id="review" required></label>
             <input type="submit" value="Rate and Review">
         </form>
+        <button id="reviewBtn">Rate and Review</button>
+        
     </main>
     {% include "footer.html" %}
+    <script src="/static/scripts/review.js"></script>
 </body>
 </html>

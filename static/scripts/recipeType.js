@@ -470,7 +470,7 @@ function imageGeneration(_title, _description) {
           title: _title,
           description: _description
       })
-  })
+    })
       .then(response => {
           if (response.ok) {
               return response.json();
@@ -483,11 +483,15 @@ function imageGeneration(_title, _description) {
       })
       .then(data => {
           hideLoading();
+          if (document.querySelector('#hiddenForm')) {
+            document.querySelector('#hiddenForm').remove();
+          }
           const imageContainer = document.getElementById('imageContainer');
           const imageGenBTN = document.querySelector('#imageGenBTN');
           // Creating form to save recipe
           const hiddenForm = document.createElement('form');
-          hiddenForm.setAttribute('class', 'form');
+          hiddenForm.classList.add('form');
+          hiddenForm.setAttribute('id', 'hiddenForm');
           hiddenForm.setAttribute('method', 'post');
           hiddenForm.setAttribute('action', saveRecipeURL);
           const hiddenTitle = document.createElement('input');
@@ -509,6 +513,9 @@ function imageGeneration(_title, _description) {
           const submitButton = document.createElement('input');
           submitButton.setAttribute('type', 'submit');
           submitButton.setAttribute('value', 'Save Recipe');
+          submitButton.addEventListener("click", () => {
+            displayLoading();
+          });
           hiddenForm.appendChild(hiddenTitle);
           hiddenForm.appendChild(hiddenDesc);
           hiddenForm.appendChild(hiddenIngredients);
@@ -518,7 +525,7 @@ function imageGeneration(_title, _description) {
           imageContainer.innerHTML = '';
           data.images.forEach(imageUrl => {
               const imgElement = document.createElement('img');
-              imgElement.setAttribute('class', 'formImg');
+              imgElement.classList.add('formImg');
               imgElement.src = imageUrl;
               imgElement.alt = 'Recipe Image';
               imgElement.setAttribute('width', 400);

@@ -1,10 +1,13 @@
 @media (max-width: 1200px) {
+    body {
+        width: 90%;
+        margin: 0 5%;
+    }
     header {
         display: flex;
         flex-direction: column;
         gap: var(--gap, 1rem);
         width: 100%;
-        min-width: 400px;
     }
     header h1 {
         margin-bottom: 0;
@@ -12,5 +15,18 @@
     .primary-navigation {
         flex-direction: row;
         justify-content: space-evenly;
+    }
+    .card {
+        margin: 25px auto 25px;
+        width: 100%;
+        max-width: 375px;
+        height: 600px;
+        perspective: 1000px;
+    }
+    .card img {
+        width: 100%;
+        max-width: 375px;
+        height: auto;
+        max-height: 375px;
     }
 }
