@@ -52,6 +52,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=False)
     recipes = db.relationship("Recipe", backref='user')
     comments = db.relationship("Comment", backref='user')
+    reviews = db.relationship("Review", backref='user')
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -74,7 +75,7 @@ class Comment(db.Model):
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     review = db.Column(db.Text, nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.String(5), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
@@ -255,10 +256,10 @@ def edit_profile(userID):
             user.email = updated_email
             user.username = updated_username
             db.session.commit()
-            return redirect(url_for('user_profile', userID = userID, current_user=current_user))
+            return redirect(url_for('user_profile', userID = userID))
         return render_template("editProfile.html", user = user, current_user=current_user)
     else:
-        return redirect(url_for('home', current_user=current_user))
+        return redirect(url_for('home'))
 
 @app.route('/search', methods=['POST', 'GET'])
 @login_required
@@ -299,12 +300,12 @@ def review(userID, recipeID):
         review = request.form.get('review')
         rating = request.form.get('rating')
         new_recipe = Review(review=review,
-                            rating=int(rating),
+                            rating=rating,
                             user_id=int(userID),
                             recipe_id = int(recipeID))
         db.session.add(new_recipe)
         db.session.commit()
-        return redirect(url_for('view_recipe', recipeID=recipeID, current_user=current_user))
+        return redirect(url_for('view_recipe', recipeID=recipeID))
 
 @app.route('/view_recipe/<recipeID>', methods=['GET', 'POST'])
 def view_recipe(recipeID):
