@@ -309,6 +309,13 @@ def view_recipe(recipeID):
     recipe = Recipe.query.filter_by(id=recipeID).first()
     return render_template('viewRecipe.html', recipe=recipe, current_user = current_user)
 
+@app.route('/admin')
+@admin_only
+def admin():
+    all_recipes = Recipe.query.all()
+    all_users = User.query.all()
+    return render_template('admin.html', all_recipes=reversed(all_recipes), all_users=all_users, current_user=current_user)
+
 @app.route('/logout')
 def logout():
     logout_user()
