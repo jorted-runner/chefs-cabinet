@@ -219,12 +219,13 @@ def generate_recipe():
         app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
 
-@app.route("/delete-recipe/<recipe_id>", methods=["GET", "POST"])
+@app.route("/delete-recipe/<recipe_id>/<userID>", methods=["GET", "POST"])
 @login_required
-def delete_recipe(recipe_id):
+def delete_recipe(recipe_id, userID):
     recipe_to_delete = Recipe.query.filter_by(id=recipe_id).first()
-    db.session.delete(recipe_to_delete)
-    db.session.commit()
+    if userID == recipe_to_delete.user.id:
+        db.session.delete(recipe_to_delete)
+        db.session.commit()
     return redirect(url_for('home'))
 
 @app.route('/profile/<userID>', methods=['GET'])
@@ -237,7 +238,7 @@ def user_profile(userID):
 @app.route('/edit_profile/<userID>', methods=['POST', 'GET'])
 @login_required
 def edit_profile(userID):
-    if current_user.id == int(userID) or current_user.username == 'jorted-runner':
+    if current_user.id == int(userID):
         user = User.query.filter_by(id=userID).first()
         if request.method == "POST":
             updated_Fname = request.form.get('fname')
@@ -315,6 +316,70 @@ def admin():
     all_recipes = Recipe.query.all()
     all_users = User.query.all()
     return render_template('admin.html', all_recipes=reversed(all_recipes), all_users=all_users, current_user=current_user)
+
+@app.route('/admin_delete_recipe/<recipeID>', methods=['POST'])
+@admin_only
+def admin_delete_recipe(recipeID):
+    recipe_to_delete = Recipe.query.filter_by(id=recipeID).first()
+    if recipe_to_delete.reviews:
+        reviews = Review.query.filter_by(recipe_id=recipeID).all()
+        for review in reviews:
+            db.session.delete(review)
+    if recipe_to_delete.comments:
+        comments = Comment.query.filter_by(recipe_id=recipeID).all()
+        for comment in comments:
+            db.session.delete(comment)
+    db.session.delete(recipe_to_delete)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/admin_delete_user/<userID>', methods=['POST'])
+@admin_only
+def admin_delete_user(userID):
+    user_to_delete = User.query.filter_by(id=userID).first()
+    if user_to_delete.reviews:
+        reviews = Review.query.filter_by(user_id=userID).all()
+        for review in reviews:
+            db.session.delete(review)
+    if user_to_delete.comments:
+        comments = Comment.query.filter_by(user_id=userID).all()
+        for comment in comments:
+            db.session.delete(comment)
+    if user_to_delete.recipes:
+        for recipe in user_to_delete.recipes:
+            admin_delete_recipe(recipe.id)
+    db.session.delete(user_to_delete)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/admin_edit_profile/<userID>', methods=['POST', 'GET'])
+@admin_only
+def admin_edit_profile(userID):
+    user = User.query.filter_by(id=userID).first()
+    if request.method == "POST":
+        updated_Fname = request.form.get('fname')
+        updated_lName = request.form.get('lname')
+        updated_email = request.form.get('email')
+        updated_username = request.form.get('username')
+        
+        if user.username != updated_username:
+            if User.query.filter_by(username=updated_username).first():
+                flash("User with username " + updated_username + " already exists. Try again.")
+                return render_template("editProfile.html", user = user, current_user=current_user)
+        if updated_email == updated_username:
+            flash('Username and Email cannot match. Please choose a unique username.')
+            return render_template("editProfile.html", user = user, current_user=current_user)
+        user.fname = updated_Fname
+        user.fname = updated_Fname
+        user.lName = updated_lName
+        user.email = updated_email
+        user.username = updated_username
+        if request.form.get('password'):
+            updated_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
+            user.password = updated_password
+        db.session.commit()
+        return redirect(url_for('admin'))
+    return render_template("admin_edit_profile.html", user = user)
 
 @app.route('/logout')
 def logout():

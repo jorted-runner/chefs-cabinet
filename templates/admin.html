@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet home page. This serve as a landing page for Chefs Cabinet as well as the main recipe feed.">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="static/scripts/main.js"></script>
+</head>
+<body>
+    {% include "header.html" %}
+    <main>
+        {% for recipe in all_recipes %}
+        <p>{{recipe.title}} | {{recipe.user.username}}</p>
+        <form action="{{ url_for('admin_delete_recipe', recipeID=recipe.id) }}" method="POST" name="deleteRecipeForm_{{ recipe.id }}">
+            <input type="submit" value="Delete Recipe">
+        </form>
+        <hr>
+        {% endfor %}
+        {% for user in all_users %}
+        <p>{{user.username}}</p>
+        <form action="{{ url_for('admin_delete_user', userID=user.id) }}" method="POST" name="deleteUser_{{ user.id }}">
+            <input type="submit" value="Delete User">
+        </form>
+        <a href="{{ url_for('admin_edit_profile', userID = user.id) }}">EDIT {{ user.username }}</a>
+        <hr>
+        {% endfor %}
+    </main>
+
+    {% include "footer.html" %}
+</body>
+</html>
