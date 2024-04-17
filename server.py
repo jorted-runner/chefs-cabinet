@@ -102,6 +102,15 @@ def custom_split(list):
     clean_data = json.loads(list)
     return clean_data
 
+@app.template_filter('avg_rating')
+def avg_rating(list):
+    total = 0
+    for rating in list:
+        total += len(rating.rating)
+    result = total / len(list)
+    formatted_result = format(result, '.1f')
+    return formatted_result
+
 @app.route("/")
 def home():
     all_recipes = Recipe.query.all()
