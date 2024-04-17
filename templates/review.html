@@ -19,14 +19,15 @@
 <body>
     {% include "header.html" %}
     <main>
+        <!-- I want to just add this to the view recipe page. I'm going to leave it here for now though -->
         <form action="{{ url_for('review', recipeID = recipe.id, userID = current_user.id) }}" method="POST" name="review_{{recipe.id}}">
             <label for="rating">Select Rating:</label>
             <select id="rating" name="rating">
-                <option value="1">⭐</option>
-                <option value="2">⭐⭐</option>
-                <option value="3">⭐⭐⭐</option>
-                <option value="4">⭐⭐⭐⭐</option>
-                <option value="5">⭐⭐⭐⭐⭐</option>
+                <option value="⭐">⭐</option>
+                <option value="⭐⭐">⭐⭐</option>
+                <option value="⭐⭐⭐">⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
             </select>
             <label>Review: <input type="textarea" name="review" id="review" required></label>
             <input type="submit" value="Rate and Review">
