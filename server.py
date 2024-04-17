@@ -108,9 +108,10 @@ def avg_rating(list):
     total = 0
     for rating in list:
         total += len(rating.rating)
-    result = total / len(list)
-    formatted_result = format(result, '.1f')
-    return formatted_result
+    avg_length = total / len(list)
+    avg_rating_string = '⭐' * int(avg_length)
+    return avg_rating_string
+
 
 @app.route("/")
 def home():
