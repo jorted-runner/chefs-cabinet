@@ -222,6 +222,14 @@ def generate_recipe():
 def delete_recipe(recipe_id, userID):
     recipe_to_delete = Recipe.query.filter_by(id=recipe_id).first()
     if userID == recipe_to_delete.user.id:
+        if recipe_to_delete.reviews:
+            reviews = Review.query.filter_by(recipe_id=recipe_id).all()
+            for review in reviews:
+                db.session.delete(review)
+        if recipe_to_delete.comments:
+            comments = Comment.query.filter_by(recipe_id=recipe_id).all()
+            for comment in comments:
+                db.session.delete(comment)
         db.session.delete(recipe_to_delete)
         db.session.commit()
     return redirect(url_for('home'))
