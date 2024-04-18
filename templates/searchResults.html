@@ -64,6 +64,7 @@
                             </div>
                         </div>
                         <div class="card__face card__face--back">
+                            <div class="close-icon">&times;</div>
                             <div class="card_header">
                                 <h2 class="back-title">{{ recipe.title }}</h2>
                                 <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
