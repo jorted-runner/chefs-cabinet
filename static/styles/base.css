@@ -19,6 +19,7 @@ body {
 }
 main {
     margin-bottom: 1rem;
+    min-height: 67vh;
 }
 h1 {
     font-family: 'Poppins', sans-serif;
@@ -142,13 +143,14 @@ hr {
     font-weight: bolder;
     color: #000;
 }
-
+.front-recipe-img {
+    cursor: pointer;
+}
 .card__inner {
     width: 100%;
     height: 100%;
     transition: transform 1s;
     transform-style: preserve-3d;
-    cursor: pointer;
     position: relative;
 }
 

@@ -42,7 +42,9 @@
                                 <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                             {% endif %}
                         </div>
-                        <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
+                        <div class="front-recipe-img">
+                            <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
+                        </div>                     
                         <div class="front-desc-div">
                             <p class="front-desc">{{recipe.description }}</p>
                         </div>

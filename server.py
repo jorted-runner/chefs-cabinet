@@ -87,7 +87,8 @@ def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         admin_email = os.environ.get("ADMIN_EMAIL")
-        if current_user.email != admin_email:
+        admin_username = os.environ.get("ADMIN_USERNAME")
+        if current_user.email != admin_email or current_user.username != admin_username:
             return abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -371,6 +372,10 @@ def admin_edit_profile(userID):
         if user.username != updated_username:
             if User.query.filter_by(username=updated_username).first():
                 flash("User with username " + updated_username + " already exists. Try again.")
+                return render_template("editProfile.html", user = user, current_user=current_user)
+        if user.email != updated_email:
+            if User.query.filter_by(email=updated_email).first():
+                flash("User with that email address already exists. Try again.")
                 return render_template("editProfile.html", user = user, current_user=current_user)
         if updated_email == updated_username:
             flash('Username and Email cannot match. Please choose a unique username.')
