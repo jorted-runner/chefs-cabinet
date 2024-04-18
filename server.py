@@ -1,9 +1,6 @@
-# TODO - Add footer to help with styling
 # TODO - Form Styling
 # TODO - Change Colors?
-# TODO - Comments
 # TODO - Following/Follow
-# TODO - Search for content
 # TODO - User Uploaded Photos
 # TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
 # Nav HTML for Notifications <li><a href="#"><img src="/static/images/notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
