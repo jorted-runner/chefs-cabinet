@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from datetime import date
 from functools import wraps
 from sqlalchemy import func
+from datetime import datetime
 
 import json
 import os 
@@ -30,7 +31,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefsCab.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs-Cab.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 Bootstrap(app)
@@ -45,9 +46,18 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
+    sign_up_date = db.Column(db.DateTime, default=datetime.now)
+    profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
     recipes = db.relationship("Recipe", backref='user')
     comments = db.relationship("Comment", backref='user')
     reviews = db.relationship("Review", backref='user')
+    following = db.relationship('Follower', foreign_keys='Follower.follower_id', backref='follower')
+    followers = db.relationship('Follower', foreign_keys='Follower.following_id', backref='following')
+
+class Follower(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    following_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,15 +65,23 @@ class Recipe(db.Model):
     description = db.Column(db.Text, nullable=True)
     ingredients = db.Column(db.Text, nullable=False)
     instructions = db.Column(db.Text, nullable=False)
-    img_url = db.Column(db.String(250), nullable=True)
-    date_posted = db.Column(db.String(250), nullable=False)
+    posted = db.Column(db.DateTime, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    comments = db.relationship("Comment", backref='recipe')
-    reviews = db.relationship('Review', backref='recipe')
+    comments = db.relationship("Comment", backref='recipe', cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='recipe', cascade="all, delete-orphan")
+    media = db.relationship('RecipeMedia', backref='recipe', cascade="all, delete-orphan")
+
+class RecipeMedia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    img_url = db.Column(db.Text, nullable=False)
+    user_upload = db.Column(db.Boolean, nullable=False, default=False)
+    display_order = db.Column(db.Integer, nullable=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text, nullable=False)
+    commented = db.Column(db.DateTime, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
@@ -71,6 +89,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     review = db.Column(db.Text, nullable=False)
     rating = db.Column(db.String(5), nullable=False)
+    reviewed = db.Column(db.DateTime, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 
@@ -169,22 +188,24 @@ def new_recipe():
 def save_recipe():
     if request.method == "POST":
         recipe_title = request.form.get("title")
-        recipe_image = request.form.get("image_url")
+        recipe_images = request.form.getlist("image_url")
         recipe_desc = request.form.get("desc")
         ingredients = request.form.get("ingredients")
         instructions = request.form.get("instructions")
-        file_name = IMAGE_PROCESSOR.download_image(recipe_image)
-        file_url = IMAGE_PROCESSOR.upload_file(file_name)
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
             ingredients=ingredients,
             instructions=instructions,
-            img_url=file_url,
-            date_posted=date.today().strftime("%B %d, %Y"),
-            user_id=current_user.id        
+            user_id=current_user.id
         )
         db.session.add(new_recipe)
+        db.session.commit()
+        for image in recipe_images:
+            file_name = IMAGE_PROCESSOR.download_image(image)
+            image_url = IMAGE_PROCESSOR.upload_file(file_name)
+            new_media = RecipeMedia(img_url=image_url, recipe_id=new_recipe.id, user_upload=True)
+            db.session.add(new_media)
         db.session.commit()
     return redirect(url_for("home"))
 
@@ -215,19 +236,11 @@ def generate_recipe():
         app.logger.error(f"Error in generate recipe route: {e}")
         return jsonify(error=str(e)), 400
 
-@app.route("/delete-recipe/<recipe_id>/<userID>", methods=["GET", "POST"])
+@app.route("/delete-recipe/<recipe_id>/<int:userID>", methods=["GET", "POST"])
 @login_required
 def delete_recipe(recipe_id, userID):
     recipe_to_delete = Recipe.query.filter_by(id=recipe_id).first()
     if userID == recipe_to_delete.user.id:
-        if recipe_to_delete.reviews:
-            reviews = Review.query.filter_by(recipe_id=recipe_id).all()
-            for review in reviews:
-                db.session.delete(review)
-        if recipe_to_delete.comments:
-            comments = Comment.query.filter_by(recipe_id=recipe_id).all()
-            for comment in comments:
-                db.session.delete(comment)
         db.session.delete(recipe_to_delete)
         db.session.commit()
     return redirect(url_for('home'))
@@ -325,14 +338,6 @@ def admin():
 @admin_only
 def admin_delete_recipe(recipeID):
     recipe_to_delete = Recipe.query.filter_by(id=recipeID).first()
-    if recipe_to_delete.reviews:
-        reviews = Review.query.filter_by(recipe_id=recipeID).all()
-        for review in reviews:
-            db.session.delete(review)
-    if recipe_to_delete.comments:
-        comments = Comment.query.filter_by(recipe_id=recipeID).all()
-        for comment in comments:
-            db.session.delete(comment)
     db.session.delete(recipe_to_delete)
     db.session.commit()
     return redirect(url_for('admin'))
@@ -378,8 +383,7 @@ def admin_edit_profile(userID):
             flash('Username and Email cannot match. Please choose a unique username.')
             return render_template("editProfile.html", user = user, current_user=current_user)
         user.fname = updated_Fname
-        user.fname = updated_Fname
-        user.lName = updated_lName
+        user.lname = updated_lName
         user.email = updated_email
         user.username = updated_username
         if request.form.get('password'):

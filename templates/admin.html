@@ -20,21 +20,24 @@
 <body>
     {% include "header.html" %}
     <main>
-        {% for recipe in all_recipes %}
-        <p>{{recipe.title}} | {{recipe.user.username}}</p>
-        <form action="{{ url_for('admin_delete_recipe', recipeID=recipe.id) }}" method="POST" name="deleteRecipeForm_{{ recipe.id }}">
-            <input type="submit" value="Delete Recipe">
-        </form>
-        <hr>
-        {% endfor %}
+        <h1>USERS</h1>
         {% for user in all_users %}
-        <p>{{user.username}}</p>
+        <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
+        <p>{{user.username}} | {{user.lname}}, {{user.fname}} | {{ user.sign_up_date}}</p>
         <form action="{{ url_for('admin_delete_user', userID=user.id) }}" method="POST" name="deleteUser_{{ user.id }}">
             <input type="submit" value="Delete User">
         </form>
         <a href="{{ url_for('admin_edit_profile', userID = user.id) }}">EDIT {{ user.username }}</a>
         <hr>
         {% endfor %}
+        <h1>RECIPES</h1>
+        {% for recipe in all_recipes %}
+        <p>{{recipe.title}} | {{recipe.user.username}}</p>
+        <form action="{{ url_for('admin_delete_recipe', recipeID=recipe.id) }}" method="POST" name="deleteRecipeForm_{{ recipe.id }}">
+            <input type="submit" value="Delete Recipe">
+        </form>
+        <hr>
+        {% endfor %}  
     </main>
 
     {% include "footer.html" %}
