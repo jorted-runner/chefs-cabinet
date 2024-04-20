@@ -280,6 +280,19 @@ def edit_profile(userID):
     else:
         return redirect(url_for('home'))
 
+@app.route('/edit_recipe/<recipeID>/<int:userID>', methods=['POST', 'GET'])
+@login_required
+def edit_recipe(recipeID, userID):
+    recipe = Recipe.query.filter_by(id=recipeID).first()
+    if userID != recipe.user.id:
+        return redirect(url_for('home'))
+    else:
+        if request.method == 'POST':
+            return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
+        else:
+            return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
+
+
 @app.route('/search', methods=['POST', 'GET'])
 @login_required
 def search():

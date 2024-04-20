@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet Edit User Profile">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="/static/scripts/main.js"></script>
+
+</head>
+<body>
+    {% include "header.html" %}
+    <main>
+        <h1>Edit Recipe:</h1>
+        {% if get_flashed_messages %}
+                {% for message in get_flashed_messages() %}
+                    <h4>{{ message | safe }}</h4>
+                {% endfor %}
+        {% endif %}
+        <form class="form" id="editRecipe" method="POST" action="{{ url_for('edit_recipe', recipeID=recipe.id, userID = current_user.id) }}">
+            <fieldset>
+            </fieldset>
+            <input type="submit" value="Save Changes">
+        </form>
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>
