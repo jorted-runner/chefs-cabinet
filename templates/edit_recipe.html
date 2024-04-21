@@ -16,6 +16,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/main.js"></script>
+    <script defer src="/static/scripts/edit.js"></script>
+    <!-- <script defer src="/static/scripts/save.js"></script> -->
 
 </head>
 <body>
@@ -27,11 +29,29 @@
                     <h4>{{ message | safe }}</h4>
                 {% endfor %}
         {% endif %}
-        <form class="form" id="editRecipe" method="POST" action="{{ url_for('edit_recipe', recipeID=recipe.id, userID = current_user.id) }}">
-            <fieldset>
-            </fieldset>
-            <input type="submit" value="Save Changes">
-        </form>
+        <p>{{recipe.title}} <button class="edit_btn">Edit</button></p>
+        <p>{{recipe.description}} <button class="edit_btn">Edit</button></p>
+        <div class="ingredients">
+            <h4>Ingredients:</h4>
+            {% set ingredients = recipe.ingredients | custom_split %}
+            <ul>
+            {% for item in ingredients %}
+                <li class="item">{{ item }} <button class="edit_btn">Edit</button><button class="delete_btn">Delete</button></li>
+            {% endfor %}
+            </ul>
+            <button class="add_ingredient_btn">Add Ingredient</button>   
+        </div>
+        <div class="instructions">
+            <h4>Instructions:</h4>
+            {% set instructions = recipe.instructions | custom_split %}
+            <ol>
+            {% for step in instructions %}
+                <li class="step">{{ step }} <button class="edit_btn">Edit</button><button class="delete_btn">Delete</button></li>
+            {% endfor %}
+            </ol>
+            <button class="add_step_btn">Add Step</button>
+        </div>
+        <button class="save_btn">Save</button>
     </main>
     {% include "footer.html" %}
 </body>
