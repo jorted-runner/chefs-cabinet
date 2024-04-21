@@ -20,9 +20,27 @@ class ImageProcessing:
     def image_convert(self, input_path, file_name):
         file_name = os.path.splitext(file_name)[0] + '.webp'
         output_path = os.path.join(self.working_dir, file_name)
+        max_size = (self.width, self.height)
         with Image.open(input_path) as img:
-            resized_img = img.resize((self.width, self.height))
+            # Get original width and height
+            original_width, original_height = img.size
+            
+            # Calculate aspect ratio
+            aspect_ratio = original_width / original_height
+            
+            # Calculate new dimensions while maintaining aspect ratio
+            new_width, new_height = max_size
+            if original_width > original_height:
+                new_height = int(new_width / aspect_ratio)
+            else:
+                new_width = int(new_height * aspect_ratio)
+            
+            # Resize the image
+            resized_img = img.resize((new_width, new_height))
+            
+            # Save the resized image
             resized_img.save(output_path, 'webp')
+        
         return output_path
 
     def download_image(self, image_url):

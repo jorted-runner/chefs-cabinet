@@ -54,7 +54,9 @@
         <div>
             <div class="images">
                 {% for image in recipe.media %}
-                <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><button class="delete_btn">Delete</button>
+                <div>
+                    <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><button class="delete_btn">Delete</button>
+                </div>
                 {% endfor %}
             </div>
             <input type="file" name="image" id="image_up">

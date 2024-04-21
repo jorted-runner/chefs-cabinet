@@ -230,21 +230,23 @@ add_image.addEventListener("click", function() {
             }
         })
         .then(data => {
-            const image_url = data.image_url; // No need to parse JSON here
+            const new_div = document.createElement('div');
+            const image_url = data.image_url;
             const newImage = document.createElement('img');
             newImage.src = image_url;
             newImage.classList.add('recipe-image');
             newImage.setAttribute('alt', 'Recipe Image');
             newImage.setAttribute('loading', 'lazy');
+            new_div.appendChild(newImage);
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete";
             deleteButton.classList.add("delete_btn");
             deleteButton.addEventListener('click', function() {
                 deleteButton.parentElement.remove();
             });
-            newImage.appendChild(deleteButton);
-            document.querySelector('.images').appendChild(newImage);
-            input.value = ''; // Clear the file input field
+            new_div.appendChild(deleteButton);
+            document.querySelector('.images').appendChild(new_div);
+            input.value = '';
         })
         .catch(error => console.error(error));
     }
