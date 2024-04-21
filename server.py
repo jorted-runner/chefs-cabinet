@@ -11,6 +11,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from flask_bootstrap import Bootstrap
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 from dotenv import load_dotenv
 from datetime import date
@@ -33,6 +34,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs-Cab.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'static\images'
 db = SQLAlchemy(app)
 Bootstrap(app)
 
@@ -127,14 +129,19 @@ def avg_rating(list):
     avg_rating_string = '⭐' * int(avg_length)
     return avg_rating_string
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route("/upload_image", methods=['POST'])
-@login_required
 def upload_image():
     image_file = request.files['image']
-    print(image_file)
-    # I need to figure out how to handle the files user upload. I think the js side of it is working fine
-    # its just the server side that needs some help.
-    file_name = IMAGE_PROCESSOR.download_image(image_file)
+    if image_file and allowed_file(image_file.filename):
+        filename = secure_filename(image_file.filename)
+        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image_file.save(file_name)
     return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
 
 @app.route("/")
