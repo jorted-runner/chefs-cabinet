@@ -127,6 +127,15 @@ def avg_rating(list):
     avg_rating_string = '⭐' * int(avg_length)
     return avg_rating_string
 
+@app.route("/upload_image", methods=['POST'])
+@login_required
+def upload_image():
+    image_file = request.files['image']
+    print(image_file)
+    # I need to figure out how to handle the files user upload. I think the js side of it is working fine
+    # its just the server side that needs some help.
+    file_name = IMAGE_PROCESSOR.download_image(image_file)
+    return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
 
 @app.route("/")
 def home():

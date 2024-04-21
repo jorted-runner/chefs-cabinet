@@ -3,6 +3,7 @@ const delete_buttons = document.querySelectorAll('.delete_btn');
 const add_step = document.querySelector('.add_step_btn');
 const add_ingredient = document.querySelector('.add_ingredient_btn');
 const instructions = document.querySelectorAll('.step');
+const add_image = document.querySelector('.add_image_btn');
 
 edit_buttons.forEach((button) => {
     button.addEventListener("click", function() {
@@ -209,4 +210,42 @@ add_step.addEventListener("click", function() {
     const newStepInput = createStepInput(instructions.length);
     const targetElement = document.querySelector('.instructions ol');
     targetElement.appendChild(newStepInput);
+});
+
+add_image.addEventListener("click", function() {
+    const input = document.querySelector('#image_up');
+    const file = input.files[0]; // Access the file from the input element
+    if (file) {
+        const formData = new FormData(); // Create FormData object to send files
+        formData.append('image', file);
+        fetch('/upload_image', {
+            method: 'POST',
+            body: formData // Send FormData instead of JSON
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                alert('Error uploading Image');
+            }
+        })
+        .then(data => {
+            const image_url = data.image_url; // No need to parse JSON here
+            const newImage = document.createElement('img');
+            newImage.src = image_url;
+            newImage.classList.add('recipe-image');
+            newImage.setAttribute('alt', 'Recipe Image');
+            newImage.setAttribute('loading', 'lazy');
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete_btn");
+            deleteButton.addEventListener('click', function() {
+                deleteButton.parentElement.remove();
+            });
+            newImage.appendChild(deleteButton);
+            document.querySelector('.images').appendChild(newImage);
+            input.value = ''; // Clear the file input field
+        })
+        .catch(error => console.error(error));
+    }
 });

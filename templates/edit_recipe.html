@@ -51,6 +51,15 @@
             </ol>
             <button class="add_step_btn">Add Step</button>
         </div>
+        <div>
+            <div class="images">
+                {% for image in recipe.media %}
+                <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><button class="delete_btn">Delete</button>
+                {% endfor %}
+            </div>
+            <input type="file" name="image" id="image_up">
+            <button class="add_image_btn">Add Image</button>
+        </div>
         <button class="save_btn">Save</button>
     </main>
     {% include "footer.html" %}
