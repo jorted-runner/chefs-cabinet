@@ -30,20 +30,9 @@
             </div>
             <p class="front-desc">{{recipe.description }}</p>
             {% for media in recipe.media %}
-                <div class="mySlides fade">
-                    <div class="numbertext">{{ loop.index }} / {{ recipe.media | length }}</div>
-                    <img class="recipe-img slideImg" src="{{ media.img_url }}" alt="Recipe Image" loading="lazy">
-                </div>
+            <img class="view-img" src="{{ media.img_url }}" alt="Recipe Image" loading="lazy">
             {% endfor %}
-            <a class="prev" onclick="plusSlides(this.parentNode.parentNode, -1)">&#10094;</a>
-            <a class="next" onclick="plusSlides(this.parentNode.parentNode, 1)">&#10095;</a>
-
-            <div style="text-align:center">
-                {% for media in recipe.media %}
-                    <span class="dot" onclick="currentSlide(this.parentNode.parentNode, '{{ loop.index }}')"></span>
-                {% endfor %}
-            </div>
-            <div class="ingredients">
+            <div class="view-ingredients ingredients">
                 <h4>Ingredients:</h4>
                 {% set ingredients = recipe.ingredients | custom_split %}
                 <ul>
@@ -52,7 +41,7 @@
                 {% endfor %}
                 </ul>   
             </div>
-            <div class="instructions">
+            <div class="view-instructions instructions">
                 <h4>Instructions:</h4>
                 {% set instructions = recipe.instructions | custom_split %}
                 <ol>
