@@ -22,23 +22,14 @@ class ImageProcessing:
         output_path = os.path.join(self.working_dir, file_name)
         max_size = (self.width, self.height)
         with Image.open(input_path) as img:
-            # Get original width and height
             original_width, original_height = img.size
-            
-            # Calculate aspect ratio
             aspect_ratio = original_width / original_height
-            
-            # Calculate new dimensions while maintaining aspect ratio
             new_width, new_height = max_size
             if original_width > original_height:
                 new_height = int(new_width / aspect_ratio)
             else:
                 new_width = int(new_height * aspect_ratio)
-            
-            # Resize the image
             resized_img = img.resize((new_width, new_height))
-            
-            # Save the resized image
             resized_img.save(output_path, 'webp')
         
         return output_path
@@ -58,7 +49,7 @@ class ImageProcessing:
             aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
             region_name=self.aws_region
         )
-        new_filename = os.path.splitext(os.path.basename(filename))[0] + '.webp'
+        new_filename = uuid.uuid4().hex + '.webp'
         output_path = self.image_convert(filename, new_filename)
         with open(output_path, "rb") as file:
             s3.Bucket(self.aws_bucket).upload_fileobj(file, new_filename)

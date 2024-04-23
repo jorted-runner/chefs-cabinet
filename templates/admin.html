@@ -22,13 +22,13 @@
     <main>
         <h1>USERS</h1>
         {% for user in all_users %}
-        <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
-        <p>{{user.username}} | {{user.lname}}, {{user.fname}} | {{ user.sign_up_date}}</p>
-        <form action="{{ url_for('admin_delete_user', userID=user.id) }}" method="POST" name="deleteUser_{{ user.id }}">
-            <input type="submit" value="Delete User">
-        </form>
-        <a href="{{ url_for('admin_edit_profile', userID = user.id) }}">EDIT {{ user.username }}</a>
-        <hr>
+            <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
+            <p>{{user.username}} | {{user.lname}}, {{user.fname}} | {{ user.sign_up_date}}</p>
+            <form action="{{ url_for('admin_delete_user', userID=user.id) }}" method="POST" name="deleteUser_{{ user.id }}">
+                <input type="submit" value="Delete User">
+            </form>
+            <a href="{{ url_for('admin_edit_profile', userID = user.id) }}">EDIT {{ user.username }}</a>
+            <hr>
         {% endfor %}
         <h1>RECIPES</h1>
         {% for recipe in all_recipes %}

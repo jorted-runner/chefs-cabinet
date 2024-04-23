@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/main.js"></script>
     <script defer src="/static/scripts/edit.js"></script>
-    <!-- <script defer src="/static/scripts/save.js"></script> -->
+    <script defer src="/static/scripts/save.js"></script>
 
 </head>
 <body>
@@ -29,8 +29,9 @@
                     <h4>{{ message | safe }}</h4>
                 {% endfor %}
         {% endif %}
-        <p>{{recipe.title}} <button class="edit_btn">Edit</button></p>
-        <p>{{recipe.description}} <button class="edit_btn">Edit</button></p>
+        <p class="recipe_id">{{recipe.id}}</p>
+        <p class="title">{{recipe.title}} <button class="edit_btn">Edit</button></p>
+        <p class="desc">{{recipe.description}} <button class="edit_btn">Edit</button></p>
         <div class="ingredients">
             <h4>Ingredients:</h4>
             {% set ingredients = recipe.ingredients | custom_split %}
@@ -55,11 +56,11 @@
             <div class="images">
                 {% for image in recipe.media %}
                 <div>
-                    <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><button class="delete_btn">Delete</button>
+                    <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><!-- <button class="delete_btn">Delete</button> -->
                 </div>
                 {% endfor %}
             </div>
-            <input type="file" name="image" id="image_up">
+            <label>New Image: <input type="file" name="image" id="image_up"></label>
             <button class="add_image_btn">Add Image</button>
         </div>
         <button class="save_btn">Save</button>

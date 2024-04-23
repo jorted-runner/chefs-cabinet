@@ -220,7 +220,7 @@ def save_recipe():
         for image in recipe_images:
             file_name = IMAGE_PROCESSOR.download_image(image)
             image_url = IMAGE_PROCESSOR.upload_file(file_name)
-            new_media = RecipeMedia(img_url=image_url, recipe_id=new_recipe.id, user_upload=True)
+            new_media = RecipeMedia(img_url=image_url, recipe_id=new_recipe.id, user_upload=False)
             db.session.add(new_media)
         db.session.commit()
     return redirect(url_for("home"))
@@ -303,10 +303,7 @@ def edit_recipe(recipeID, userID):
     if userID != recipe.user.id:
         return redirect(url_for('home'))
     else:
-        if request.method == 'POST':
-            return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
-        else:
-            return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
+        return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
 
 
 @app.route('/search', methods=['POST', 'GET'])
@@ -355,6 +352,48 @@ def review(userID, recipeID):
 def view_recipe(recipeID):
     recipe = Recipe.query.filter_by(id=recipeID).first()
     return render_template('viewRecipe.html', recipe=recipe, current_user = current_user)
+
+from sqlalchemy.exc import IntegrityError
+
+import traceback
+
+@app.route('/update_recipe', methods=['POST'])
+def update_recipe():
+    if request.method == "POST":
+        try:
+            data = request.get_json()
+            recipe_id = data.get("id")
+            recipe_title = data.get("title")
+            recipe_desc = data.get("desc")
+            instructions = data.get("instructions")
+            ingredients = data.get("ingredients")
+            images = data.get("images")
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+
+            if recipe:
+                existing_images = [image.img_url for image in recipe.media]
+                new_images = [image for image in images if image not in existing_images]
+                if new_images:
+                    for image in new_images:
+                        new_image = RecipeMedia(img_url=image, recipe_id=recipe.id, user_upload=False)
+                        db.session.add(new_image)
+                recipe.title = recipe_title
+                recipe.description = recipe_desc
+                recipe.ingredients = ingredients
+                recipe.instructions = instructions
+
+                db.session.commit()
+                return jsonify({'success': True}), 200
+            else:
+                return jsonify({'success': False, 'message': 'Recipe not found'}), 404
+        except Exception as e:
+            db.session.rollback()
+            traceback.print_exc()  # Log traceback to understand the error
+            return jsonify({'success': False, 'message': 'Internal server error: ' + str(e)}), 500
+    else:
+        return jsonify({'success': False, 'message': 'Invalid request method'}), 405
+
+
 
 @app.route('/admin')
 @admin_only

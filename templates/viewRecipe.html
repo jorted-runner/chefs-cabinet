@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="/static/scripts/slide_show.js"></script>
 </head>
 <body>
     {% include "header.html" %}
@@ -28,7 +29,14 @@
                 {% endif %}
             </div>
             <p class="front-desc">{{recipe.description }}</p>
-            <img class="recipe-img" src="{{ recipe.img_url }}" alt="Recipe Image" loading="lazy">
+            {% for media in recipe.media %}
+                <div class="front-recipe-img">
+                    <div class="mySlides fade">
+                        <div class="numbertext">{{loop.index}} / {{ recipe.media | length }}</div>
+                        <img class="recipe-img slideImg" src="{{ media.img_url }}" alt="Recipe Image" loading="lazy">
+                    </div>
+                </div>
+            {% endfor %}
             <div class="ingredients">
                 <h4>Ingredients:</h4>
                 {% set ingredients = recipe.ingredients | custom_split %}
