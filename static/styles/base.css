@@ -407,3 +407,12 @@ footer div {
   to {opacity: 1}
 }
 
+textarea {
+    width: 100%;
+    height: 6rem; /* Adjust the height as needed */
+    resize: vertical; /* Allow vertical resizing */
+}
+
+
+
+

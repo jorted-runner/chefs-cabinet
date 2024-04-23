@@ -17,21 +17,21 @@ edit_buttons.forEach((button) => {
 
         const text = clone.textContent.trim();
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = text;
+        const textarea = document.createElement("textarea"); // Change input to textarea
+        textarea.classList.add('edit_input');
+        textarea.value = text;
 
         const saveButton = document.createElement("button");
         saveButton.textContent = "Save";
 
         parentElement.innerHTML = "";
-        parentElement.appendChild(input);
+        parentElement.appendChild(textarea); // Append textarea instead of input
         parentElement.appendChild(saveButton);
 
-        input.focus();
+        textarea.focus();
 
         saveButton.addEventListener("click", function() {
-            const newValue = input.value;
+            const newValue = textarea.value;
             parentElement.textContent = newValue;
 
             const editButton = document.createElement("button");
@@ -65,21 +65,21 @@ function editParentText() {
 
     const text = clone.textContent.trim();
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = text;
+    const textarea = document.createElement("textarea"); // Change input to textarea
+    textarea.classList.add('edit_input');
+    textarea.value = text;
 
     const saveButton = document.createElement("button");
     saveButton.textContent = "Save";
 
     parentElement.innerHTML = "";
-    parentElement.appendChild(input);
+    parentElement.appendChild(textarea); // Append textarea instead of input
     parentElement.appendChild(saveButton);
 
-    input.focus();
+    textarea.focus();
 
     saveButton.addEventListener("click", function() {
-        const newValue = input.value;
+        const newValue = textarea.value;
         parentElement.textContent = newValue;
 
         const editButton = document.createElement("button");
@@ -106,7 +106,7 @@ delete_buttons.forEach((button) => {
 
 function createIngredientInput() {
     const newIngredientInput = document.createElement("input");
-    newIngredientInput.type = "text";
+    newIngredientInput.type = "textarea";
     newIngredientInput.placeholder = "Enter ingredient";
     newIngredientInput.classList.add("ingredient_input");
     return newIngredientInput;
@@ -124,8 +124,7 @@ function createStepInput(currentSteps) {
     }
     
     // Create text input
-    const stepInput = document.createElement("input");
-    stepInput.type = "text";
+    const stepInput = document.createElement("textarea");
     stepInput.placeholder = "Enter step";
     stepInput.classList.add("step_input");
     
@@ -214,13 +213,13 @@ add_step.addEventListener("click", function() {
 
 add_image.addEventListener("click", function() {
     const input = document.querySelector('#image_up');
-    const file = input.files[0]; // Access the file from the input element
+    const file = input.files[0];
     if (file) {
-        const formData = new FormData(); // Create FormData object to send files
+        const formData = new FormData();
         formData.append('image', file);
         fetch('/upload_image', {
             method: 'POST',
-            body: formData // Send FormData instead of JSON
+            body: formData
         })
         .then(response => {
             if (response.ok) {
