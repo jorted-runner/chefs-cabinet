@@ -1,4 +1,4 @@
-document.querySelectorAll('.card__inner').forEach(function(card) {
+document.querySelectorAll('.card__inner, .recipe').forEach(function(card) {
   card.setAttribute('data-slide-index', 1);
   showSlides(card, 1);
 });
