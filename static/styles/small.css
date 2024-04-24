@@ -12,12 +12,19 @@
         height: 600px;
         perspective: 1000px;
     }
-    .card img {
+    .slideshow-container {
+        position: relative;
+        margin: auto;
+        width: 100%;
+        max-width: 375px;
+    }
+    .slideImg {
         width: auto;
         height: auto;
         max-height: 375px;
         max-width: 375px;
     }
+    
     .primary-navigation {
         flex-direction: row; 
     }
