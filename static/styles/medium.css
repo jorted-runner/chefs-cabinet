@@ -24,7 +24,7 @@
         perspective: 1000px;
     }
     .card img {
-        width: 100%;
+        width: auto;
         max-width: 375px;
         height: auto;
         max-height: 375px;

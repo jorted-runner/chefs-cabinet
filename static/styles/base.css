@@ -324,8 +324,10 @@ footer div {
   
   .slideImg {
     display: block;
-    width: 100%;
+    width: auto;
     height: auto;
+    max-width: 400px;
+    max-height: 400px;
     margin: 0 auto;
 }
   
