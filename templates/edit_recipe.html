@@ -59,8 +59,10 @@
                 </div>
                 {% endfor %}
             </div>
-            <label>New Image: <input type="file" name="image" id="image_up"></label>
-            <button class="add_image_btn">Add Image</button>
+            {% if (recipe.media | length) <= 10 %}
+                <label>New Image: <input type="file" name="image" id="image_up"></label>
+                <button class="add_image_btn">Add Image</button>
+            {% endif %}
         </div>
         <button class="save_btn">Save</button>
     </main>

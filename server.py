@@ -377,8 +377,10 @@ def update_recipe():
                     for image in new_images:
                         new_image = RecipeMedia(img_url=image, recipe_id=recipe.id, user_upload=False)
                         db.session.add(new_image)
-                recipe.title = recipe_title
-                recipe.description = recipe_desc
+                if recipe_title != '':
+                    recipe.title = recipe_title
+                if recipe_desc != '':
+                    recipe.description = recipe_desc
                 recipe.ingredients = ingredients
                 recipe.instructions = instructions
 

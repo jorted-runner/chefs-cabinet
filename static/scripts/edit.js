@@ -38,16 +38,17 @@ edit_buttons.forEach((button) => {
             editButton.textContent = "Edit";
             editButton.classList.add("edit_btn");
 
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.classList.add("delete_btn");
-            deleteButton.addEventListener('click', function() {
-                button.parentElement.remove();
-            });
-
+           
             parentElement.appendChild(editButton);
-            parentElement.appendChild(deleteButton);
-
+            if (parentElement.className !== 'title' && parentElement.className !== 'desc') {
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.classList.add("delete_btn");
+                deleteButton.addEventListener('click', function() {
+                    deleteButton.parentElement.remove();
+                });
+                parentElement.appendChild(deleteButton);
+            }
             editButton.addEventListener("click", editParentText);
         });
 
@@ -86,14 +87,16 @@ function editParentText() {
         editButton.textContent = "Edit";
         editButton.classList.add("edit_btn");
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.classList.add("delete_btn");
-        deleteButton.addEventListener('click', function() {
-            deleteButton.parentElement.remove();
-        });
         parentElement.appendChild(editButton);
-        parentElement.appendChild(deleteButton);
+        if (parentElement.className !== 'title' && parentElement.className !== 'desc') {
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete_btn");
+            deleteButton.addEventListener('click', function() {
+                deleteButton.parentElement.remove();
+            });
+            parentElement.appendChild(deleteButton);
+        }
         editButton.addEventListener("click", editParentText);
     });
 }
@@ -192,15 +195,17 @@ add_ingredient.addEventListener("click", function() {
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
         editButton.classList.add("edit_btn");
-
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.classList.add("delete_btn");
-        deleteButton.addEventListener('click', function() {
-            deleteButton.parentElement.remove();
-        });
         newItem.appendChild(editButton);
-        newItem.appendChild(deleteButton);
+
+        if (newItem.className !== 'title' && newItem.className !== 'desc') {
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("delete_btn");
+            deleteButton.addEventListener('click', function() {
+                deleteButton.parentElement.remove();
+            });
+            newItem.appendChild(deleteButton);
+        }
         editButton.addEventListener("click", editParentText);
     });
     targetElement.appendChild(saveButton);
