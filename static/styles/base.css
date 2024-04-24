@@ -143,7 +143,7 @@ hr {
     font-weight: bolder;
     color: #000;
 }
-.front-recipe-img {
+.mySlides {
     cursor: pointer;
 }
 .card__inner {
@@ -265,7 +265,7 @@ fieldset {
     margin: 0 auto;
     text-align: center;
 }
-
+/* Footer */
 footer {
     width: 100%;
     max-width: 100%;
@@ -287,7 +287,7 @@ footer div {
     text-decoration: underline;
     color: #fbf8ea;
 }
-
+/* Search Bar */
 .search-container {
     position: relative;
     display: inline-block;
@@ -312,7 +312,7 @@ footer div {
 .hiddenForm {
     display: none;
 }
-
+/* Slide Show */
 * {box-sizing:border-box}
 
 .slideshow-container {
@@ -320,14 +320,14 @@ footer div {
     position: relative;
     margin: auto;
     width: 100%;
-  }
+}
   
   .slideImg {
     display: block;
     width: 100%;
-    max-width: 300px;
+    height: auto;
     margin: 0 auto;
-  }
+}
   
 .mySlides {
   display: none;
