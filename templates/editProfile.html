@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/main.js"></script>
+    <script defer src="/static/scripts/profile_pic.js"></script>
 
 </head>
 <body>
@@ -27,6 +28,7 @@
                     <h4>{{ message | safe }}</h4>
                 {% endfor %}
         {% endif %}
+        <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
         <form class="form" id="editProfile" method="POST" action="{{ url_for('edit_profile', userID = user.id) }}">
             <fieldset>
                 <legend>Profile Information</legend>
@@ -37,6 +39,12 @@
             </fieldset>
             <input type="submit" value="Save Changes">
         </form>
+        <label>New Profile Picture: <input type="file" name="image" id="image_up"></label>
+        <button class="add_image_btn">Add Image</button>
+        <div id="image_preview_container" style="position: relative;">
+            <img id="image_preview" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 500px;">
+            <div id="selection_box" style="display: none; position: absolute; width: 100px; height: 100px; border: 2px solid red;"></div>
+          </div>
     </main>
     {% include "footer.html" %}
 </body>

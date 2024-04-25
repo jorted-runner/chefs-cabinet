@@ -57,3 +57,23 @@ class ImageProcessing:
         os.remove(output_path)
         os.remove(filename)
         return file_url
+    
+    def upload_profile(self, filename, x, y, width, height, folder):
+        with Image.open(filename) as img:
+            cropped_img = img.crop((x, y, x + width, y + height))
+            cropped_file_name = os.path.join(folder, 'cropped_' + filename)
+            cropped_img.save(cropped_file_name)
+        s3 = boto3.resource(
+            "s3",
+            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY"),
+            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            region_name=self.aws_region
+        )
+        new_filename = uuid.uuid4().hex + '.webp'
+        output_path = self.image_convert(filename, new_filename)
+        with open(output_path, "rb") as file:
+            s3.Bucket(self.aws_bucket).upload_fileobj(file, new_filename)
+        file_url = f"https://{self.aws_bucket}.s3.{self.aws_region}.amazonaws.com/{new_filename}"
+        os.remove(output_path)
+        os.remove(filename)
+        return file_url

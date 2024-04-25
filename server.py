@@ -144,6 +144,19 @@ def upload_image():
         image_file.save(file_name)
     return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
 
+@app.route("/upload_profile_pic", methods=['POST'])
+def upload_profile():
+    image_file = request.files['image']
+    x = int(request.form['x'])
+    y = int(request.form['y'])
+    width = int(request.form['width'])
+    height = int(request.form['height'])
+    if image_file and allowed_file(image_file.filename):
+        filename = secure_filename(image_file.filename)
+        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image_file.save(file_name)
+    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=file_name,x=x, y=y, width=width, height=height, folder=app.config['UPLOAD_FOLDER']))
+
 @app.route("/")
 def home():
     all_recipes = Recipe.query.all()
