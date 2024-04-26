@@ -4,7 +4,7 @@
             <div class="front-title-div">
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                 <div class="card-user-info">
-                    <img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                    <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                     <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
                 </div>
                 {% if recipe.reviews %}
@@ -31,10 +31,15 @@
         </div>
         <div class="card__face card__face--back">
             <div class="close-icon">&times;</div>
-            <div class="card_header">
-                <h2 class="back-title">{{ recipe.title }}</h2>
-                <h3 class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></h3>
-                <p class="recipe-desc">{{ recipe.description }}</p>
+            <div class="front-title-div">
+                <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
+                <div class="card-user-info">
+                    <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
+                    <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                </div>
+                {% if recipe.reviews %}
+                    <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
+                {% endif %}
             </div>
             <div class="card_body">
                 <div class="ingredients">
@@ -86,5 +91,3 @@
         </div>
     </div>
 </div>
-
-<hr>

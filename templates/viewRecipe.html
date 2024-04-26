@@ -39,11 +39,16 @@
                 </div>
                 {% endif %}
             </div>
-                <h1 class="view-title">{{ recipe.title}}</h1>
-                <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+            <div class="front-title-div">
+                <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
+                <div class="card-user-info">
+                    <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
+                    <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                </div>
                 {% if recipe.reviews %}
-                        <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
-                    {% endif %}
+                    <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
+                {% endif %}
+            </div>
                 <div class="recipe-info">
                     <p class="desc">{{recipe.description }}</p>
                     <div class="view-ingredients">

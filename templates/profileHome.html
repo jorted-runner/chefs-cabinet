@@ -44,9 +44,19 @@
         </nav>
     </header>
     <main>
-        <h1>{{ user.username }}</h1>
-        <h3>{{ user.fname }} {{ user.lname }}</h3>
-        <div class="recipe_feed">
+        <div class="profile-header">
+            <div class="user-intro">
+                <img class="user-profile-pic" src="{{ user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                <div>
+                    <h1>{{ user.username }}</h1>
+                    <h3>{{ user.fname }} {{ user.lname }}</h3>
+                </div>
+            </div>
+            
+            
+        </div>
+        
+        <div class="recipe_feed profile_feed">
             {% for recipe in all_recipes %}
                 {% include 'recipe_card.html' %}
             {% endfor %}

@@ -1,7 +1,7 @@
+# TODO - Following/Follow
+# TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Form Styling
 # TODO - Change Colors?
-# TODO - Following/Follow
-# TODO - User Uploaded Photos
 # TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
 # Nav HTML for Notifications <li><a href="#"><img src="/static/images/notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
 

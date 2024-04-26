@@ -29,4 +29,8 @@
         height: auto;
         max-height: 375px;
     }
+    .profile_feed {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 }
