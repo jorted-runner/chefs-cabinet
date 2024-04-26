@@ -10,17 +10,15 @@ class ImageProcessing:
         load_dotenv()
         self.aws_bucket = os.environ.get("AWS_BUCKET")
         self.aws_region = os.environ.get("AWS_REGION")
-        self.width = 400
-        self.height = 400
         if (os.environ.get("PROD")) == "True":
             self.working_dir = "/var/www/chefs-cab/static/images"
         else:
             self.working_dir = "static\images"
 
-    def image_convert(self, input_path, file_name):
+    def image_convert(self, input_path, file_name, width, height):
         file_name = os.path.splitext(file_name)[0] + '.webp'
         output_path = os.path.join(self.working_dir, file_name)
-        max_size = (self.width, self.height)
+        max_size = (width, height)
         with Image.open(input_path) as img:
             original_width, original_height = img.size
             aspect_ratio = original_width / original_height
@@ -50,7 +48,7 @@ class ImageProcessing:
             region_name=self.aws_region
         )
         new_filename = uuid.uuid4().hex + '.webp'
-        output_path = self.image_convert(filename, new_filename)
+        output_path = self.image_convert(filename, new_filename, 400, 400)
         with open(output_path, "rb") as file:
             s3.Bucket(self.aws_bucket).upload_fileobj(file, new_filename)
         file_url = f"https://{self.aws_bucket}.s3.{self.aws_region}.amazonaws.com/{new_filename}"
@@ -58,11 +56,7 @@ class ImageProcessing:
         os.remove(filename)
         return file_url
     
-    def upload_profile(self, filename, x, y, width, height, folder):
-        with Image.open(filename) as img:
-            cropped_img = img.crop((x, y, x + width, y + height))
-            cropped_file_name = os.path.join(folder, 'cropped_' + filename)
-            cropped_img.save(cropped_file_name)
+    def upload_profile(self, filename):
         s3 = boto3.resource(
             "s3",
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY"),
@@ -70,7 +64,7 @@ class ImageProcessing:
             region_name=self.aws_region
         )
         new_filename = uuid.uuid4().hex + '.webp'
-        output_path = self.image_convert(filename, new_filename)
+        output_path = self.image_convert(filename, new_filename, 200, 200)
         with open(output_path, "rb") as file:
             s3.Bucket(self.aws_bucket).upload_fileobj(file, new_filename)
         file_url = f"https://{self.aws_bucket}.s3.{self.aws_region}.amazonaws.com/{new_filename}"

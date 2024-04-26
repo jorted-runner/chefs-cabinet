@@ -18,6 +18,7 @@ from datetime import date
 from functools import wraps
 from sqlalchemy import func
 from datetime import datetime
+from PIL import Image
 
 import json
 import os 
@@ -34,7 +35,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs-Cab.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static\images'
+app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
 Bootstrap(app)
 
@@ -155,7 +156,12 @@ def upload_profile():
         filename = secure_filename(image_file.filename)
         file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         image_file.save(file_name)
-    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=file_name,x=x, y=y, width=width, height=height, folder=app.config['UPLOAD_FOLDER']))
+    with Image.open(file_name) as img:
+        cropped_img = img.crop((x, y, x + width, y + height))
+        cropped_file_name = os.path.join(app.config['UPLOAD_FOLDER'], 'cropped_' + filename)
+        cropped_img.save(cropped_file_name)
+    os.remove(file_name)
+    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=cropped_file_name))
 
 @app.route("/")
 def home():
