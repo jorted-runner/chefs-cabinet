@@ -23,7 +23,7 @@
         height: 600px;
         perspective: 1000px;
     }
-    .card img {
+    .recipe-img {
         width: auto;
         max-width: 375px;
         height: auto;

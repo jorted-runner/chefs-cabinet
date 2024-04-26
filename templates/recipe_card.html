@@ -3,7 +3,10 @@
         <div class="card__face card__face--front">
             <div class="front-title-div">
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
-                <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                <div class="card-user-info">
+                    <img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                    <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                </div>
                 {% if recipe.reviews %}
                     <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                 {% endif %}
@@ -17,13 +20,11 @@
             <a class="prev" onclick="plusSlides(this.parentNode.parentNode, -1)">&#10094;</a>
             <a class="next" onclick="plusSlides(this.parentNode.parentNode, 1)">&#10095;</a>
 
-            <div style="text-align:center">
+            <div class="media-text">
                 {% for media in recipe.media %}
                     <span class="dot" onclick="currentSlide(this.parentNode.parentNode, '{{ loop.index }}')"></span>
                 {% endfor %}
             </div>
-
-
             <div class="front-desc-div">
                 <p class="front-desc">{{recipe.description }}</p>
             </div>

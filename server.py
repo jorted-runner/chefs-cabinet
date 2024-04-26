@@ -148,20 +148,11 @@ def upload_image():
 @app.route("/upload_profile_pic", methods=['POST'])
 def upload_profile():
     image_file = request.files['image']
-    x = int(request.form['x'])
-    y = int(request.form['y'])
-    width = int(request.form['width'])
-    height = int(request.form['height'])
     if image_file and allowed_file(image_file.filename):
         filename = secure_filename(image_file.filename)
         file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         image_file.save(file_name)
-    with Image.open(file_name) as img:
-        cropped_img = img.crop((x, y, x + width, y + height))
-        cropped_file_name = os.path.join(app.config['UPLOAD_FOLDER'], 'cropped_' + filename)
-        cropped_img.save(cropped_file_name)
-    os.remove(file_name)
-    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=cropped_file_name))
+    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=file_name))
 
 @app.route("/")
 def home():
@@ -297,21 +288,23 @@ def edit_profile(userID):
             updated_lName = request.form.get('lname')
             updated_email = request.form.get('email')
             updated_username = request.form.get('username')
+            updated_profile = request.form.get('image_url')
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
-                    return render_template("editProfile.html", user = user, current_user=current_user)
+                    return render_template("editProfile.html", user=user, current_user=current_user)
             if updated_email == updated_username:
                 flash('Username and Email cannot match. Please choose a unique username.')
-                return render_template("editProfile.html", user = user, current_user=current_user)
+                return render_template("editProfile.html", user=user, current_user=current_user)
             user.fname = updated_Fname
-            user.fname = updated_Fname
-            user.lName = updated_lName
+            user.lname = updated_lName
             user.email = updated_email
             user.username = updated_username
+            if updated_profile:
+                user.profile_pic = updated_profile
             db.session.commit()
-            return redirect(url_for('user_profile', userID = userID))
-        return render_template("editProfile.html", user = user, current_user=current_user)
+            return redirect(url_for('user_profile', userID=userID))
+        return render_template("editProfile.html", user=user, current_user=current_user)
     else:
         return redirect(url_for('home'))
 

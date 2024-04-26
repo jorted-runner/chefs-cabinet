@@ -35,6 +35,15 @@ function showSlides(card, n) {
       dots[i].classList.remove("activeSlide");
   }
 
+  if (slides.length === 1) {
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].style.display = "none";
+    }
+    card.querySelector('.prev').style.display = 'none';
+    card.querySelector('.next').style.display = 'none';
+    card.querySelector('.numbertext').style.display = 'none';
+  }
+
   slides[n - 1].style.display = "block";
   dots[n - 1].classList.add("activeSlide");
 

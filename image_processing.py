@@ -64,7 +64,7 @@ class ImageProcessing:
             region_name=self.aws_region
         )
         new_filename = uuid.uuid4().hex + '.webp'
-        output_path = self.image_convert(filename, new_filename, 200, 200)
+        output_path = self.image_convert(filename, new_filename, 150, 150)
         with open(output_path, "rb") as file:
             s3.Bucket(self.aws_bucket).upload_fileobj(file, new_filename)
         file_url = f"https://{self.aws_bucket}.s3.{self.aws_region}.amazonaws.com/{new_filename}"

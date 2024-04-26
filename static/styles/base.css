@@ -187,8 +187,22 @@ hr {
     text-align: left;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding-bottom: 0;
+    padding-bottom: .25rem;
     align-items: center;
+}
+.card-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.card-profile-pic {
+    width: auto;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.front-desc-div {
+    padding: 0 .25rem .25rem .25rem;
 }
 .front-title {
     margin-bottom: 0;
@@ -203,26 +217,8 @@ hr {
     grid-column: 2;
 }
 
-.front-user {
-    font-size: 1rem;
-    margin: 0;
-    grid-row: 2;
-    text-align: left;
-    grid-column: 1;
-    padding: 4px 0;
-
-}
-
-.front-desc-div {
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-}
-.front-desc {
-    padding: .2rem 1rem;
-    margin: 0;
+.media-text {
+    text-align: center;
 }
 /* Back of Recipe Card */
 .card_header {
@@ -343,8 +339,8 @@ footer div {
   width: 15%;
   margin-top: -22px;
   padding: 16px;
-  color: rgb(132, 132, 132);
-  background-color: rgba(189, 188, 188, 0.39);
+  color: rgb(59, 57, 57);
+  background-color: rgba(189, 188, 188, 0.329);
   font-weight: bold;
   font-size: 18px;
   transition: 0.6s ease;
@@ -390,7 +386,8 @@ footer div {
   cursor: pointer;
   height: 15px;
   width: 15px;
-  margin: 0 2px;
+  margin: .5rem 2px;
+  margin-bottom: 0;
   background-color: #bbb;
   border-radius: 50%;
   display: inline-block;
