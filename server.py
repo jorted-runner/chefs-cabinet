@@ -12,6 +12,8 @@ from flask_bootstrap import Bootstrap
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
 
 from dotenv import load_dotenv
 from datetime import date
@@ -21,7 +23,8 @@ from datetime import datetime
 from PIL import Image
 
 import json
-import os 
+import os
+import traceback 
 
 from ai_interface import AI_tool
 from image_processing import ImageProcessing
@@ -121,6 +124,10 @@ def custom_split(list):
     clean_data = json.loads(list)
     return clean_data
 
+@app.template_filter('followers_ids')
+def followers_ids(followers):
+    return [follower.follower_id for follower in followers]
+
 @app.template_filter('avg_rating')
 def avg_rating(list):
     total = 0
@@ -156,7 +163,16 @@ def upload_profile():
 
 @app.route("/")
 def home():
-    all_recipes = Recipe.query.all()
+    if current_user.is_authenticated:
+        if current_user.following:
+            following_ids = [follower.following_id for follower in current_user.following]
+            print(following_ids)
+
+            all_recipes = Recipe.query.filter(or_(Recipe.user_id.in_(following_ids))).all()
+        else:
+            all_recipes = Recipe.query.all()
+    else:
+        all_recipes = Recipe.query.all()
     return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user)
 
 @app.route('/login', methods=["GET", "POST"])
@@ -365,10 +381,6 @@ def view_recipe(recipeID):
     recipe = Recipe.query.filter_by(id=recipeID).first()
     return render_template('viewRecipe.html', recipe=recipe, current_user = current_user)
 
-from sqlalchemy.exc import IntegrityError
-
-import traceback
-
 @app.route('/update_recipe', methods=['POST'])
 def update_recipe():
     if request.method == "POST":
@@ -407,6 +419,42 @@ def update_recipe():
     else:
         return jsonify({'success': False, 'message': 'Invalid request method'}), 405
 
+@app.route('/follow', methods=['POST'])
+@login_required
+def follow():
+    try:
+        data = request.get_json()
+        userID = data.get('userID')
+        currentUserID = data.get('currentUserID')
+        if not userID or not currentUserID:
+            return jsonify({'error': 'Missing userID or currentUserID'}), 400
+        new_following = Follower(follower_id=currentUserID, following_id=userID)
+        db.session.add(new_following)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/unfollow', methods=['POST'])
+@login_required
+def unfollow():
+    try:
+        data = request.get_json()
+        userID = data.get('userID')
+        currentUserID = data.get('currentUserID')
+        if not userID or not currentUserID:
+            return jsonify({'error': 'Missing userID or currentUserID'}), 400
+        unfollow_rel = Follower.query.filter_by(follower_id=currentUserID, following_id=userID).first()
+        if not unfollow_rel:
+            return jsonify({'error': 'Relationship does not exist'}), 404
+        db.session.delete(unfollow_rel)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        # Handle any unexpected errors
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/admin')

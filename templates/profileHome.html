@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/card_flip.js"></script>
     <script defer src="/static/scripts/slide_show.js"></script>
+    <script defer src="/static/scripts/follow.js"></script>
 
 </head>
 <body>
@@ -51,9 +52,16 @@
                     <h1>{{ user.username }}</h1>
                     <h3>{{ user.fname }} {{ user.lname }}</h3>
                 </div>
-            </div>
-            
-            
+                <form>
+                    <input type="hidden" value="{{user.id}}" id="userID">
+                    <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                </form>
+                {% if current_user.id in user.followers | followers_ids %}
+                    <button class="un-follow">Un-Follow</button>
+                {% elif current_user.id != user.id %}
+                    <button class="follow">Follow</button>
+                {% endif %}
+            </div>           
         </div>
         
         <div class="recipe_feed profile_feed">

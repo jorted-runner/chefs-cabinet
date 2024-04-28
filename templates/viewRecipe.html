@@ -28,18 +28,16 @@
                     <img src="{{image.img_url}}" class="slideImg" alt="Recipe Image">
                 </div>
                 {% endfor %}
-                {% if (recipe.media | length) > 1 %}
                 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                 <a class="next" onclick="plusSlides(1)">&#10095;</a>
 
-                <div style="text-align:center">
+                <div class="media-text">
                     {% for media in recipe.media %}
                         <span class="dot" onclick="currentSlide(this.parentNode.parentNode, '{{ loop.index }}')"></span>
                     {% endfor %}
                 </div>
-                {% endif %}
             </div>
-            <div class="front-title-div">
+            <div class="front-title-div view-title-div">
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                 <div class="card-user-info">
                     <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>

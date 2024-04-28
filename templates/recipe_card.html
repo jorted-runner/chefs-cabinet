@@ -41,6 +41,9 @@
                     <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                 {% endif %}
             </div>
+            <div class="front-desc-div">
+                <p class="front-desc">{{recipe.description }}</p>
+            </div>
             <div class="card_body">
                 <div class="ingredients">
                     <h4>Ingredients:</h4>
