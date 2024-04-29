@@ -2,11 +2,19 @@
     <div class="card__inner">
         <div class="card__face card__face--front">
             <div class="front-title-div">
+                <form>
+                    <input type="hidden" value="{{recipe.user.id}}" id="userID">
+                    <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                </form>
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                 <div class="card-user-info">
                     <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                     <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                    {% if current_user.id != recipe.user.id and current_user.id not in recipe.user.followers | followers_ids %}
+                        <button class="follow follow-btn">Follow</button>
+                    {% endif %}
                 </div>
+                
                 {% if recipe.reviews %}
                     <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                 {% endif %}
@@ -32,11 +40,19 @@
         <div class="card__face card__face--back">
             <div class="close-icon">&times;</div>
             <div class="front-title-div">
+                <form>
+                    <input type="hidden" value="{{recipe.user.id}}" id="userID">
+                    <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                </form>
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                 <div class="card-user-info">
                     <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                     <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                    {% if current_user.id != recipe.user.id and current_user.id not in recipe.user.followers | followers_ids %}
+                        <button class="follow follow-btn">Follow</button>
+                    {% endif %}
                 </div>
+                
                 {% if recipe.reviews %}
                     <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                 {% endif %}

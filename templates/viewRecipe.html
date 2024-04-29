@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/view_slides.js"></script>
+    <script defer src="/static/scripts/follow.js"></script>
 </head>
 <body>
     {% include "header.html" %}
@@ -38,11 +39,19 @@
                 </div>
             </div>
             <div class="front-title-div view-title-div">
+                <form>
+                    <input type="hidden" value="{{recipe.user.id}}" id="userID">
+                    <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                </form>
                 <h2 class="front-title" id="recipe_{{ recipe.id }}">{{ recipe.title }}</h2>
                 <div class="card-user-info">
                     <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><img class="card-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                     <p class="front-user"><a href="{{ url_for('user_profile', userID = recipe.user.id)}}">{{ recipe.user.username }}</a></p>
+                    {% if current_user.id != recipe.user.id and current_user.id not in recipe.user.followers | followers_ids %}
+                        <button class="follow follow-btn">Follow</button>
+                    {% endif %}
                 </div>
+                
                 {% if recipe.reviews %}
                     <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                 {% endif %}

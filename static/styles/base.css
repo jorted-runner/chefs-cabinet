@@ -186,7 +186,7 @@ hr {
     padding: .5rem 1rem;
     text-align: left;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr;
     padding-bottom: .25rem;
     align-items: center;
 }
@@ -196,6 +196,11 @@ hr {
 .card-user-info {
     display: flex;
     align-items: center;
+}
+.follow-btn {
+    width: 30%;
+    height: 50%;
+    margin-left: 1rem;
 }
 
 .card-profile-pic {
@@ -240,6 +245,7 @@ hr {
     padding: 4px 0;
     text-align: right;
     grid-column: 2;
+    width: 100%;
 }
 
 .media-text {

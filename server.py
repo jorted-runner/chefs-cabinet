@@ -166,7 +166,7 @@ def home():
     if current_user.is_authenticated:
         if current_user.following:
             following_ids = [follower.following_id for follower in current_user.following]
-            all_recipes = Recipe.query.filter(or_(Recipe.user_id.in_(following_ids))).all()
+            all_recipes = Recipe.query.filter(or_(Recipe.user_id == current_user.id, Recipe.user_id.in_(following_ids))).all()
         else:
             all_recipes = Recipe.query.all()
     else:
