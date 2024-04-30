@@ -353,18 +353,44 @@ def edit_recipe(recipeID, userID):
 def search():
     if request.method == 'POST':
         searchTerm = request.form.get('searchTerm')
-        users = User.query.filter(
-            User.username.like(f"%{searchTerm}%") | 
-            User.fname.like(f"%{searchTerm}%") | 
-            User.lname.like(f"%{searchTerm}%")
+        searchwords = searchTerm.split(' ')
+        users_results = []
+        recipes_results = []
+        cookbook_results = []
+        for word in searchwords:
+            users = User.query.filter(
+                User.username.like(f"%{word}%") | 
+                User.fname.like(f"%{word}%") | 
+                User.lname.like(f"%{word}%")
             ).all()
-        results = Recipe.query.filter(
-            Recipe.title.like(f"%{searchTerm}%") | 
-            Recipe.description.like(f"%{searchTerm}%") | 
-            Recipe.ingredients.like(f"%{searchTerm}%")
-        ).all()
-        return render_template('searchResults.html', results=results, users=users, searchTerm=searchTerm, current_user=current_user)
-    return render_template('searchResults.html', current_user=current_user)
+            users_results.extend(users)
+            recipes = Recipe.query.filter(
+                Recipe.title.like(f"%{word}%") | 
+                Recipe.description.like(f"%{word}%") | 
+                Recipe.ingredients.like(f"%{word}%")
+            ).all()
+            recipes_results.extend(recipes)
+            if word.lower() == "cookbook" or word.lower() == "books" or word.lower() == 'cook' or word.lower() == 'book':
+                cookbooks = CookBook.query.filter()
+            else:
+                cookbooks = CookBook.query.filter(
+                    (CookBook.name.like(f"%{word}%")) &
+                    ((CookBook.status.is_(None)) | (CookBook.status != False) | (CookBook.user_id == current_user.id))
+                )
+            cookbook_results.extend(cookbooks)
+        return render_template('searchResults.html', 
+                               users=users_results, 
+                               recipes=recipes_results, 
+                               searchTerm=searchTerm,
+                               cookbooks=cookbook_results, 
+                               current_user=current_user)
+    following_ids = [follower.following_id for follower in current_user.following]
+    all_recipes = Recipe.query.filter(
+        (Recipe.user_id != current_user.id) &
+        (~Recipe.user_id.in_(following_ids))
+    ).order_by(func.random()).limit(100).all()
+
+    return render_template('searchResults.html', random_recipes=all_recipes, current_user=current_user)
 
 @app.route('/comment/<userID>/<recipeID>', methods=['POST'])
 @login_required
@@ -428,7 +454,6 @@ def update_recipe():
                 return jsonify({'success': False, 'message': 'Recipe not found'}), 404
         except Exception as e:
             db.session.rollback()
-            traceback.print_exc()  # Log traceback to understand the error
             return jsonify({'success': False, 'message': 'Internal server error: ' + str(e)}), 500
     else:
         return jsonify({'success': False, 'message': 'Invalid request method'}), 405

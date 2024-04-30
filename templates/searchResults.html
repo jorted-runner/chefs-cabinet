@@ -27,7 +27,7 @@
             {% if searchTerm %}
                 <h1>Search Results: {{searchTerm}}</h1>
             {% else %}
-                <h1>Search Results</h1>
+                <h1>Search</h1>
             {% endif %}
             <form class="form" id="search" method="POST" action="{{ url_for('search') }}">
                 {% if searchTerm %}
@@ -48,14 +48,36 @@
                     <h3><a href="{{ url_for('user_profile', userID = user.id)}}">{{ user.username }}</a></h3>
                 {% endfor %}
             {% endif %}
-            {% if results %}
+
+            {% if cookbooks %}
+                <h2>Cookbooks Found:</h2>
+                {% for cookbook in cookbooks %}
+                    {% if cookbook.status == True or (current_user.id == cookbook.user_id or current_user.is_admin) %}
+                    <a href="{{ url_for('cookbook', cookbookID=cookbook.id) }}">
+                        <div class="cookbook-card">
+                            <h1>{{cookbook.name}}</h1>
+                            {% if cookbook.status == False %}
+                                <p>Private Cookbook - Only visible to you</p>
+                            {% endif %}
+                            <img class="cookbook-img" src="{{ cookbook.cover_img }}" alt="Cookbook Cover Image" loading="lazy">
+                        </div>
+                    </a>                      
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if recipes %}
                 <hr>
                 <h2>Recipes Found:</h2>
-                {% for recipe in results %}
+                {% for recipe in recipes %}
                     {% include 'recipe_card.html' %}
                     <hr>
                 {% endfor %}
             </div>
+            {% endif %}
+            {% if random_recipes %}
+                {% for recipe in random_recipes %}
+                    {% include 'recipe_card.html' %}
+                {% endfor %}
             {% endif %}
     </main>
     {% include "footer.html" %}

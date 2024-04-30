@@ -2,7 +2,7 @@
 
 // Global Variables
 const recipeTypeElmnt = document.querySelector("#recipeType");
-const formElmnt = document.querySelector(".form");
+const formElmnt = document.querySelector(".form-div");
 const loaderContainer = document.querySelector('.loader-container');
 var ingredientsInclude = [];
 var ingredientsExclude = [];

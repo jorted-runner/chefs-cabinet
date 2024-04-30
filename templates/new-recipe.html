@@ -25,13 +25,16 @@
     </div>
     {% include "messages.html" %}
     <main>
-        <label for="recipeType">Recipe Type</label>
-        <select name="recipeType" id="recipeType">
-            <option value="">Select a Recipe Type</option>
-            <option value="aiAssisted">A.I. Assisted</option>
-            <option value="blankRecipe">Blank Recipe</option>
-        </select>
-        <div class="form"></div>
+        <form class="form">
+            <label for="recipeType">Recipe Type</label>
+            <select name="recipeType" id="recipeType">
+                <option value="">Select a Recipe Type</option>
+                <option value="aiAssisted">A.I. Assisted</option>
+                <option value="blankRecipe">Blank Recipe</option>
+            </select>
+        </form>
+        
+        <div class="form-div"></div>
     </main>
     {% include "footer.html" %}
 </body>
