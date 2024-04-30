@@ -14,6 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
 
 from dotenv import load_dotenv
 from datetime import date
@@ -87,6 +88,8 @@ cookbook_recipes = db.Table(
 class CookBook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
+    status = db.Column(db.Boolean, nullable=False, default=True)
+    cover_img = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/book_image.webp')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipes = db.relationship("Recipe", secondary=cookbook_recipes, backref='cookbooks')
 
@@ -473,19 +476,27 @@ def add_cookbook():
     cookbook_name = request.form.get('cookbook')
     user_id = request.form.get('userID')
     recipe_id = request.form.get('recipeID')
-
+    status = request.form.get('status')
+    if status == 'private':
+        status = False
+    else:
+        status = True
     try:
         cookbook = CookBook.query.filter_by(name=cookbook_name, user_id=user_id).first()
-
+        if not cookbook:
+            cookbook = CookBook.query.filter_by(id=cookbook_name, user_id=user_id).first()
         if cookbook:
-            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            recipe = Recipe.query.get(recipe_id)
             if recipe:
-                cookbook.recipes.append(recipe)
-                db.session.commit()
+                if recipe not in cookbook.recipes:
+                    cookbook.recipes.append(recipe)
+                    db.session.commit()
+                else:
+                    flash('Recipe already exists in the cookbook.', 'error')
             else:
                 flash('Invalid recipe ID.', 'error')
         else:
-            new_cookbook = CookBook(name=cookbook_name, user_id=user_id)
+            new_cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status)
             recipe = Recipe.query.get(recipe_id)
             if recipe:
                 new_cookbook.recipes.append(recipe)
@@ -498,6 +509,22 @@ def add_cookbook():
         db.session.rollback() 
     return redirect(request.referrer)
 
+@app.route('/cookbook/<cookbookID>', methods=['GET'])
+def cookbook(cookbookID):
+    cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
+    if cookbook:
+        if cookbook.status:
+            return render_template('cookbook.html', cookbook=cookbook, current_user=current_user)
+        else:
+            if current_user.is_authenticated and cookbook.user_id == current_user.id:
+                return render_template('cookbook.html', cookbook=cookbook, current_user=current_user)
+            else:
+                flash('This cookbook is private and cannot be accessed by other users.', 'error')
+                return redirect(url_for("home"))
+    else:
+        flash('Cookbook not found.', 'error')
+        return redirect(url_for("home"))
+    
 @app.route('/admin')
 @admin_only
 def admin():

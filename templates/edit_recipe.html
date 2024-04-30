@@ -23,11 +23,8 @@
     {% include "header.html" %}
     <main>
         <h1>Edit Recipe:</h1>
-        {% if get_flashed_messages %}
-                {% for message in get_flashed_messages() %}
-                    <h4>{{ message | safe }}</h4>
-                {% endfor %}
-        {% endif %}
+        {% include "messages.html" %}
+
         <p class="recipe_id">{{recipe.id}}</p>
         <p class="title">{{recipe.title}} <button class="edit_btn">Edit</button></p>
         <p class="desc">{{recipe.description}} <button class="edit_btn">Edit</button></p>

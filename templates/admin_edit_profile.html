@@ -22,11 +22,7 @@
     {% include "header.html" %}
     <main>
         <h1>Edit Profile:</h1>
-        {% if get_flashed_messages %}
-                {% for message in get_flashed_messages() %}
-                    <h4>{{ message | safe }}</h4>
-                {% endfor %}
-        {% endif %}
+        {% include "messages.html" %}
         <form class="form" id="editProfile" method="POST" action="{{ url_for('admin_edit_profile', userID = user.id) }}">
             <fieldset>
                 <legend>Profile Information</legend>

@@ -20,6 +20,8 @@
 <body>
     {% include "header.html" %}
     <main>
+        {% include "messages.html" %}
+
         <h1>USERS</h1>
         {% for user in all_users %}
             <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">

@@ -21,6 +21,8 @@
 <body>
     {% include "header.html" %}
     <main>
+        {% include "messages.html" %}
+
         <div class="recipe_feed">
             {% if searchTerm %}
                 <h1>Search Results: {{searchTerm}}</h1>

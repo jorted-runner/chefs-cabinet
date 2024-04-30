@@ -29,8 +29,11 @@
         height: auto;
         max-height: 375px;
     }
-    .profile_feed {
+    .profile_feed, .cookbook_feed {
         display: grid;
         grid-template-columns: 1fr;
+    }
+    .hidden {
+        display: none;
     }
 }

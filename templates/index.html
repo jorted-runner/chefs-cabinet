@@ -48,6 +48,7 @@
             </div>
         </div>
         {% else %}
+        {% include "messages.html" %}
         <div class="recipe_feed">
             {% for recipe in all_recipes %}
                 {% include 'recipe_card.html' %}

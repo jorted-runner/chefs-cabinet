@@ -4,13 +4,16 @@
         margin: 0 1%;
     }
 
-    .card {
+    .card, .cookbook-card {
         margin: 25px auto 25px;
         width: 100%;
         max-width: 375px;
         min-width: 300px;
         height: 600px;
         perspective: 1000px;
+    }
+    .cookbook-card {
+        height: fit-content;
     }
     .slideshow-container {
         position: relative;
@@ -24,7 +27,12 @@
         max-height: 375px;
         max-width: 375px;
     }
-    
+    .cookbook-img {
+        width: auto;
+        height: auto;
+        max-height: 360px;
+        max-width: 360px;
+    }
     .primary-navigation {
         flex-direction: row; 
     }

@@ -20,11 +20,8 @@
     {% include "header.html" %}
     <main>
         <h3>User Registration</h3>
-        {% if get_flashed_messages %}
-                {% for message in get_flashed_messages() %}
-                    <h4>{{ message | safe }}</h4>
-                {% endfor %}
-        {% endif %}
+        {% include "messages.html" %}
+
         <form class="form" id="register" method="post" action="{{url_for('register')}}">
             <fieldset>
                 <legend>Registration Information</legend>
