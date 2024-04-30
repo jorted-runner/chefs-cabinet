@@ -2,12 +2,28 @@ const cookBook_DropDown = document.querySelector("#cookbook");
 const addCookBook_btn = document.querySelector('.addRecipe-btn');
 const cookBookInfo = document.querySelector('.cookBook-Info');
 const overlay = document.querySelector('.overlay');
+let recipeCards = document.querySelectorAll('.card__inner');
 
-addCookBook_btn.addEventListener('click', function() {
-    cookBookInfo.classList.remove('hidden');
-    overlay.style.display = 'block';
-    document.body.classList.add('no-scroll');
-})
+if (recipeCards) {
+    recipeCards.forEach(card => {
+        card.querySelector('.addRecipe-btn').addEventListener("click", function() {
+            card.querySelector('.cookBook-Info').classList.remove('hidden');
+            card.querySelector('.overlay').style.display = 'block';
+            document.body.classList.add('no-scroll');
+        });
+        
+        card.querySelector('.overlay').addEventListener("click", function() {
+            card.querySelector('.cookBook-Info').classList.add('hidden');
+            card.querySelector('.overlay').style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        });
+        
+        card.querySelector('.cookBook-Info').addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+    })
+    
+}
 
 if (cookBook_DropDown) {
     cookBook_DropDown.addEventListener("change", function(event) {
@@ -17,6 +33,23 @@ if (cookBook_DropDown) {
         }
     });    
 }
+
+addCookBook_btn.addEventListener("click", function() {
+    cookBookInfo.classList.remove('hidden');
+    overlay.style.display = 'block';
+    document.body.classList.add('no-scroll');
+});
+
+overlay.addEventListener("click", function() {
+    cookBookInfo.classList.add('hidden');
+    overlay.style.display = 'none';
+    document.body.classList.remove('no-scroll');
+});
+
+cookBookInfo.addEventListener("click", function(event) {
+    event.stopPropagation();
+});
+
 
 function replaceWithTextInput(selectElement) {
     var inputElement = document.createElement("input");
@@ -53,19 +86,3 @@ function addPrivacyDropdown() {
     submitButton.parentNode.insertBefore(privacyLabel, submitButton);
     submitButton.parentNode.insertBefore(privacyDropdown, submitButton);
 }
-
-addCookBook_btn.addEventListener("click", function() {
-    cookBookInfo.classList.remove('hidden');
-    overlay.style.display = 'block';
-    document.body.classList.add('no-scroll');
-});
-
-overlay.addEventListener("click", function() {
-    cookBookInfo.classList.add('hidden');
-    overlay.style.display = 'none';
-    document.body.classList.remove('no-scroll');
-});
-
-cookBookInfo.addEventListener("click", function(event) {
-    event.stopPropagation();
-});

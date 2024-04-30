@@ -386,6 +386,10 @@ footer div {
     justify-content: center;
 }
 
+.card-cookbook-Info {
+    width: 90%;
+}
+
 .overlay {
     position: fixed;
     top: 0;
