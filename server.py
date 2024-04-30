@@ -1,4 +1,3 @@
-# TODO - Following/Follow
 # TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Form Styling
 # TODO - Change Colors?

@@ -55,6 +55,20 @@
                     <h1>{{ user.username }}</h1>
                     <h3>{{ user.fname }} {{ user.lname }}</h3>
                 </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Following</td>
+                            <td>Followers</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{user.following | length }}</td>
+                            <td>{{user.followers | length }}</td>
+                        </tr>
+                    </tbody>
+                </table>
                 <form>
                     <input type="hidden" value="{{user.id}}" id="userID">
                     <input type="hidden" value="{{current_user.id}}" id="currentUserID">
