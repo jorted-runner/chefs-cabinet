@@ -37,7 +37,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs-Cab.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefscabinet.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
