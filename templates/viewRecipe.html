@@ -22,16 +22,25 @@
 <body>
     {% include "header.html" %}
     <main>
-        <div class="cookBook-Info">
-            <form>
+        {% if get_flashed_messages %}
+                {% for message in get_flashed_messages() %}
+                    <h4>{{ message | safe }}</h4>
+                {% endfor %}
+        {% endif %}
+        <div class="overlay"></div>
+
+        <div class="cookBook-Info hidden">
+            <form class="cookbook-form form" id="add-cookbook" method="POST" action="{{url_for('add_cookbook')}}">
                 <label for="cookbook">Cook Book</label>
                 <select name="cookbook" id="cookbook">
                     <option value="">Select a Cook Book</option>
                     <option value="new">New Cook Book</option>
                     {% for cookbook in current_user.cookbooks %}
-                        <option value="{{ cookbook.name }}">{{ cookbook.name }}</option>
+                        <option value="{{ cookbook.id }}">{{ cookbook.name }}</option>
                     {% endfor %}
                 </select>
+                <input type="hidden" value="{{current_user.id}}" name="userID">
+                <input type="hidden" value="{{recipe.id}}" name="recipeID">
                 <input type="submit" value="Add">
             </form>
         </div>

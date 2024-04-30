@@ -467,6 +467,36 @@ def unfollow():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/add_cookbook', methods=['POST'])
+@login_required
+def add_cookbook():
+    cookbook_name = request.form.get('cookbook')
+    user_id = request.form.get('userID')
+    recipe_id = request.form.get('recipeID')
+
+    try:
+        cookbook = CookBook.query.filter_by(name=cookbook_name, user_id=user_id).first()
+
+        if cookbook:
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            if recipe:
+                cookbook.recipes.append(recipe)
+                db.session.commit()
+            else:
+                flash('Invalid recipe ID.', 'error')
+        else:
+            new_cookbook = CookBook(name=cookbook_name, user_id=user_id)
+            recipe = Recipe.query.get(recipe_id)
+            if recipe:
+                new_cookbook.recipes.append(recipe)
+                db.session.add(new_cookbook)
+                db.session.commit()
+            else:
+                flash('Invalid recipe ID.', 'error')
+    except Exception as e:
+        flash('An error occurred while adding the cookbook: {}'.format(str(e)), 'error')
+        db.session.rollback() 
+    return redirect(request.referrer)
 
 @app.route('/admin')
 @admin_only
