@@ -197,12 +197,26 @@ hr {
     display: flex;
     align-items: center;
 }
-.follow-btn {
-    width: 30%;
-    height: 50%;
-    margin-left: 1rem;
+.user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-
+.follow-btn {
+    width: 80%;
+    height: 50%;
+    margin: 0 auto;
+}
+.review-save {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-around;
+}
+.addRecipe-btn {
+    width: 100%;
+}
 .card-profile-pic {
     width: auto;
     height: 25px;
@@ -227,8 +241,8 @@ hr {
 }
 
 .front-desc-div {
-    margin: 0 auto;
-    position: relative; /* Make the container relative */
+    margin: .25rem auto;
+    position: relative;
 }
 .front-desc {
     margin: .25rem;
@@ -238,6 +252,7 @@ hr {
     margin-bottom: 0;
     margin-top: 0;
     grid-column: 1/3;
+    font-size: 1.25rem;
 }
 
 .front-review {
@@ -247,11 +262,13 @@ hr {
     grid-column: 2;
     width: 100%;
 }
-
+.front-user {
+    margin: 0;
+}
 .media-text {
     text-align: center;
     position: absolute;
-    top: 80%;
+    top: 75%;
     left: 0;
     width: 100%;
     transform: translateY(-70%);
@@ -259,10 +276,9 @@ hr {
 
 .recipe-img {
     display: block;
-    max-width: 100%; /* Ensure the image doesn't exceed its container width */
-    height: auto; /* Maintain aspect ratio */
+    max-width: 100%;
+    height: auto;
 }
-
 
 /* Back of Recipe Card */
 .card_header {

@@ -55,6 +55,7 @@ class User(UserMixin, db.Model):
     sign_up_date = db.Column(db.DateTime, default=datetime.now)
     profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
     recipes = db.relationship("Recipe", backref='user')
+    cookbooks = db.relationship("CookBook", backref='user')
     comments = db.relationship("Comment", backref='user')
     reviews = db.relationship("Review", backref='user')
     following = db.relationship('Follower', foreign_keys='Follower.follower_id', backref='follower')
@@ -76,6 +77,18 @@ class Recipe(db.Model):
     comments = db.relationship("Comment", backref='recipe', cascade="all, delete-orphan")
     reviews = db.relationship('Review', backref='recipe', cascade="all, delete-orphan")
     media = db.relationship('RecipeMedia', backref='recipe', cascade="all, delete-orphan")
+
+cookbook_recipes = db.Table(
+    'cookbook_recipes',
+    db.Column('cookbook_id', db.Integer, db.ForeignKey('cook_book.id'), primary_key=True),
+    db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id'), primary_key=True)
+)
+
+class CookBook(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipes = db.relationship("Recipe", secondary=cookbook_recipes, backref='cookbooks')
 
 class RecipeMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)

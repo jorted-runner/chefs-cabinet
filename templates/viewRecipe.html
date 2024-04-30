@@ -17,10 +17,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/view_slides.js"></script>
     <script defer src="/static/scripts/follow.js"></script>
+    <script defer src="/static/scripts/cookbook.js"></script>
 </head>
 <body>
     {% include "header.html" %}
     <main>
+        <div class="cookBook-Info">
+            <form>
+                <label for="cookbook">Cook Book</label>
+                <select name="cookbook" id="cookbook">
+                    <option value="">Select a Cook Book</option>
+                    <option value="new">New Cook Book</option>
+                    {% for cookbook in current_user.cookbooks %}
+                        <option value="{{ cookbook.name }}">{{ cookbook.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Add">
+            </form>
+        </div>
         <div class="recipe">
             <div class="slideshow-container">
                 {% for image in recipe.media %}
@@ -51,10 +65,12 @@
                         <button class="follow follow-btn">Follow</button>
                     {% endif %}
                 </div>
-                
-                {% if recipe.reviews %}
-                    <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
-                {% endif %}
+                <div class="review-save">
+                    {% if recipe.reviews %}
+                        <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
+                    {% endif %}
+                    <button class="addRecipe-btn">Add to Cook Book</button>   
+                </div>
             </div>
                 <div class="recipe-info">
                     <p class="desc">{{recipe.description }}</p>

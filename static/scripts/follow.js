@@ -6,7 +6,6 @@ if (follow_btns) {
     follow_btns.forEach(follow_btn => {
         follow_btn.addEventListener('click', function() {
             const card = follow_btn.closest('.card__inner');
-            const card_flip_status = card.classList.contains('is-flipped');
             const scrollPosition = window.scrollY || window.pageYOffset;
             const parentForm = follow_btn.closest('.front-title-div, .user-intro').querySelector('form');
             const userID = parentForm.querySelector('#userID').value;
@@ -15,7 +14,6 @@ if (follow_btns) {
                 userID: userID,
                 currentUserID: currentUserID,
             };
-            localStorage.setItem('card_flip_status', card_flip_status);
             fetch('/follow', {
                 method: 'POST',
                 headers: {
@@ -37,13 +35,9 @@ if (follow_btns) {
             .catch(error => {
                 console.error('Error following user:', error);
             });
+            
             window.onload = function() {
                 window.scrollTo(0, scrollPosition);
-                const flipStatus = localStorage.getItem('card_flip_status');
-                
-                if (flipStatus == 'True') {
-                    card.classList.add('is-flipped');
-                }
             };
         });
     });
@@ -83,9 +77,6 @@ if (unFollow_btns) {
             });
             window.onload = function() {
                 window.scrollTo(0, scrollPosition);
-                if (card_flip_status) {
-                    card.classList.add('is-flipped')
-                }
             };
         });
     });    
