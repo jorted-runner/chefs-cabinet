@@ -1,3 +1,8 @@
+# TODO - Figure out add to cookbook iphone/ipad glitch
+# TODO - Cookbook drop down sorting order (most recent first)?
+# TODO - When add to recipe jump back to same page position
+# TODO - Edit ingredients to include and regenerate recipe ('edit and regenerate | step back to add/subtract ingredients page')
+# TODO - Recipe idea/inspiration tile
 # TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Form Styling
 # TODO - Change Colors?

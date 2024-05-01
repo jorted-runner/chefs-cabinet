@@ -38,7 +38,8 @@
                     {% if recipe.reviews %}
                         <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                     {% endif %}
-                    <button class="addRecipe-btn">Add to Cook Book</button>  
+                    <!-- button is hidden until I can sort out the image glitch -->
+                    <button class="addRecipe-btn hidden">Add to Cook Book</button>  
                 </div>
                 
             </div>
