@@ -40,6 +40,11 @@ old_cookbook_recipes = old_cursor.fetchall()
 for recipe in old_cookbook_recipes:
     new_cursor.execute(f"INSERT into cookbook_recipes (cookbook_id, recipe_id) VALUES ('{recipe[0]}', '{recipe[1]}')")
 
+old_cursor.execute(f"SELECT * from follower")
+old_followers = old_cursor.fetchall()
+for follower in old_followers:
+    new_cursor.execute("INSERT into follower (id, follower_id, following_id) values (?, ?, ?)", (follower[0], follower[1], follower[2]))
+
 new_DB.commit()
 new_DB.close()
 old_DB.close()
