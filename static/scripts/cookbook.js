@@ -68,26 +68,31 @@ if (cookBook_DropDown) {
     });    
 }
 
-addCookBook_btn.addEventListener("click", function() {
-    cookBookInfo.classList.remove('hidden');
-    overlay.style.display = 'block';
-    overlay.style.zIndex = '990';
-    cookBookInfo.style.zIndex = '995';
-    document.body.classList.add('no-scroll');
-});
+if (addCookBook_btn) {
+    addCookBook_btn.addEventListener("click", function() {
+        cookBookInfo.classList.remove('hidden');
+        overlay.style.display = 'block';
+        overlay.style.zIndex = '990';
+        cookBookInfo.style.zIndex = '995';
+        document.body.classList.add('no-scroll');
+    });
+}
 
-overlay.addEventListener("click", function() {
-    cookBookInfo.classList.add('hidden');
-    overlay.style.display = 'none';
-    overlay.style.zIndex = 'auto';
-    cookBookInfo.style.zIndex = 'auto';
-    document.body.classList.remove('no-scroll');
-});
+if (overlay) {
+    overlay.addEventListener("click", function() {
+        cookBookInfo.classList.add('hidden');
+        overlay.style.display = 'none';
+        overlay.style.zIndex = 'auto';
+        cookBookInfo.style.zIndex = 'auto';
+        document.body.classList.remove('no-scroll');
+    });
+}
 
-cookBookInfo.addEventListener("click", function(event) {
-    event.stopPropagation();
-});
-
+if (cookBookInfo) {
+    cookBookInfo.addEventListener("click", function(event) {
+        event.stopPropagation();
+    });
+}
 
 function replaceWithTextInput(selectElement) {
     var inputElement = document.createElement("input");

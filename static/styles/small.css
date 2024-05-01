@@ -20,18 +20,21 @@
         margin: auto;
         width: 100%;
         max-width: 375px;
+        z-index: 10;
     }
     .slideImg {
         width: auto;
         height: auto;
         max-height: 375px;
         max-width: 375px;
+        z-index: 10;
     }
     .cookbook-img {
         width: auto;
         height: auto;
         max-height: 360px;
         max-width: 360px;
+        z-index: 10;
     }
     .primary-navigation {
         flex-direction: row; 
