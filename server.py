@@ -41,7 +41,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefscabinet.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_cabinet.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
@@ -95,6 +95,7 @@ class CookBook(db.Model):
     status = db.Column(db.Boolean, nullable=False, default=True)
     cover_img = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/book_image.webp')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    last_modified = db.Column(db.DateTime, default=datetime.now)
     recipes = db.relationship("Recipe", secondary=cookbook_recipes, backref='cookbooks')
 
 class RecipeMedia(db.Model):
