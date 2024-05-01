@@ -17,12 +17,16 @@ if (recipeCards) {
         card.querySelector('.addRecipe-btn').addEventListener("click", function() {
             card.querySelector('.cookBook-Info').classList.remove('hidden');
             card.querySelector('.overlay').style.display = 'block';
+            card.querySelector('.overlay').style.zIndex = '990';
+            card.querySelector('.cookBook-Info').style.zIndex = '995';
             document.body.classList.add('no-scroll');
         });
         
         card.querySelector('.overlay').addEventListener("click", function() {
             card.querySelector('.cookBook-Info').classList.add('hidden');
             card.querySelector('.overlay').style.display = 'none';
+            card.querySelector('.cookBook-Info').style.zIndex = 'auto';
+            card.querySelector('.overlay').style.zIndex = 'auto';
             document.body.classList.remove('no-scroll');
         });
         
@@ -55,7 +59,6 @@ if (recipeCards) {
         }
     });    
 }
-
 if (cookBook_DropDown) {
     cookBook_DropDown.addEventListener("change", function(event) {
         if (event.target.value == 'new') {
@@ -68,12 +71,16 @@ if (cookBook_DropDown) {
 addCookBook_btn.addEventListener("click", function() {
     cookBookInfo.classList.remove('hidden');
     overlay.style.display = 'block';
+    overlay.style.zIndex = '990';
+    cookBookInfo.style.zIndex = '995';
     document.body.classList.add('no-scroll');
 });
 
 overlay.addEventListener("click", function() {
     cookBookInfo.classList.add('hidden');
     overlay.style.display = 'none';
+    overlay.style.zIndex = 'auto';
+    cookBookInfo.style.zIndex = 'auto';
     document.body.classList.remove('no-scroll');
 });
 
@@ -116,4 +123,6 @@ function addPrivacyDropdown() {
     
     submitButton.parentNode.insertBefore(privacyLabel, submitButton);
     submitButton.parentNode.insertBefore(privacyDropdown, submitButton);
-}
+} 
+
+
