@@ -45,8 +45,7 @@
             {% for media in recipe.media %}
             <div class="mySlides fade">
                 <div class="numbertext">{{ loop.index }} / {{ recipe.media | length }}</div>
-                <!-- should re add lazy loading eventually -->
-                <img class="recipe-img slideImg" src="{{ media.img_url }}" alt="Recipe Image">
+                <img class="recipe-img slideImg" src="{{ media.img_url }}" alt="Recipe Image" loading="lazy">
             </div>
             {% endfor %}
             <a class="prev" onclick="plusSlides(this.parentNode.parentNode, -1)">&#10094;</a>
