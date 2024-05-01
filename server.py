@@ -1,5 +1,4 @@
 # TODO - Figure out add to cookbook iphone/ipad glitch
-# TODO - Cookbook drop down sorting order (most recent first)?
 # TODO - When add to recipe jump back to same page position
 # TODO - Edit ingredients to include and regenerate recipe ('edit and regenerate | step back to add/subtract ingredients page')
 # TODO - Recipe idea/inspiration tile
@@ -157,6 +156,11 @@ def avg_rating(list):
     avg_length = total / len(list)
     avg_rating_string = '⭐' * int(avg_length)
     return avg_rating_string
+
+@app.template_filter('date_sort')
+def date_sort(cookbooks):
+    sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
+    return sorted_cookbooks
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -517,6 +521,7 @@ def add_cookbook():
             cookbook = CookBook.query.filter_by(id=cookbook_name, user_id=user_id).first()
         if cookbook:
             recipe = Recipe.query.get(recipe_id)
+            cookbook.last_modified = datetime.now()
             if recipe:
                 if recipe not in cookbook.recipes:
                     cookbook.recipes.append(recipe)
@@ -526,7 +531,7 @@ def add_cookbook():
             else:
                 flash('Invalid recipe ID.', 'error')
         else:
-            new_cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status)
+            new_cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status, last_modified=datetime.now())
             recipe = Recipe.query.get(recipe_id)
             if recipe:
                 new_cookbook.recipes.append(recipe)

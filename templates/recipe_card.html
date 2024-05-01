@@ -7,8 +7,8 @@
                     <label for="cookbook">Cook Book</label>
                     <select name="cookbook" id="cookbook">
                         <option value="">Select a Cook Book</option>
-                        <option value="new">New Cook Book</option>
-                        {% for cookbook in current_user.cookbooks %}
+                        <option value="new">- NEW COOKBOOK -</option>
+                        {% for cookbook in current_user.cookbooks | date_sort %}
                             <option value="{{ cookbook.id }}">{{ cookbook.name }}</option>
                         {% endfor %}
                     </select>

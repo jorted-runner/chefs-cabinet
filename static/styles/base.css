@@ -223,18 +223,34 @@ hr {
     border-radius: 50%;
     margin-right: 10px;
 }
+.profile-header {
+    width: 80%;
+    margin: 0 auto;
+}
 .user-intro {
     display: flex;
     align-items: center;
+    margin: 0 auto;
+    width: 100%;
 }
-
+.follower-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
 .user-profile-pic {
     width: auto;
     height: 75px;
     border-radius: 50%;
     margin-right: 10px; 
 }
-
+.buttons {
+    margin-top: .5rem;
+    display: flex;
+    align-items: left;
+    gap: 1rem;
+}
 .user-intro h1,
 .user-intro h3 {
     margin: 0;
@@ -550,6 +566,12 @@ textarea {
 .cookbook-card {
     height: fit-content;
 }
+table {
+    text-align: center;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
 .hidden {
     display: none;
 }

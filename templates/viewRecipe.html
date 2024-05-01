@@ -26,15 +26,15 @@
 
         <div class="overlay"></div>
 
-        <div class="cookBook-Info hidden">
+        <div class="cookBook-Info card-cookbook-Info hidden">
             <form class="cookbook-form form" id="add-cookbook" method="POST" action="{{url_for('add_cookbook')}}">
                 <label for="cookbook">Cook Book</label>
                 <select name="cookbook" id="cookbook">
                     <option value="">Select a Cook Book</option>
-                    <option value="new">New Cook Book</option>
-                    {% for cookbook in current_user.cookbooks %}
+                    {% for cookbook in current_user.cookbooks | date_sort %}
                         <option value="{{ cookbook.id }}">{{ cookbook.name }}</option>
                     {% endfor %}
+                    <option value="new">- NEW COOKBOOK -</option>
                 </select>
                 <input type="hidden" value="{{current_user.id}}" name="userID">
                 <input type="hidden" value="{{recipe.id}}" name="recipeID">

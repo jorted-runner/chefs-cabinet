@@ -55,6 +55,8 @@
                     <h1>{{ user.username }}</h1>
                     <h3>{{ user.fname }} {{ user.lname }}</h3>
                 </div>
+            </div> 
+            <div class="follower-info">
                 <table>
                     <thead>
                         <tr>
@@ -78,19 +80,22 @@
                 {% elif current_user.id != user.id %}
                     <button class="follow">Follow</button>
                 {% endif %}
-            </div>           
+            </div>
+            <div class="buttons">
+                {% if user.cookbooks %}
+                    <button id="recipes">Recipes</button>
+                    <button id="cookbooks">Cookbooks</button>
+            {% endif %}  
+            </div>
         </div>
-        {% if user.cookbooks %}
-            <button id="recipes">Recipes</button>
-            <button id="cookbooks">Cookbooks</button>
-        {% endif %}
+        
         <div class="recipe_feed profile_feed">
             {% for recipe in all_recipes %}
                 {% include 'recipe_card.html' %}
             {% endfor %}
         </div>
         <div class="cookbook_feed hidden">
-            {% for cookbook in user.cookbooks %}
+            {% for cookbook in (user.cookbooks | date_sort) %}
                 {% if cookbook.status == True or (current_user.id == cookbook.user_id or current_user.is_admin) %}
                 <a href="{{ url_for('cookbook', cookbookID=cookbook.id) }}">
                     <div class="cookbook-card">
