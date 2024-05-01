@@ -13,7 +13,7 @@
         perspective: 1000px;
     }
     .cookbook-card {
-        height: fit-content;
+        height: 500px;
     }
     .slideshow-container {
         position: relative;
