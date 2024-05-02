@@ -95,10 +95,10 @@
             {% if followers %}
                 {% for follower in followers %}
                     <div class="follower-card">
-                        <img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy">
+                        <a href="{{ url_for('user_profile', userID = follower.id)}}"><img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                         <div>
-                            <h3>{{follower.username}}</h3>
-                            <p>{{follower.fname}} {{follower.lname}}</p>
+                            <h3><a href="{{ url_for('user_profile', userID = follower.id)}}">{{ follower.username }}</a></h3>
+                            <a href="{{ url_for('user_profile', userID = follower.id)}}">{{follower.fname}} {{follower.lname}}</a>
                         </div>
                         <form>
                             <input type="hidden" value="{{follower.id}}" id="userID">
@@ -122,10 +122,10 @@
             {% if following %}
                 {% for follower in following %}
                     <div class="follower-card">
-                        <img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy">
+                        <a href="{{ url_for('user_profile', userID = follower.id)}}"><img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy"></a>
                         <div>
-                            <h3>{{follower.username}}</h3>
-                            <p>{{follower.fname}} {{follower.lname}}</p>
+                            <h3><a href="{{ url_for('user_profile', userID = follower.id)}}">{{ follower.username }}</a></h3>
+                            <a href="{{ url_for('user_profile', userID = follower.id)}}">{{follower.fname}} {{follower.lname}}</a>
                         </div>
                         <form>
                             <input type="hidden" value="{{follower.id}}" id="userID">
