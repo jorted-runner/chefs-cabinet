@@ -21,7 +21,7 @@
     {% include "header.html" %}
     <div class="loader-container">
         <div class="spinner"></div>
-        <p class="spinner-text">Generating, this may take up to one minute</p>
+        <p class="spinner-text">This may take up to one minute</p>
     </div>
     {% include "messages.html" %}
     <main>
@@ -35,30 +35,31 @@
         </form>
         <form class="ai-recipe form hidden">
             <h1>Ingredients to Include</h1>
-            <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Seedless Grapes"></label>
-            <button type="submit" id="addInclude">Add</button>
-            <ul id="ingredients"></ul>
+            <label for="newInclude">New Ingredient: <input type="text" id="newInclude" placeholder="Seedless Grapes"></label>
+            <button type="button" id="addInclude">Add</button>
+            <ul id="include"></ul>
             <hr>
             <h1>Ingredients to Exclude</h1>
-            <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Gluten"></label>
-            <button type="submit" id="addExclude">Add</button>
-            <ul id="ingredientsExclude"></ul>
-            <button type="submit" id="generateRecipeBTN">Generate Recipe</button>
+            <label for="newExclude">New Ingredient: <input type="text" id="newExclude" placeholder="Gluten"></label>
+            <button type="button" id="addExclude">Add</button>
+            <ul id="exclude"></ul>
+            <button type="button" id="generateRecipeBTN">Generate Recipe</button>
         </form>
         <form class="blank-recipe form hidden">
             <label for="recipeTitle">Recipe Title: <input type="text" placeholder="Creamy Chicken Noodle Soup" id="recipeTitle"></label>
             <label for="recipeDesc">Recipe Description: <input type="text" placeholder="Creamy Chicken Noodle Soup that will heal all your sicknesses." id="recipeDesc"></label>
             <h1>Ingredients</h1>
             <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Seedless Grapes"></label>
-            <button type="submit" id="addIngredient">Add</button>
+            <button type="button" id="addIngredient">Add</button>
             <ul id="ingredients"></ul>
             <hr>
             <h1>Instructions</h1>
             <label for="newStep">Next Step: <input type="text" id="newStep" placeholder="Mix Dry Ingredients in a Bowl"></label>
             <button type="submit" id="addStep">Add</button>
             <ol id="instructions"></ol>
-            <button type="submit" id="imageGenBTN">Generate Image</button>
+            <button type="button" id="imageGenBTN">Generate Image</button>
         </form>
+        <div class="display-recipe hidden"></div>
     </main>
     {% include "footer.html" %}
 </body>

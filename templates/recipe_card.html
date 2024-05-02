@@ -1,20 +1,21 @@
 <div class="card">
     <div class="card__inner">
         <div class="card__face card__face--front">
-            <div class="overlay"></div>
-            <div class="cookBook-Info card-cookbook-Info hidden">
+            <div class="cookBook-Info hidden">
+                <div class="close-icon">&times;</div>
+                <div class="errors hidden"></div>
                 <form class="cookbook-form form" id="add-cookbook" method="POST" action="{{url_for('add_cookbook')}}">
                     <label for="cookbook">Cook Book</label>
                     <select name="cookbook" id="cookbook">
                         <option value="">Select a Cook Book</option>
-                        <option value="new">- NEW COOKBOOK -</option>
                         {% for cookbook in current_user.cookbooks | date_sort %}
                             <option value="{{ cookbook.id }}">{{ cookbook.name }}</option>
                         {% endfor %}
+                        <option value="new">- NEW COOKBOOK -</option>
                     </select>
-                    <input type="hidden" value="{{current_user.id}}" name="userID">
-                    <input type="hidden" value="{{recipe.id}}" name="recipeID">
-                    <input type="submit" value="Add">
+                    <input type="hidden" value="{{current_user.id}}" name="userID" id="userID">
+                    <input type="hidden" value="{{recipe.id}}" name="recipeID" id="recipeID">
+                    <button id="add_to_cookbook" type="button">Add</button>
                 </form>
             </div>
             <div class="front-title-div">
@@ -38,8 +39,7 @@
                     {% if recipe.reviews %}
                         <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                     {% endif %}
-                    <!-- button is hidden until I can sort out the image glitch -->
-                    <button class="addRecipe-btn hidden">Add to Cook Book</button>  
+                    <button class="addRecipe-btn">Add to Cook Book</button>  
                 </div>
                 
             </div>

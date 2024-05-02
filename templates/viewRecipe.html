@@ -24,9 +24,9 @@
     <main>
         {% include "messages.html" %}
 
-        <div class="overlay"></div>
-
-        <div class="cookBook-Info card-cookbook-Info hidden">
+        <div class="cookBook-Info hidden">
+            <div class="close-icon">&times;</div>
+            <div class="errors hidden"></div>
             <form class="cookbook-form form" id="add-cookbook" method="POST" action="{{url_for('add_cookbook')}}">
                 <label for="cookbook">Cook Book</label>
                 <select name="cookbook" id="cookbook">
@@ -36,9 +36,9 @@
                     {% endfor %}
                     <option value="new">- NEW COOKBOOK -</option>
                 </select>
-                <input type="hidden" value="{{current_user.id}}" name="userID">
-                <input type="hidden" value="{{recipe.id}}" name="recipeID">
-                <input type="submit" value="Add">
+                <input type="hidden" value="{{current_user.id}}" name="userID" id="userID">
+                <input type="hidden" value="{{recipe.id}}" name="recipeID" id="recipeID">
+                <button id="add_to_cookbook" type="button">Add</button>
             </form>
         </div>
         <div class="recipe">

@@ -293,7 +293,8 @@ def generate_images():
         data = request.get_json()
         title = data['title']
         description = data['description']
-        prompt = f"{title}. {description}"
+        ingredients = data['ingredients']
+        prompt = f"{title}. {description}. {ingredients}"
         image_urls = RECIPE_AI.image_generation(prompt)
         return jsonify(images=image_urls)
     except Exception as e:
@@ -519,42 +520,41 @@ def unfollow():
 @app.route('/add_cookbook', methods=['POST'])
 @login_required
 def add_cookbook():
-    cookbook_name = request.form.get('cookbook')
-    user_id = request.form.get('userID')
-    recipe_id = request.form.get('recipeID')
-    status = request.form.get('status')
-    if status == 'private':
-        status = False
-    else:
-        status = True
     try:
-        cookbook = CookBook.query.filter_by(name=cookbook_name, user_id=user_id).first()
-        if not cookbook:
-            cookbook = CookBook.query.filter_by(id=cookbook_name, user_id=user_id).first()
-        if cookbook:
-            recipe = Recipe.query.get(recipe_id)
-            cookbook.last_modified = datetime.now()
-            if recipe:
-                if recipe not in cookbook.recipes:
-                    cookbook.recipes.append(recipe)
-                    db.session.commit()
-                else:
-                    flash('Recipe already exists in the cookbook.', 'error')
-            else:
-                flash('Invalid recipe ID.', 'error')
+        data = request.get_json()
+        cookbook_name = data.get('cookbook')
+        user_id = data.get('userID')
+        recipe_id = data.get('recipeID')
+        status = data.get('status')
+
+        if status == 'private':
+            status = False
         else:
-            new_cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status, last_modified=datetime.now())
-            recipe = Recipe.query.get(recipe_id)
-            if recipe:
-                new_cookbook.recipes.append(recipe)
-                db.session.add(new_cookbook)
+            status = True
+
+        cookbook = CookBook.query.filter_by(id=cookbook_name, user_id=user_id).first()
+        
+        if not cookbook:
+            cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status, last_modified=datetime.now())
+            db.session.add(cookbook)
+            db.session.commit()
+        
+        recipe = Recipe.query.get(recipe_id)
+        
+        if recipe:
+            if recipe not in cookbook.recipes:
+                cookbook.recipes.append(recipe)
+                cookbook.last_modified = datetime.now()
                 db.session.commit()
             else:
-                flash('Invalid recipe ID.', 'error')
+                return jsonify({'error': 'Recipe already exists in the cookbook.'}), 400
+        else:
+            return jsonify({'error': 'Invalid recipe ID.'}), 400
     except Exception as e:
-        flash('An error occurred while adding the cookbook: {}'.format(str(e)), 'error')
-        db.session.rollback() 
-    return redirect(request.referrer)
+        db.session.rollback()
+        return jsonify({'error': 'An error occurred while adding the cookbook: {}'.format(str(e))}), 500
+
+    return jsonify({'success': True}), 200
 
 @app.route('/cookbook/<cookbookID>', methods=['GET'])
 def cookbook(cookbookID):
