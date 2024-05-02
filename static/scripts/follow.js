@@ -7,7 +7,7 @@ if (follow_btns) {
         follow_btn.addEventListener('click', function() {
             const card = follow_btn.closest('.card__inner');
             const scrollPosition = window.scrollY || window.pageYOffset;
-            const parentForm = follow_btn.closest('.front-title-div, .follower-info').querySelector('form');
+            const parentForm = follow_btn.closest('.front-title-div, .follower-info, .follower-card').querySelector('form');
             const userID = parentForm.querySelector('#userID').value;
             const currentUserID = parentForm.querySelector('#currentUserID').value;            
             const data = {
@@ -47,7 +47,7 @@ if (unFollow_btns) {
     unFollow_btns.forEach(unFollow_btn => {
         unFollow_btn.addEventListener('click', function() {
             const scrollPosition = window.scrollY || window.pageYOffset;
-            const parentForm = unFollow_btn.closest('.front-title-div, .follower-info').querySelector('form');
+            const parentForm = unFollow_btn.closest('.front-title-div, .follower-info, .follower-card').querySelector('form');
             const userID = parentForm.querySelector('#userID').value;
             const currentUserID = parentForm.querySelector('#currentUserID').value;             
             const data = {

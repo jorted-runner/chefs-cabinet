@@ -20,6 +20,7 @@
     <script defer src="/static/scripts/follow.js"></script>
     <script defer src="/static/scripts/recipe-cookbook.js"></script>
     <script defer src="/static/scripts/cookbook.js"></script>
+    <script defer src="/static/scripts/show_follow.js"></script>
 
 </head>
 <body>
@@ -66,8 +67,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{user.following | length }}</td>
-                            <td>{{user.followers | length }}</td>
+                            <td id="following">{{user.following | length }}</td>
+                            <td id="followers">{{user.followers | length }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -88,7 +89,61 @@
             {% endif %}  
             </div>
         </div>
-        
+        <div class="overlay_follow"></div>
+        <div class="followers hidden display_fol_cards">
+            {% set followers = user.followers | get_follower_data %}
+            {% if followers %}
+                {% for follower in followers %}
+                    <div class="follower-card">
+                        <img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy">
+                        <div>
+                            <h3>{{follower.username}}</h3>
+                            <p>{{follower.fname}} {{follower.lname}}</p>
+                        </div>
+                        <form>
+                            <input type="hidden" value="{{follower.id}}" id="userID">
+                            <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                        </form>
+                        {% if current_user.id in follower.followers | followers_ids %}
+                            <button class="un-follow">Un-Follow</button>
+                        {% elif current_user.id != follower.id %}
+                            <button class="follow">Follow</button>
+                        {% endif %}
+                    </div>
+                {%endfor %}
+            {% else %}
+            <div class="follower-card">
+                <h1>{{ user.username }} has no followers to display.</h1>
+            </div>
+            {% endif %}
+        </div>
+        <div class="following hidden display_fol_cards">
+            {% set following = user.following | get_following_data %}
+            {% if following %}
+                {% for follower in following %}
+                    <div class="follower-card">
+                        <img class="user-profile-pic follower-card-profile" src="{{ follower.profile_pic }}" alt="Profile Pic" loading="lazy">
+                        <div>
+                            <h3>{{follower.username}}</h3>
+                            <p>{{follower.fname}} {{follower.lname}}</p>
+                        </div>
+                        <form>
+                            <input type="hidden" value="{{follower.id}}" id="userID">
+                            <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                        </form>
+                        {% if current_user.id in follower.followers | followers_ids %}
+                            <button class="un-follow">Un-Follow</button>
+                        {% elif current_user.id != follower.id %}
+                            <button class="follow">Follow</button>
+                        {% endif %}
+                    </div>
+                {%endfor %}
+                {% else %}
+                <div class="follower-card">
+                    <h1>{{user.username}} is not following anyone.</h1>
+                </div>
+                {% endif %}
+        </div>
         <div class="recipe_feed profile_feed">
             {% for recipe in all_recipes %}
                 {% include 'recipe_card.html' %}

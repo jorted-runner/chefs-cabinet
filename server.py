@@ -148,6 +148,18 @@ def custom_split(list):
 def followers_ids(followers):
     return [follower.follower_id for follower in followers]
 
+@app.template_filter('get_follower_data')
+def get_follower_data(followers):
+    user_ids = [follower.follower_id for follower in followers]
+    followers_data = User.query.filter(User.id.in_(user_ids)).all()
+    return followers_data
+
+@app.template_filter('get_following_data')
+def get_following_data(followers):
+    user_ids = [follower.following_id for follower in followers]
+    following_data = User.query.filter(User.id.in_(user_ids)).all()
+    return following_data   
+
 @app.template_filter('avg_rating')
 def avg_rating(list):
     total = 0

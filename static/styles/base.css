@@ -233,6 +233,12 @@ hr {
     margin: 0 auto;
     width: 100%;
 }
+.follower-card {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+}
 .follower-info {
     display: flex;
     align-items: center;
@@ -403,11 +409,37 @@ footer div {
     justify-content: center;
 }
 
+.display_fol_cards {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    z-index: 1000;
+    width: 370px;
+    height: 600px;
+    overflow: scroll;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .card-cookbook-Info {
     width: 90%;
 }
 
 .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+.overlay_follow {
     position: fixed;
     top: 0;
     left: 0;
@@ -571,6 +603,11 @@ table {
     margin: 0 auto;
     font-family: 'Montserrat', sans-serif;
 }
+
+.no-scroll {
+    overflow: hidden;
+}
+
 
 .hidden {
     display: none;
