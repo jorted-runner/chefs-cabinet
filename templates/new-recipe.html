@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <script defer src="{{ url_for('static', filename='scripts/recipeType.js') }}"></script>
+    <script defer src="/static/scripts/recipe_type.js"></script>
 </head>
 <body>
     {% include "header.html" %}
@@ -34,12 +34,31 @@
             </select>
         </form>
         <form class="ai-recipe form hidden">
-            <label>test ai</label>
+            <h1>Ingredients to Include</h1>
+            <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Seedless Grapes"></label>
+            <button type="submit" id="addInclude">Add</button>
+            <ul id="ingredients"></ul>
+            <hr>
+            <h1>Ingredients to Exclude</h1>
+            <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Gluten"></label>
+            <button type="submit" id="addExclude">Add</button>
+            <ul id="ingredientsExclude"></ul>
+            <button type="submit" id="generateRecipeBTN">Generate Recipe</button>
         </form>
         <form class="blank-recipe form hidden">
-            <label>test blank</label>
+            <label for="recipeTitle">Recipe Title: <input type="text" placeholder="Creamy Chicken Noodle Soup" id="recipeTitle"></label>
+            <label for="recipeDesc">Recipe Description: <input type="text" placeholder="Creamy Chicken Noodle Soup that will heal all your sicknesses." id="recipeDesc"></label>
+            <h1>Ingredients</h1>
+            <label for="newIngredient">New Ingredient: <input type="text" id="newIngredient" placeholder="Seedless Grapes"></label>
+            <button type="submit" id="addIngredient">Add</button>
+            <ul id="ingredients"></ul>
+            <hr>
+            <h1>Instructions</h1>
+            <label for="newStep">Next Step: <input type="text" id="newStep" placeholder="Mix Dry Ingredients in a Bowl"></label>
+            <button type="submit" id="addStep">Add</button>
+            <ol id="instructions"></ol>
+            <button type="submit" id="imageGenBTN">Generate Image</button>
         </form>
-        <div class="form-div"></div>
     </main>
     {% include "footer.html" %}
 </body>
