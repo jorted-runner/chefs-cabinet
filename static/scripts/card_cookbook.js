@@ -4,16 +4,18 @@ if (recipeCards) {
     recipeCards.forEach(card => {
         if (card.querySelector("#cookbook")) {
             card.querySelector("#cookbook").addEventListener("change", function(event) {
-                const errorsContainer = card.querySelector('.errors');
-                errorsContainer.classList.add('hidden');
-                errorsContainer.innerHTML = '';
+                const errorsContainer = card.querySelector('.messages');
+                if (errorsContainer) {
+                    errorsContainer.classList.add('hidden');
+                    errorsContainer.innerHTML = '';
+                }
                 if (event.target.value == 'new') {
                     replaceWithTextInput(event.target);
                     addPrivacyDropdown(card);
                 }
             });    
         }
-        card.querySelector('#add_to_cookbook').addEventListener('click', function() {
+        card.querySelector('#add_to_cookbook').addEventListener('click', function(event) {
             const userID = card.querySelector('#userID').value;
             const recipeID = card.querySelector('#recipeID').value;
             var statusElement = card.querySelector('#status');
@@ -23,39 +25,38 @@ if (recipeCards) {
             }
             const cookbook = card.querySelector('#cookbook').value;
             const data = {
-                userID : userID,
-                recipeID : recipeID, 
-                status : status,
-                cookbook : cookbook
+                userID: userID,
+                recipeID: recipeID,
+                status: status,
+                cookbook: cookbook
             };
             if (cookbook) {
                 fetch('/add_cookbook', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Replace this with a div that can be open and closed
-                        alert('Successfully added to Cookbook');
-                        let cookBookInfo = card.querySelector('.cookBook-Info');
-                        cookBookInfo.classList.add('hidden');
-                        document.body.classList.remove('no-scroll');
-                        return response.json();
-                    } else {
-                        return response.json().then(errorData => {
-                            const errorMessage = errorData.error;
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => {
+                        if (response.ok) {
                             const p = document.createElement('p');
-                            p.textContent = errorMessage;
-                            card.querySelector('.errors').appendChild(p);
-                            card.querySelector('.errors').classList.remove('hidden');
-                        });
-                    }
-                })
+                            p.textContent = "Recipe Successfully added to Cookbook.";
+                            card.querySelector('.messages').appendChild(p);
+                            card.querySelector('.messages').classList.remove('hidden');
+                            return response.json();
+                        } else {
+                            return response.json().then(errorData => {
+                                const errorMessage = errorData.error;
+                                const p = document.createElement('p');
+                                p.textContent = errorMessage;
+                                card.querySelector('.messages').appendChild(p);
+                                card.querySelector('.messages').classList.remove('hidden');
+                            });
+                        }
+                    })
             }
-        });
+        });        
     });    
 
     document.addEventListener("click", function(event) {

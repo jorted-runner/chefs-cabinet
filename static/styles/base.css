@@ -398,7 +398,7 @@ footer div {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
-    max-width: 300px;
+    max-width: 350px;
     height: 30%;
     background: white;
     z-index: 1000;

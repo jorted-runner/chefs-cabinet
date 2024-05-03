@@ -6,7 +6,7 @@ const add_to_cookbook = document.querySelector('#add_to_cookbook');
 
 if (cookBook_DropDown) {
     cookBook_DropDown.addEventListener("change", function(event) {
-        const errorsContainer = document.querySelector('.errors');
+        const errorsContainer = document.querySelector('.messages');
         errorsContainer.classList.add('hidden');
         errorsContainer.innerHTML = '';
         if (event.target.value == 'new') {
@@ -99,17 +99,18 @@ add_to_cookbook.addEventListener('click', function() {
         .then(response => {
             if (response.ok) {
                 // Replace this with a div that can be open and closed
-                alert('Successfully added to Cookbook');
-                cookBookInfo.classList.add('hidden');
-                document.body.classList.remove('no-scroll');
+                const p = document.createElement('p');
+                p.textContent = "Recipe Successfully added to Cookbook.";
+                document.querySelector('.messages').appendChild(p);
+                document.querySelector('.messages').classList.remove('hidden');
                 return response.json();
             } else {
                 return response.json().then(errorData => {
                     const errorMessage = errorData.error;
                     const p = document.createElement('p');
                     p.textContent = errorMessage;
-                    document.querySelector('.errors').appendChild(p);
-                    document.querySelector('.errors').classList.remove('hidden');
+                    document.querySelector('.messages').appendChild(p);
+                    document.querySelector('.messages').classList.remove('hidden');
                 });
             }
         })
