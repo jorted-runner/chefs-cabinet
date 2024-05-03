@@ -71,7 +71,7 @@ if (recipeCards) {
 
     document.addEventListener("click", function(event) {
         let target = event.target;
-        if (target.classList.contains('close-icon')) {
+        if (target.classList.contains('card-close')) {
             let card = target.closest('.card');
             let cookBookInfo = card.querySelector('.cookBook-Info');
             cookBookInfo.classList.add('hidden');
