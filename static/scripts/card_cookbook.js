@@ -75,6 +75,11 @@ if (recipeCards) {
             let card = target.closest('.card');
             let cookBookInfo = card.querySelector('.cookBook-Info');
             cookBookInfo.classList.add('hidden');
+            const scrollPosition = window.scrollY || window.pageYOffset;
+            window.location.reload();
+            window.onload = function() {
+                window.scrollTo(0, scrollPosition);
+            };
         }
     });
 

@@ -28,6 +28,11 @@ if (close_btn) {
     close_btn.addEventListener("click", function() {
         cookBookInfo.classList.add('hidden');
         document.body.classList.remove('no-scroll');
+        const scrollPosition = window.scrollY || window.pageYOffset;
+        window.location.reload();
+        window.onload = function() {
+            window.scrollTo(0, scrollPosition);
+        };
     });
 }
 
