@@ -22,26 +22,7 @@
 
 </head>
 <body>
-    <header>
-        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
-        <nav>
-            {% if not current_user.is_authenticated: %}
-                <ul class="primary-navigation">
-                    <li><a href="{{ url_for('home')}}">Home</a></li>
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Register</a></li>
-                </ul>
-            {% else: %}
-                <ul class="primary-navigation">
-                    <li><a href="{{ url_for('home') }}"><img src="/static/images/home.svg" alt="Home Icon" class="nav-icon"></a></li>
-                    <li><a href="{{ url_for('search') }}"><img src="/static/images/search-icon.svg" alt="Search Icon" class="nav-icon"></a></li>
-                    <li><a href="{{ url_for('new_recipe') }}"><img src="/static/images/plus-icon.svg" alt="New Recipe Icon" class="nav-icon"></a></li>
-                    <li><a href="{{ url_for('user_profile', userID = current_user.id)}}"><img src="/static/images/temp-profile-icon.svg" alt="Profile Icon" class="nav-icon"></a></li>
-                    <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-                </ul>
-            {% endif %}  
-        </nav>
-    </header>
+    {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
 
@@ -64,6 +45,13 @@
             </div>           
         </div>
         <h1>{{cookbook.name}}</h1>
+        {% if current_user.id == cookbook.user.id %}
+                <div>
+                    <form action="{{ url_for('edit_cookbook', cookbookID=cookbook.id) }}" method="GET" name="editCookbookForm_{{ cookbook.id }}">
+                        <input type="submit" value="Edit Cookbook">
+                    </form>
+                </div>    
+            {% endif %}
         <div class="recipe_feed">
             {% for recipe in cookbook.recipes %}
                 {% include 'recipe_card.html' %}

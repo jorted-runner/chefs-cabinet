@@ -17,7 +17,7 @@ edit_buttons.forEach((button) => {
 
         const text = clone.textContent.trim();
 
-        const textarea = document.createElement("textarea"); // Change input to textarea
+        const textarea = document.createElement("textarea");
         textarea.classList.add('edit_input');
         textarea.value = text;
 
@@ -25,7 +25,7 @@ edit_buttons.forEach((button) => {
         saveButton.textContent = "Save";
 
         parentElement.innerHTML = "";
-        parentElement.appendChild(textarea); // Append textarea instead of input
+        parentElement.appendChild(textarea);
         parentElement.appendChild(saveButton);
 
         textarea.focus();

@@ -138,6 +138,16 @@
                 </form>
                 <button id="reviewBtn">Rate and Review</button>
             </div>
+            {% if current_user.id == recipe.user.id %}
+                <div>
+                    <form action="{{ url_for('edit_recipe', recipeID=recipe.id, userID = current_user.id ) }}" method="GET" name="editRecipeForm_{{ recipe.id }}">
+                        <input type="submit" value="Edit Recipe">
+                    </form>
+                    <form action="{{ url_for('delete_recipe', recipe_id=recipe.id, userID = current_user.id ) }}" method="POST" name="deleteRecipeForm_{{ recipe.id }}">
+                        <input type="submit" value="Delete Recipe">
+                    </form>
+                </div>    
+            {% endif %}
             
         </div>
     </main>

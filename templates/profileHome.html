@@ -24,10 +24,7 @@
 
 </head>
 <body>
-    <header>
-        <a href="{{ url_for('home') }}"><h1 class="header-h1">Chefs Cabinet</h1></a>
-        {% include 'navigation.html' %}
-    </header>
+    {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
         <div class="profile-header">
@@ -133,16 +130,15 @@
         <div class="cookbook_feed hidden">
             {% for cookbook in (user.cookbooks | date_sort) %}
                 {% if cookbook.status == True or (current_user.id == cookbook.user_id or current_user.is_admin) %}
-                <a href="{{ url_for('cookbook', cookbookID=cookbook.id) }}">
-                    <div class="cookbook-card">
-                        <h1>{{cookbook.name}}</h1>
-                        {% if cookbook.status == False %}
-                            <p>Private Cookbook - Only visible to you</p>
-                        {% endif %}
-                        <img class="cookbook-img" src="{{ cookbook.cover_img }}" alt="Cookbook Cover Image" loading="lazy">
-                    </div>
-                </a>
-                                        
+                    <a href="{{ url_for('cookbook', cookbookID=cookbook.id) }}">
+                        <div class="cookbook-card">
+                            <h1>{{cookbook.name}}</h1>
+                            {% if cookbook.status == False %}
+                                <p>Private Cookbook - Only visible to you</p>
+                            {% endif %}
+                            <img class="cookbook-img" src="{{ cookbook.cover_img }}" alt="Cookbook Cover Image" loading="lazy">
+                        </div>
+                    </a>                   
                 {% endif %}
             {% endfor %}
         </div>

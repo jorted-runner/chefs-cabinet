@@ -346,10 +346,10 @@ def edit_profile(userID):
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
-                    return render_template("editProfile.html", user=user, current_user=current_user)
+                    return render_template("edit_profile.html", user=user, current_user=current_user)
             if updated_email == updated_username:
                 flash('Username and Email cannot match. Please choose a unique username.')
-                return render_template("editProfile.html", user=user, current_user=current_user)
+                return render_template("edit_profile.html", user=user, current_user=current_user)
             user.fname = updated_Fname
             user.lname = updated_lName
             user.email = updated_email
@@ -358,7 +358,7 @@ def edit_profile(userID):
                 user.profile_pic = updated_profile
             db.session.commit()
             return redirect(url_for('user_profile', userID=userID))
-        return render_template("editProfile.html", user=user, current_user=current_user)
+        return render_template("edit_profile.html", user=user, current_user=current_user)
     else:
         return redirect(url_for('home'))
 
@@ -367,6 +367,7 @@ def edit_profile(userID):
 def edit_recipe(recipeID, userID):
     recipe = Recipe.query.filter_by(id=recipeID).first()
     if userID != recipe.user.id:
+        flash('You do not own that recipe. You cannot edit it.')
         return redirect(url_for('home'))
     else:
         return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
@@ -558,6 +559,19 @@ def add_cookbook():
 
     return jsonify({'success': True}), 200
 
+@app.route('/edit_cookbook/<cookbookID>', methods=['GET', 'POST'])
+@login_required
+def edit_cookbook(cookbookID):
+    cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
+    if request.method == 'POST':
+        return redirect(url_for("home"))
+    else:
+        if cookbook.user_id == current_user.id:
+            return render_template('edit_cookbook.html', cookbook=cookbook, current_user=current_user)
+        else:
+            flash('You do not have permission to edit this cookbook')
+            return redirect(url_for("home"))
+
 @app.route('/cookbook/<cookbookID>', methods=['GET'])
 def cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
@@ -621,14 +635,14 @@ def admin_edit_profile(userID):
         if user.username != updated_username:
             if User.query.filter_by(username=updated_username).first():
                 flash("User with username " + updated_username + " already exists. Try again.")
-                return render_template("editProfile.html", user = user, current_user=current_user)
+                return render_template("edit_profile.html", user = user, current_user=current_user)
         if user.email != updated_email:
             if User.query.filter_by(email=updated_email).first():
                 flash("User with that email address already exists. Try again.")
-                return render_template("editProfile.html", user = user, current_user=current_user)
+                return render_template("edit_profile.html", user = user, current_user=current_user)
         if updated_email == updated_username:
             flash('Username and Email cannot match. Please choose a unique username.')
-            return render_template("editProfile.html", user = user, current_user=current_user)
+            return render_template("edit_profile.html", user = user, current_user=current_user)
         user.fname = updated_Fname
         user.lname = updated_lName
         user.email = updated_email

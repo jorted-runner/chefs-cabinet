@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet Cookbook">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="/static/scripts/edit_cookbook.js"></script>
+    <script defer src="/static/scripts/save_cookbook.js"></script>
+
+</head>
+<body>
+    {% include "header.html" %}
+    <main>
+        <h1>Edit Cookbook:</h1>
+        {% include "messages.html" %}
+        <img class="cookbook-img" src="{{ cookbook.cover_img }}" alt="Cookbook Cover Image" loading="lazy"><button class="edit_image">Edit</button>
+        <p class="cookbook_id hidden">{{cookbook.id}}</p>
+        <h3>Cookbook Name:</h3>
+        <p class="cookbook_name">{{cookbook.name}} <button id="edit_name" class="edit_btn">Edit</button></p>
+        <h3>Cookbook Status:</h3>
+        {% if cookbook.status == True %}
+            <p class="cookbook_status">Public <button class="edit_btn">Edit</button></p>
+        {% else %}
+            <p class="cookbook_status">Private <button class="edit_btn">Edit</button></p>
+        {% endif %}
+        <div>
+            <p><strong>Recipes:</strong></p>
+            <ul>
+                {% for recipe in cookbook.recipes %}
+                    <li>{{recipe.title}} <button class="remove_btn">Remove</button></li>
+                {% endfor %}
+            </ul>
+            
+        </div>
+        <button class="save_btn">Save</button>
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>
