@@ -39,8 +39,13 @@
                     {% if recipe.reviews %}
                         <p class="front-review">{{ recipe.reviews | avg_rating }} ({{ recipe.reviews | length }})</p>
                     {% endif %}
-                    <button class="addRecipe-btn">Add to Cook Book</button>  
+                    {% if 'iPhone' in request.user_agent.string or 'iPad' in request.user_agent.string %}
+                        <button class="addRecipe-btn hidden">Add to Cook Book</button>
+                    {% else %}
+                        <button class="addRecipe-btn">Add to Cook Book</button>  
+                    {% endif %}
                 </div>
+                
                 
             </div>
             {% for media in recipe.media %}
