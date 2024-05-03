@@ -1,3 +1,5 @@
+# TODO - Remove add to cook book from recipe card still weird
+# TODO - fix search page so that when you follow someone hou still see something
 # TODO - Figure out add to cookbook iphone/ipad glitch
 # TODO - When add to recipe jump back to same page position
 # TODO - Edit ingredients to include and regenerate recipe ('edit and regenerate | step back to add/subtract ingredients page')
