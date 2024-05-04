@@ -16,8 +16,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <script defer src="/static/scripts/edit_cookbook.js"></script>
-    <script defer src="/static/scripts/save_cookbook.js"></script>
-
 </head>
 <body>
     {% include "header.html" %}
@@ -30,18 +28,17 @@
         <p class="cookbook_name">{{cookbook.name}} <button id="edit_name" class="edit_btn">Edit</button></p>
         <h3>Cookbook Status:</h3>
         {% if cookbook.status == True %}
-            <p class="cookbook_status">Public <button class="edit_btn">Edit</button></p>
+            <p class="cookbook_status">Public <button class="edit_btn edit_status">Edit</button></p>
         {% else %}
-            <p class="cookbook_status">Private <button class="edit_btn">Edit</button></p>
+            <p class="cookbook_status">Private <button class="edit_btn edit_status">Edit</button></p>
         {% endif %}
         <div>
             <p><strong>Recipes:</strong></p>
             <ul>
                 {% for recipe in cookbook.recipes %}
-                    <li>{{recipe.title}} <button class="remove_btn">Remove</button></li>
+                    <li>{{recipe.title}} <p class="hidden recipe-id">{{recipe.id}}</p><button class="remove_btn">Remove</button></li>
                 {% endfor %}
             </ul>
-            
         </div>
         <button class="save_btn">Save</button>
     </main>

@@ -296,12 +296,16 @@ hr {
     transform: translateY(-70%);
 }
 
-.recipe-img, .cookbook-img {
+.recipe-img {
     display: block;
     max-width: 100%;
     height: auto;
 }
-
+.cookbook-img {
+    display: block;
+    max-width: 400px;
+    height: auto;
+}
 /* Back of Recipe Card */
 .card_header {
     height: 95%;
@@ -605,7 +609,6 @@ table {
 .behind-overlay {
     z-index: 1;
 }
-
 .hidden {
     display: none;
 }
