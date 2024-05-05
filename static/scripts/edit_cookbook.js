@@ -6,6 +6,8 @@ const save_button = document.querySelector('.save_btn');
 
 const cookbook_img = document.querySelector('.cookbook-img');
 
+let removedIDs = [];
+
 editStatus_button.addEventListener('click', function() {
     const parentElement = editStatus_button.parentElement;
     editStatus_button.remove();
@@ -38,7 +40,7 @@ function addPrivacyDropdown(parentElement, currentPrivacy) {
     privacyDropdown.id = "status";
 
     var optionPublic = document.createElement("option");
-    optionPublic.value = "public";
+    optionPublic.value = "Public";
     optionPublic.text = "Public";
     if (currentPrivacy === "Public") {
         optionPublic.selected = true;
@@ -46,7 +48,7 @@ function addPrivacyDropdown(parentElement, currentPrivacy) {
     privacyDropdown.appendChild(optionPublic);
     
     var optionPrivate = document.createElement("option");
-    optionPrivate.value = "private";
+    optionPrivate.value = "Private";
     optionPrivate.text = "Private";
     if (currentPrivacy === "Private") {
         optionPrivate.selected = true;
@@ -144,6 +146,7 @@ function editParentText() {
 
 remove_buttons.forEach(button => {
     button.addEventListener('click', function() {
+        removedIDs.push(button.parentElement.querySelector('.recipe-id').textContent)
         button.parentElement.remove();
     });
 });
@@ -174,7 +177,12 @@ save_button.addEventListener('click', function() {
     const recipe_id_elements = document.querySelectorAll('.recipe-id');
     const cookbook_id = document.querySelector('.cookbook_id').textContent;
     const input = document.querySelector('#file_input');
-    const file = input.files[0];
+    var file = '';
+    if (input) {
+        file = input.files[0];
+    } else {
+        file = null;
+    }
     const name = getText(name_element);
     const status = getText(status_element);
 
@@ -187,9 +195,27 @@ save_button.addEventListener('click', function() {
         name: name,
         status: status,
         cover_img: file,
-        recipes: recipe_ids
+        recipes: recipe_ids,
+        removedRecipes: removedIDs
     }
-    console.log(data);
+    fetch(`/edit_cookbook/${cookbook_id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            removedIDs = [];
+            throw new Error('Failed to update cookbook');
+        }
+    })
+    .then(data => {
+        window.location.href = `/cookbook/${cookbook_id}`;
+    })
 });
 
 function getText(element) {

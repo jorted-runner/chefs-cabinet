@@ -26,7 +26,7 @@ from datetime import date
 from functools import wraps
 from sqlalchemy import func
 from datetime import datetime
-from PIL import Image
+from sqlalchemy import and_
 
 import json
 import os
@@ -564,7 +564,38 @@ def add_cookbook():
 def edit_cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
     if request.method == 'POST':
-        return redirect(url_for("home"))
+        try:
+            data = request.get_json()
+            cookbook_id = data.get('id')
+            name = data.get('name')
+            status = data.get('status')
+            cover_img = data.get('cover_img')
+            recipes = data.get('recipes', [])
+            removedRecipes = data.get('removedRecipes', []) 
+            cookbook = CookBook.query.filter_by(id=cookbook_id).first()
+            cookbook.name = name
+            if status == 'Private':
+                cookbook.status = False
+            else:
+                cookbook.status = True
+            if cover_img:
+                cookbook.cover_img = cover_img
+            for removedID in removedRecipes:
+                db.session.execute(
+                    cookbook_recipes.delete().where(
+                        and_(
+                            cookbook_recipes.c.recipe_id == removedID,
+                            cookbook_recipes.c.cookbook_id == cookbook.id
+                        )
+                    )
+                )
+            cookbook.last_modified = datetime.now()
+            db.session.commit()
+            return jsonify({'success': True}), 200
+        except:
+            db.session.rollback()
+            traceback.print_exc()
+            return jsonify({'success': False, 'message': 'Internal server error'}), 500 
     else:
         if cookbook.user_id == current_user.id:
             return render_template('edit_cookbook.html', cookbook=cookbook, current_user=current_user)

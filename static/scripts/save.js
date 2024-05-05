@@ -51,7 +51,6 @@ saveButton.addEventListener('click', function() {
         ingredients: JSON.stringify(INGREDIENTS),
         images: IMAGES
     };
-    console.log(recipeData);
     fetch('/update_recipe', {
         method: 'POST',
         headers: {
@@ -63,9 +62,9 @@ saveButton.addEventListener('click', function() {
         if (response.ok) {
             return response.json();
         } else {
-            IMAGES = []
-            INGREDIENTS = []
-            INSTRUCTIONS = []
+            IMAGES = [];
+            INGREDIENTS = [];
+            INSTRUCTIONS = [];
             throw new Error('Failed to save recipe');
         }
     })
