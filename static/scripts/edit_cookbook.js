@@ -185,25 +185,20 @@ save_button.addEventListener('click', function() {
     }
     const name = getText(name_element);
     const status = getText(status_element);
-
-    recipe_ids = [];
+    const formData = new FormData(); 
+    formData.append('id', cookbook_id);
+    formData.append('name', name);
+    formData.append('status', status);
+    formData.append('removedRecipes', JSON.stringify(removedIDs));
+    formData.append('cover_img', file);
+    
     recipe_id_elements.forEach(id => {
-        recipe_ids.push(id.textContent);
+        formData.append('recipes[]', id.textContent);
     });
-    const data = {
-        id: cookbook_id,
-        name: name,
-        status: status,
-        cover_img: file,
-        recipes: recipe_ids,
-        removedRecipes: removedIDs
-    }
+    
     fetch(`/edit_cookbook/${cookbook_id}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        body: formData
     })
     .then(response => {
         if (response.ok) {

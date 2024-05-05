@@ -176,7 +176,7 @@ def date_sort(cookbooks):
     sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
     return sorted_cookbooks
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -565,21 +565,25 @@ def edit_cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
     if request.method == 'POST':
         try:
-            data = request.get_json()
-            cookbook_id = data.get('id')
-            name = data.get('name')
-            status = data.get('status')
-            cover_img = data.get('cover_img')
-            recipes = data.get('recipes', [])
-            removedRecipes = data.get('removedRecipes', []) 
+            cookbook_id = request.form.get('id')
+            name = request.form.get('name')
+            status = request.form.get('status')
+            cover_img_file = request.files['cover_img']
+            if cover_img_file: 
+                if cover_img_file and allowed_file(cover_img_file.filename):
+                    filename = secure_filename(cover_img_file.filename)
+                    file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    cover_img_file.save(file_name)
+                cover_img = IMAGE_PROCESSOR.upload_file(file_name)
+                cookbook.cover_img = cover_img
+            recipes = request.form.get('recipes', [])
+            removedRecipes = request.form.get('removedRecipes', []) 
             cookbook = CookBook.query.filter_by(id=cookbook_id).first()
             cookbook.name = name
             if status == 'Private':
                 cookbook.status = False
             else:
                 cookbook.status = True
-            if cover_img:
-                cookbook.cover_img = cover_img
             for removedID in removedRecipes:
                 db.session.execute(
                     cookbook_recipes.delete().where(
