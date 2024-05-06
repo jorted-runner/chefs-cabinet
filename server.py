@@ -1,4 +1,6 @@
-# TODO - Fix add images to recipe. I want it to just display the chosen file rather than upload to S3. Only upload to S3 when user saves the recipe
+# TODO - Generate Shopping list
+# TODO - Allow user to reorder recipe images
+# TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
 # TODO - fix search page so that when you follow someone hou still see something
 # TODO - Figure out 'add to cookbook' iphone/ipad glitch
 # TODO - When add to recipe jump back to same page position
