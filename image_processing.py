@@ -4,6 +4,7 @@ import boto3
 import uuid
 from dotenv import load_dotenv
 from PIL import Image
+from werkzeug.utils import secure_filename
 
 class ImageProcessing:
     def __init__(self):
@@ -14,7 +15,12 @@ class ImageProcessing:
             self.working_dir = "/var/www/chefs-cab/static/images"
         else:
             self.working_dir = "static\images"
+        self.ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
+    def allowed_file(self, filename):
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in self.ALLOWED_EXTENSIONS
+    
     def image_convert(self, input_path, file_name, width, height):
         file_name = os.path.splitext(file_name)[0] + '.webp'
         output_path = os.path.join(self.working_dir, file_name)
@@ -29,8 +35,14 @@ class ImageProcessing:
                 new_width = int(new_height * aspect_ratio)
             resized_img = img.resize((new_width, new_height))
             resized_img.save(output_path, 'webp')
-        
         return output_path
+
+    def download_userIMG(self, file):
+        if file and self.allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_name = os.path.join(self.working_dir, filename)
+            file.save(file_name)
+        return file_name
 
     def download_image(self, image_url):
         new_filename = uuid.uuid4().hex + ".jpg"

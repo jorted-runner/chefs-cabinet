@@ -176,19 +176,10 @@ def date_sort(cookbooks):
     sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
     return sorted_cookbooks
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 @app.route("/upload_image", methods=['POST'])
 def upload_image():
     image_file = request.files['image']
-    if image_file and allowed_file(image_file.filename):
-        filename = secure_filename(image_file.filename)
-        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image_file.save(file_name)
+    file_name = IMAGE_PROCESSOR.download_userIMG(file=image_file)
     return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
 
 @app.route("/")
@@ -345,10 +336,8 @@ def edit_profile(userID):
             user.lname = updated_lName
             user.email = updated_email
             user.username = updated_username
-            if updated_profile and allowed_file(updated_profile.filename):
-                filename = secure_filename(updated_profile.filename)
-                file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                updated_profile.save(file_name)
+            if updated_profile:
+                file_name = IMAGE_PROCESSOR.download_userIMG(file=updated_profile)
                 updated_profile_url = IMAGE_PROCESSOR.upload_profile(file_name)
                 user.profile_pic = updated_profile_url
             db.session.commit()
@@ -566,10 +555,7 @@ def edit_cookbook(cookbookID):
                 status = request.form.get('status')
                 cover_img_file = request.files['cover_img']
                 if cover_img_file: 
-                    if cover_img_file and allowed_file(cover_img_file.filename):
-                        filename = secure_filename(cover_img_file.filename)
-                        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        cover_img_file.save(file_name)
+                    file_name = IMAGE_PROCESSOR.download_userIMG(file=cover_img_file)
                     cover_img = IMAGE_PROCESSOR.upload_file(file_name)
                     cookbook.cover_img = cover_img
                 removedRecipes = request.form.get('removedRecipes', []) 
