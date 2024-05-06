@@ -1,8 +1,7 @@
-# TODO - Remove add to cook book from recipe card still weird
+# TODO - Fix add images to recipe. I want it to just display the chosen file rather than upload to S3. Only upload to S3 when user saves the recipe
 # TODO - fix search page so that when you follow someone hou still see something
-# TODO - Figure out add to cookbook iphone/ipad glitch
+# TODO - Figure out 'add to cookbook' iphone/ipad glitch
 # TODO - When add to recipe jump back to same page position
-# TODO - Edit ingredients to include and regenerate recipe ('edit and regenerate | step back to add/subtract ingredients page')
 # TODO - Recipe idea/inspiration tile
 # TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Form Styling
