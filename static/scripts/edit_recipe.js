@@ -1,3 +1,5 @@
+import { getText } from "./utils.js";
+
 const edit_buttons = document.querySelectorAll('.edit_btn');
 const delete_buttons = document.querySelectorAll('.delete_btn');
 const add_step = document.querySelector('.add_step_btn');
@@ -5,22 +7,111 @@ const add_ingredient = document.querySelector('.add_ingredient_btn');
 const instructions = document.querySelectorAll('.step');
 const add_image = document.querySelector('.add_image_btn');
 
+const saveButton = document.querySelector('.save_btn');
+
+var INSTRUCTIONS = [];
+var INGREDIENTS = [];
+var IMAGES = [];
+var USER_FILES = [];
+var REMOVED_IMAGES = [];
+
+saveButton.addEventListener('click', function() {
+    const recipe_id = document.querySelector('.recipe_id').textContent;
+    const recipe_title = document.querySelector('.title');
+    const title = getText(recipe_title);
+    const recipe_desc = document.querySelector('.desc');
+    const desc = getText(recipe_desc);
+
+    const instructions = document.querySelectorAll('.step');
+    instructions.forEach(step => {
+        const text = getText(step);
+        INSTRUCTIONS.push(text);
+    });
+    const ingredients = document.querySelectorAll('.item');
+    ingredients.forEach(item => {
+        const text = getText(item);
+        INGREDIENTS.push(text);
+    });
+    
+    const formData = new FormData();
+    formData.append('id', recipe_id);
+    formData.append('title', title);
+    formData.append('desc', desc);
+    formData.append('instructions', JSON.stringify(INSTRUCTIONS));
+    formData.append('ingredients', JSON.stringify(INGREDIENTS));
+    const userUploads = document.querySelectorAll('.user-uploads');
+    if (userUploads) {
+        Array.from(userUploads).forEach(image => {
+            if (image.files.length > 0) {
+                const file = image.files[0];
+                USER_FILES.push(file);
+            }
+        });
+        USER_FILES.forEach(file => {
+            formData.append('userUploads', file);
+        });
+    }
+    formData.append('removed_images', JSON.stringify(REMOVED_IMAGES));
+    fetch('/update_recipe', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            IMAGES = [];
+            INGREDIENTS = [];
+            INSTRUCTIONS = [];
+            USER_FILES = [];
+            throw new Error('Failed to save recipe');
+        }
+    })
+    .then(data => {
+        console.log('Recipe saved successfully');
+        window.location.href = `/view_recipe/${recipe_id}`;
+    })
+    .catch(error => {
+        console.error('Error saving recipe:', error);
+    });
+});
+
+function check_num_images() {
+    const delete_image_buttons = document.querySelectorAll('.delete_image_btn');
+    const num_images = document.querySelectorAll('.recipe-image').length;
+    const userUploads = document.querySelectorAll('.user-uploads');
+    const USER_FILES = [];
+    userUploads.forEach(image => {
+        if (image.files.length > 0) {
+            const file = image.files[0];
+            USER_FILES.push(file);
+        }
+    });
+    if ((num_images > 1 && USER_FILES.length > 0) || num_images >=2 ) {
+        delete_image_buttons.forEach(button => {
+            button.classList.remove('hidden');
+            button.addEventListener('click', function() {
+                const parent = button.parentElement;
+                REMOVED_IMAGES.push(parent.querySelector('.recipe-image').src);
+                parent.remove();
+                check_num_images();
+            })
+        });
+    } else {
+        delete_image_buttons.forEach(button => {
+            button.classList.add('hidden');
+        });
+    }
+}
+
+
 edit_buttons.forEach((button) => {
     button.addEventListener("click", function() {
         const parentElement = button.parentElement;
-
-        const clone = parentElement.cloneNode(true);
-
-        clone.querySelectorAll('.edit_btn, .delete_btn').forEach(button => {
-            button.remove();
-        });
-
-        const text = clone.textContent.trim();
-
+        const text = getText(parentElement);
         const textarea = document.createElement("textarea");
         textarea.classList.add('edit_input');
         textarea.value = text;
-
         const saveButton = document.createElement("button");
         saveButton.textContent = "Save";
 
@@ -57,14 +148,7 @@ edit_buttons.forEach((button) => {
 
 function editParentText() {
     const parentElement = this.parentElement;
-
-    const clone = parentElement.cloneNode(true);
-
-    clone.querySelectorAll('.edit_btn, .delete_btn').forEach(button => {
-        button.remove();
-    });
-
-    const text = clone.textContent.trim();
+    const text = getText(parentElement);
 
     const textarea = document.createElement("textarea"); // Change input to textarea
     textarea.classList.add('edit_input');
@@ -143,6 +227,7 @@ function createStepInput(currentSteps) {
             if (stepNumber && !isNaN(stepNumber)) {
                 const stepLi = document.createElement("li");
                 stepLi.textContent = step;
+                stepLi.classList.add('step');
                 const editButton = document.createElement("button");
                 editButton.textContent = "Edit";
                 editButton.classList.add("edit_btn");
@@ -191,6 +276,7 @@ add_ingredient.addEventListener("click", function() {
         saveButton.remove();
         const newItem = document.createElement('li');
         newItem.textContent = newValue;
+        newItem.classList.add('item');
         targetElement.appendChild(newItem);
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
@@ -216,42 +302,24 @@ add_step.addEventListener("click", function() {
     targetElement.appendChild(newStepInput);
 });
 
-add_image.addEventListener("click", function() {
-    const input = document.querySelector('#image_up');
-    const file = input.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-        fetch('/upload_image', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                alert('Error uploading Image');
-            }
-        })
-        .then(data => {
-            const new_div = document.createElement('div');
-            const image_url = data.image_url;
-            const newImage = document.createElement('img');
-            newImage.src = image_url;
-            newImage.classList.add('recipe-image');
-            newImage.setAttribute('alt', 'Recipe Image');
-            newImage.setAttribute('loading', 'lazy');
-            new_div.appendChild(newImage);
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.classList.add("delete_btn");
-            deleteButton.addEventListener('click', function() {
-                deleteButton.parentElement.remove();
-            });
-            new_div.appendChild(deleteButton);
-            document.querySelector('.images').appendChild(new_div);
-            input.value = '';
-        })
-        .catch(error => console.error(error));
+add_image.addEventListener('click', function() {
+    check_num_images();
+    var container = document.querySelector('.images');
+    var label = document.createElement('label');
+    label.textContent = 'New Image: ';
+    var input = document.createElement('input');
+    input.addEventListener('change', function() {
+        check_num_images();
+    });
+    input.classList.add('recipe-image');
+    input.classList.add('user-uploads');
+    input.setAttribute('type', 'file');
+    input.setAttribute('name', 'image');
+    label.appendChild(input);
+    container.appendChild(label);
+    if (document.querySelectorAll('.recipe-image').length >= 10) {
+        add_image.classList.add('hidden');
     }
 });
+
+check_num_images();

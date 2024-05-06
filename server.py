@@ -175,12 +175,6 @@ def date_sort(cookbooks):
     sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
     return sorted_cookbooks
 
-@app.route("/upload_image", methods=['POST'])
-def upload_image():
-    image_file = request.files['image']
-    file_name = IMAGE_PROCESSOR.download_userIMG(file=image_file)
-    return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
-
 @app.route("/")
 def home():
     if current_user.is_authenticated:
@@ -433,35 +427,45 @@ def view_recipe(recipeID):
 def update_recipe():
     if request.method == "POST":
         try:
-            data = request.get_json()
-            recipe_id = data.get("id")
-            recipe_title = data.get("title")
-            recipe_desc = data.get("desc")
-            instructions = data.get("instructions")
-            ingredients = data.get("ingredients")
-            images = data.get("images")
-            recipe = Recipe.query.filter_by(id=recipe_id).first()
-
-            if recipe:
-                existing_images = [image.img_url for image in recipe.media]
-                new_images = [image for image in images if image not in existing_images]
-                if new_images:
-                    for image in new_images:
-                        new_image = RecipeMedia(img_url=image, recipe_id=recipe.id, user_upload=False)
-                        db.session.add(new_image)
-                if recipe_title != '':
-                    recipe.title = recipe_title
-                if recipe_desc != '':
-                    recipe.description = recipe_desc
-                recipe.ingredients = ingredients
-                recipe.instructions = instructions
-
-                db.session.commit()
-                return jsonify({'success': True}), 200
-            else:
-                return jsonify({'success': False, 'message': 'Recipe not found'}), 404
+            recipe_id = request.form.get("id")
+            recipe_title = request.form.get("title")
+            recipe_desc = request.form.get("desc")
+            instructions = request.form.get("instructions")
+            ingredients = request.form.get("ingredients")
+            removedRecipe_URLs = custom_split(request.form.get('removed_images'))
+            user_uploads = ''
+            try:
+                user_uploads = request.files.getlist('userUploads')
+            finally:
+                recipe = Recipe.query.filter_by(id=recipe_id).first()
+                if recipe:
+                    if user_uploads:
+                        for user_file in user_uploads:
+                            file_name = IMAGE_PROCESSOR.download_userIMG(file=user_file)
+                            recipe_img = IMAGE_PROCESSOR.upload_file(file_name)
+                            new_image = RecipeMedia(img_url=recipe_img, recipe_id=recipe.id, user_upload=True)
+                            db.session.add(new_image)
+                    if removedRecipe_URLs:
+                        for url in removedRecipe_URLs:
+                            image = RecipeMedia.query.filter_by(img_url=url, recipe_id=recipe_id).first()
+                            if image:
+                                db.session.delete(image)
+                                db.session.commit()
+                    if recipe_title != '':
+                        recipe.title = recipe_title
+                    if recipe_desc != '':
+                        recipe.description = recipe_desc
+                    recipe.ingredients = ingredients
+                    recipe.instructions = instructions
+                    db.session.commit()
+                    return jsonify({'success': True}), 200
+                else:
+                    db.session.rollback()
+                    traceback.print_exc()
+                    return jsonify({'success': False, 'message': 'Recipe not found'}), 404
         except Exception as e:
             db.session.rollback()
+            traceback.print_exc()
             return jsonify({'success': False, 'message': 'Internal server error: ' + str(e)}), 500
     else:
         return jsonify({'success': False, 'message': 'Invalid request method'}), 405

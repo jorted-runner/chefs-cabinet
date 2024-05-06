@@ -15,8 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <script defer src="/static/scripts/edit.js"></script>
-    <script defer src="/static/scripts/save.js"></script>
+    <script defer src="/static/scripts/edit_recipe.js" type="module"></script>
 
 </head>
 <body>
@@ -52,12 +51,11 @@
             <div class="images">
                 {% for image in recipe.media %}
                 <div>
-                    <img class="recipe-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><!-- <button class="delete_btn">Delete</button> -->
+                    <img class="recipe-image existing-image" src="{{ image.img_url }}" alt="Recipe Image" loading="lazy"><button class="delete_image_btn hidden">Delete</button>
                 </div>
                 {% endfor %}
             </div>
             {% if (recipe.media | length) <= 10 %}
-                <label>New Image: <input type="file" name="image" id="image_up"></label>
                 <button class="add_image_btn">Add Image</button>
             {% endif %}
         </div>

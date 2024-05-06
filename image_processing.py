@@ -14,7 +14,7 @@ class ImageProcessing:
         if (os.environ.get("PROD")) == "True":
             self.working_dir = "/var/www/chefs-cab/static/images"
         else:
-            self.working_dir = "static\images"
+            self.working_dir = ".\static\images"
         self.ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
     def allowed_file(self, filename):

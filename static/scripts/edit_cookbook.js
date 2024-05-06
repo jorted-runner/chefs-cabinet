@@ -1,3 +1,5 @@
+import { getText } from "./utils.js";
+
 const editName_button = document.querySelector('#edit_name');
 const remove_buttons = document.querySelectorAll('.remove_btn');
 const editStatus_button = document.querySelector('.edit_status');
@@ -230,12 +232,3 @@ save_button.addEventListener('click', function() {
         window.location.href = `/cookbook/${cookbook_id}`;
     })
 });
-
-function getText(element) {
-    const clone = element.cloneNode(true);
-    clone.querySelectorAll('.edit_btn, .remove_btn').forEach(button => {
-        button.remove();
-    });
-    const text = clone.textContent.trim();
-    return text;
-}

@@ -605,7 +605,15 @@ table {
 .no-scroll {
     overflow: hidden;
 }
-
+.images {
+    display: flex;
+    flex-direction: column;
+}
+.user-profile {
+    width: 100%;
+    height: auto;
+    max-width: 200px;
+}
 .behind-overlay {
     z-index: 1;
 }
