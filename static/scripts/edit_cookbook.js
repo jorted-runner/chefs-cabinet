@@ -3,7 +3,8 @@ const remove_buttons = document.querySelectorAll('.remove_btn');
 const editStatus_button = document.querySelector('.edit_status');
 const editImage_button = document.querySelector('.edit_image');
 const save_button = document.querySelector('.save_btn');
-
+const delete_button = document.querySelector('.delete_btn');
+const current_userID = document.querySelector('.user_id').textContent;
 const cookbook_img = document.querySelector('.cookbook-img');
 
 let removedIDs = [];
@@ -14,7 +15,7 @@ editStatus_button.addEventListener('click', function() {
     const text = parentElement.textContent.trim();
     addPrivacyDropdown(parentElement, text);
     const saveButton = document.createElement("button");
-    saveButton.textContent = "Save";
+    saveButton.textContent = "Done";
     saveButton.addEventListener("click", function() {
         saveStatus(parentElement);
     });
@@ -27,7 +28,7 @@ function editStatus(element) {
     const text = parentElement.textContent.trim();
     addPrivacyDropdown(parentElement, text);
     const saveButton = document.createElement("button");
-    saveButton.textContent = "Save";
+    saveButton.textContent = "Done";
     saveButton.addEventListener("click", function() {
         saveStatus(parentElement);
     });
@@ -90,7 +91,7 @@ editName_button.addEventListener("click", function() {
     textarea.value = text;
 
     const saveButton = document.createElement("button");
-    saveButton.textContent = "Save";
+    saveButton.textContent = "Done";
 
     parentElement.innerHTML = "";
     parentElement.appendChild(textarea);
@@ -122,7 +123,7 @@ function editParentText() {
     textarea.value = text;
 
     const saveButton = document.createElement("button");
-    saveButton.textContent = "Save";
+    saveButton.textContent = "Done";
 
     parentElement.innerHTML = "";
     parentElement.appendChild(textarea); // Append textarea instead of input
@@ -170,11 +171,32 @@ editImage_button.addEventListener('click', function() {
     editImage_button.insertAdjacentElement("afterend", fileInput);
 });
 
+delete_button.addEventListener('click', function() {
+    const cookbook_id = document.querySelector('.cookbook_id').textContent;
+    const formData = new FormData(); 
+    formData.append('id', cookbook_id);
+    fetch('/delete_cookbook', {
+        method: 'POST', 
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to delete cookbook');
+        }
+    })
+    .then(data => {
+        window.location.href = `/profile/${current_userID}`;
+    })
+    .catch(error => {
+        console.error('There was an error deleting the cookbook:', error);
+    });
+});
 
 save_button.addEventListener('click', function() {
     const name_element = document.querySelector('.cookbook_name');
     const status_element = document.querySelector('.cookbook_status');
-    const recipe_id_elements = document.querySelectorAll('.recipe-id');
     const cookbook_id = document.querySelector('.cookbook_id').textContent;
     const input = document.querySelector('#file_input');
     var file = '';
@@ -191,10 +213,6 @@ save_button.addEventListener('click', function() {
     formData.append('status', status);
     formData.append('removedRecipes', JSON.stringify(removedIDs));
     formData.append('cover_img', file);
-    
-    recipe_id_elements.forEach(id => {
-        formData.append('recipes[]', id.textContent);
-    });
     
     fetch(`/edit_cookbook/${cookbook_id}`, {
         method: 'POST',

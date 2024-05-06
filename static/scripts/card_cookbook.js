@@ -1,4 +1,32 @@
 let recipeCards = document.querySelectorAll('.card');
+const delete_button = document.querySelector('.delete_btn');
+
+
+if (delete_button) {
+    const current_userID = document.querySelector('.current_user_id').textContent;
+    const cookbook_id = document.querySelector('.cookbook_id').textContent;
+    delete_button.addEventListener('click', function() {
+        const formData = new FormData(); 
+        formData.append('id', cookbook_id);
+        fetch('/delete_cookbook', {
+            method: 'POST', 
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to delete cookbook');
+            }
+        })
+        .then(data => {
+            window.location.href = `/profile/${current_userID}`;
+        })
+        .catch(error => {
+            console.error('There was an error deleting the cookbook:', error);
+        });
+    });
+}
 
 if (recipeCards) {
     recipeCards.forEach(card => {

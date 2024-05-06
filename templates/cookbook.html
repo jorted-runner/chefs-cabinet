@@ -50,7 +50,10 @@
                     <form action="{{ url_for('edit_cookbook', cookbookID=cookbook.id) }}" method="GET" name="editCookbookForm_{{ cookbook.id }}">
                         <input type="submit" value="Edit Cookbook">
                     </form>
-                </div>    
+                </div>
+                <p class="hidden cookbook_id">{{cookbook.id}}</p>
+                <p class="hidden current_user_id">{{current_user.id}}</p>
+                <button class="delete_btn">Delete Cookbook</button> 
             {% endif %}
         <div class="recipe_feed">
             {% for recipe in cookbook.recipes %}

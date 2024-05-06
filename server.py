@@ -564,42 +564,45 @@ def add_cookbook():
 def edit_cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
     if request.method == 'POST':
-        try:
-            cookbook_id = request.form.get('id')
-            name = request.form.get('name')
-            status = request.form.get('status')
-            cover_img_file = request.files['cover_img']
-            if cover_img_file: 
-                if cover_img_file and allowed_file(cover_img_file.filename):
-                    filename = secure_filename(cover_img_file.filename)
-                    file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    cover_img_file.save(file_name)
-                cover_img = IMAGE_PROCESSOR.upload_file(file_name)
-                cookbook.cover_img = cover_img
-            recipes = request.form.get('recipes', [])
-            removedRecipes = request.form.get('removedRecipes', []) 
-            cookbook = CookBook.query.filter_by(id=cookbook_id).first()
-            cookbook.name = name
-            if status == 'Private':
-                cookbook.status = False
-            else:
-                cookbook.status = True
-            for removedID in removedRecipes:
-                db.session.execute(
-                    cookbook_recipes.delete().where(
-                        and_(
-                            cookbook_recipes.c.recipe_id == removedID,
-                            cookbook_recipes.c.cookbook_id == cookbook.id
+        if cookbook.user_id == current_user.id:
+            try:
+                cookbook_id = request.form.get('id')
+                name = request.form.get('name')
+                status = request.form.get('status')
+                cover_img_file = request.files['cover_img']
+                if cover_img_file: 
+                    if cover_img_file and allowed_file(cover_img_file.filename):
+                        filename = secure_filename(cover_img_file.filename)
+                        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        cover_img_file.save(file_name)
+                    cover_img = IMAGE_PROCESSOR.upload_file(file_name)
+                    cookbook.cover_img = cover_img
+                removedRecipes = request.form.get('removedRecipes', []) 
+                cookbook = CookBook.query.filter_by(id=cookbook_id).first()
+                cookbook.name = name
+                if status == 'Private':
+                    cookbook.status = False
+                else:
+                    cookbook.status = True
+                for removedID in removedRecipes:
+                    db.session.execute(
+                        cookbook_recipes.delete().where(
+                            and_(
+                                cookbook_recipes.c.recipe_id == removedID,
+                                cookbook_recipes.c.cookbook_id == cookbook.id
+                            )
                         )
                     )
-                )
-            cookbook.last_modified = datetime.now()
-            db.session.commit()
-            return jsonify({'success': True}), 200
-        except:
-            db.session.rollback()
-            traceback.print_exc()
-            return jsonify({'success': False, 'message': 'Internal server error'}), 500 
+                cookbook.last_modified = datetime.now()
+                db.session.commit()
+                return jsonify({'success': True}), 200
+            except:
+                db.session.rollback()
+                traceback.print_exc()
+                return jsonify({'success': False, 'message': 'Internal server error'}), 500
+        else:
+            flash('You do not have permission to edit this cookbook')
+            return redirect(url_for("home")) 
     else:
         if cookbook.user_id == current_user.id:
             return render_template('edit_cookbook.html', cookbook=cookbook, current_user=current_user)
@@ -623,6 +626,21 @@ def cookbook(cookbookID):
         flash('Cookbook not found.', 'error')
         return redirect(url_for("home"))
     
+@app.route('/delete_cookbook', methods=['POST'])
+def delete_cookbook():
+    cookbook_id = request.form.get('id')
+    cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbook_id).first()
+    if cookbook and current_user.id == cookbook.user_id:
+        try:
+            db.session.delete(cookbook)
+            db.session.commit()
+            return jsonify({'success': True}), 200
+        except:
+            db.session.rollback()
+            traceback.print_exc()
+            return jsonify({'success': False, 'message': 'Internal server error'}), 500 
+    return jsonify({'success': False, 'message': 'Cookbook not found'}), 404 
+
 @app.route('/admin')
 @admin_only
 def admin():

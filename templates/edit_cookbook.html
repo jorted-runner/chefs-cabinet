@@ -21,6 +21,7 @@
     {% include "header.html" %}
     <main>
         <h1>Edit Cookbook:</h1>
+        <p class="hidden user_id">{{current_user.id}}</p>
         {% include "messages.html" %}
         <img class="cookbook-img" src="{{ cookbook.cover_img }}" alt="Cookbook Cover Image" loading="lazy"><button class="edit_image">Edit</button>
         <p class="cookbook_id hidden">{{cookbook.id}}</p>
@@ -40,7 +41,8 @@
                 {% endfor %}
             </ul>
         </div>
-        <button class="save_btn">Save</button>
+        <button class="save_btn">Save Changes</button>
+        <button class="delete_btn">Delete Cookbook</button>
     </main>
     {% include "footer.html" %}
 </body>
