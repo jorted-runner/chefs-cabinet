@@ -191,15 +191,6 @@ def upload_image():
         image_file.save(file_name)
     return jsonify(image_url=IMAGE_PROCESSOR.upload_file(filename=file_name))
 
-@app.route("/upload_profile_pic", methods=['POST'])
-def upload_profile():
-    image_file = request.files['image']
-    if image_file and allowed_file(image_file.filename):
-        filename = secure_filename(image_file.filename)
-        file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image_file.save(file_name)
-    return jsonify(image_url=IMAGE_PROCESSOR.upload_profile(filename=file_name))
-
 @app.route("/")
 def home():
     if current_user.is_authenticated:
@@ -342,7 +333,7 @@ def edit_profile(userID):
             updated_lName = request.form.get('lname')
             updated_email = request.form.get('email')
             updated_username = request.form.get('username')
-            updated_profile = request.form.get('image_url')
+            updated_profile = request.files['file_input']
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
@@ -354,8 +345,12 @@ def edit_profile(userID):
             user.lname = updated_lName
             user.email = updated_email
             user.username = updated_username
-            if updated_profile:
-                user.profile_pic = updated_profile
+            if updated_profile and allowed_file(updated_profile.filename):
+                filename = secure_filename(updated_profile.filename)
+                file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                updated_profile.save(file_name)
+                updated_profile_url = IMAGE_PROCESSOR.upload_profile(file_name)
+                user.profile_pic = updated_profile_url
             db.session.commit()
             return redirect(url_for('user_profile', userID=userID))
         return render_template("edit_profile.html", user=user, current_user=current_user)

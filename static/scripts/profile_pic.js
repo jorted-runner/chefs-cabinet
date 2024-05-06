@@ -1,43 +1,23 @@
-document.getElementById('image_up').addEventListener('change', function() {
-    var file = this.files[0];
-    var reader = new FileReader();
+const editImage_button = document.querySelector('.edit_image');
+const userProfilePicture = document.querySelector('.user-profile');
+var profilePictureInput = document.querySelector('#profile_pic');
 
-    reader.onload = function(e) {
-        var img = new Image();
-        img.src = e.target.result;
-    };
-
-    reader.readAsDataURL(file);
+editImage_button.addEventListener('click', function() {
+    const fileInput = document.createElement("input");
+    fileInput.setAttribute('id', 'file_input');
+    fileInput.setAttribute('name', 'file_input')
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function() {
+                userProfilePicture.src = reader.result;
+            };
+        }
+    });
+    editImage_button.style.display = "none";
+    editImage_button.insertAdjacentElement("afterend", fileInput);
 });
-
-document.querySelector('.add_image_btn').addEventListener('click', function() {
-    const input = document.querySelector('#image_up');
-    const file = input.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-        
-        fetch('/upload_profile_pic', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                alert('Error uploading Image');
-            }
-        })
-        .then(data => {
-            document.querySelector('.user-profile').src = data.image_url;
-            const form = document.querySelector('.form');
-            const hiddenIMG = document.createElement('input');
-            hiddenIMG.setAttribute('type', 'hidden');
-            hiddenIMG.setAttribute('name', 'image_url');
-            hiddenIMG.setAttribute('value', data.image_url);
-            form.appendChild(hiddenIMG);
-        })
-        .catch(error => console.error(error));
-    }
-});
-

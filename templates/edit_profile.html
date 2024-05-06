@@ -23,9 +23,9 @@
     <main>
         <h1>Edit Profile:</h1>
         {% include "messages.html" %}
-
-        <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
-        <form class="form" id="editProfile" method="POST" action="{{ url_for('edit_profile', userID = user.id) }}">
+        <form class="form" id="editProfile" method="POST" action="{{ url_for('edit_profile', userID = user.id) }}" enctype="multipart/form-data">
+            <img class="user-profile" src="{{ user.profile_pic }}" alt="User Profile Image" loading="lazy">
+            <button class="edit_image" type="button">Edit</button>
             <fieldset>
                 <input type="hidden" value="{{user.id}}" name="user_id">
                 <legend>Profile Information</legend>
@@ -36,11 +36,7 @@
             </fieldset>
             <input type="submit" value="Save Changes">
         </form>
-        <label>New Profile Picture: <input type="file" name="image" id="image_up"></label>
-        <button class="add_image_btn">Add Image</button>
-        <div id="image_preview_container" style="position: relative;">
-            <img id="image_preview" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 500px;">
-        </div>
+        
     </main>
     {% include "footer.html" %}
 </body>
