@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet User Profile Home">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script defer src="/static/scripts/shopping_list.js"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+    <main>
+        {% include "messages.html" %}
+        <p class="hidden data">{{shopping_list}}</p>
+        <div class="list">
+            <h1>Shopping List</h1>
+        </div>
+        
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>

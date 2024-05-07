@@ -8,8 +8,6 @@ class AI_tool():
     self.client = OpenAI()
     gpt_url = "https://api.openai.com/v1/chat/completions"
 
-    
-
   def image_generation(self, prompt):
     response = self.client.images.generate(
       model="dall-e-3",
@@ -22,7 +20,6 @@ class AI_tool():
     urls.append(response.data[0].url)
     return urls
     
-
   def recipe_generation(self, include, exclude):
     prompt = f"Write a recipe with a descriptive name that must include {include} and any other needed ingredients but does not contain {exclude}. Output the Title, Description, Ingredients, and Instructions. Format the output in a JSON where each ingredient is a single item within the 'Ingredients' and each step within 'Instructions' the same way." 
     response = self.client.chat.completions.create(
@@ -35,4 +32,16 @@ class AI_tool():
     )
     recipe = response.choices[0].message.content
     return recipe
-    
+
+  def list_generation(self, ingredients):
+    prompt = f"I am planning to cook several recipes and need to create a shopping list based on their ingredients. Please provide the items needed along with their quantities. {ingredients}"
+    response = self.client.chat.completions.create(
+        model="gpt-3.5-turbo-0125",
+        response_format={"type":"json_object"},
+        messages=[
+          {"role":"system","content":"You are a helpful assistant trained as a personal shopper designed to output JSON."},
+          {"role": "user", "content": f"{prompt}"}
+        ]
+      )
+    shopping_list = response.choices[0].message.content
+    return shopping_list

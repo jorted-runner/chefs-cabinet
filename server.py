@@ -627,6 +627,25 @@ def delete_cookbook():
             return jsonify({'success': False, 'message': 'Internal server error'}), 500 
     return jsonify({'success': False, 'message': 'Cookbook not found'}), 404 
 
+@app.route('/generate_list', methods=['POST'])
+def generate_list():
+    if current_user.is_authenticated:
+        try:
+            ingredients = []
+            cookbook_id = request.form.get('id')
+            cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbook_id).first()
+            for recipe in cookbook.recipes:
+                for item in custom_split(recipe.ingredients):
+                    ingredients.append(item)
+            shopping_list = RECIPE_AI.list_generation(ingredients=ingredients)
+            return render_template('shopping_list.html', shopping_list=shopping_list, current_user=current_user)
+        except Exception as e:
+            traceback.print_exc()
+            return jsonify({'success': False, 'message': str(e)}), 500 
+    else:
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Not an authenticated user'}), 404
+
 @app.route('/admin')
 @admin_only
 def admin():

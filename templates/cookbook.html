@@ -25,7 +25,10 @@
     {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
-
+        <div class="loader-container">
+            <div class="spinner"></div>
+            <p class="spinner-text">This may take up to one minute</p>
+        </div>
         <div class="profile-header">
             <div class="user-intro">
                 <img class="user-profile-pic" src="{{ cookbook.user.profile_pic }}" alt="Profile Pic" loading="lazy">
@@ -45,6 +48,11 @@
             </div>           
         </div>
         <h1>{{cookbook.name}}</h1>
+        <form action="{{ url_for('generate_list') }}" method="POST" name="generate_list">
+            <input type="hidden" value="{{ cookbook.id }}" name="id">
+            <input type="submit" value="Generate Shopping List">
+        </form>
+        
         {% if current_user.id == cookbook.user.id %}
                 <div>
                     <form action="{{ url_for('edit_cookbook', cookbookID=cookbook.id) }}" method="GET" name="editCookbookForm_{{ cookbook.id }}">
