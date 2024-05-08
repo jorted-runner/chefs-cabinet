@@ -15,16 +15,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <script defer src="/static/scripts/shopping_list.js"></script>
+    <!-- <script defer src="/static/scripts/shopping_list.js"></script> -->
 </head>
 <body>
     {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
-        <p class="hidden data">{{shopping_list}}</p>
+        <p class="data">{{shopping_list}}</p>
         <div class="list">
             <h1>Shopping List</h1>
         </div>
+        {% set shopping_data = shopping_list | parse_to_json %}
+        
+        <ul>
+            {% for item, details in shopping_data.items() %}
+                <li>{{ item }} - {{ details.quantity }}</li>
+            {% endfor %}
+        </ul>
+
+
+
         
     </main>
     {% include "footer.html" %}

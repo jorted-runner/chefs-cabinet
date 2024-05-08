@@ -147,6 +147,10 @@ def custom_split(list):
     clean_data = json.loads(list)
     return clean_data
 
+@app.template_filter('parse_to_json')
+def parse_to_json(data):
+    return json.loads(data)
+
 @app.template_filter('followers_ids')
 def followers_ids(followers):
     return [follower.follower_id for follower in followers]
