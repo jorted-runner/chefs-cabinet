@@ -21,21 +21,24 @@
     {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
-        <p class="data">{{shopping_list}}</p>
         <div class="list">
             <h1>Shopping List</h1>
         </div>
         {% set shopping_data = shopping_list | parse_to_json %}
         
-        <ul>
-            {% for item, details in shopping_data.items() %}
-                <li>{{ item }} - {{ details.quantity }}</li>
+            {% for category, details in shopping_data.items() %}
+            <div>
+                <h3>{{ category }}</h3>
+                <ul>
+                {% for item in details %}
+                    <li>{{item.quantity}} - {{item.item | title}} <button type="button" class="edit_btn">Edit</button> <button type="button" class="remove_btn">Remove</button></li>
+                {% endfor %}
+                </ul>
+                <button type="button" class="add_btn">Add Item</button>
+            </div>
+            <hr>
             {% endfor %}
-        </ul>
-
-
-
-        
+        <button type="button" class="addNewDiv">Add Category</button>
     </main>
     {% include "footer.html" %}
 </body>

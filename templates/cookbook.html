@@ -19,6 +19,7 @@
     <script defer src="/static/scripts/slide_show.js"></script>
     <script defer src="/static/scripts/follow.js"></script>
     <script defer src="/static/scripts/card_cookbook.js"></script>
+    <script defer src="/static/scripts/loading.js"></script>
 
 </head>
 <body>
@@ -48,10 +49,12 @@
             </div>           
         </div>
         <h1>{{cookbook.name}}</h1>
-        <form action="{{ url_for('generate_list') }}" method="POST" name="generate_list">
-            <input type="hidden" value="{{ cookbook.id }}" name="id">
-            <input type="submit" value="Generate Shopping List">
-        </form>
+        {% if cookbook.recipes %}
+            <form action="{{ url_for('generate_list') }}" method="POST" name="generate_list">
+                <input type="hidden" value="{{ cookbook.id }}" name="id">
+                <input type="submit" id="generate_shopping" value="Generate Shopping List">
+            </form>
+        {% endif %}
         
         {% if current_user.id == cookbook.user.id %}
                 <div>

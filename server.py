@@ -562,30 +562,32 @@ def edit_cookbook(cookbookID):
                 cookbook_id = request.form.get('id')
                 name = request.form.get('name')
                 status = request.form.get('status')
-                cover_img_file = request.files['cover_img']
-                if cover_img_file: 
-                    file_name = IMAGE_PROCESSOR.download_userIMG(file=cover_img_file)
-                    cover_img = IMAGE_PROCESSOR.upload_file(file_name)
-                    cookbook.cover_img = cover_img
-                removedRecipes = request.form.get('removedRecipes', []) 
-                cookbook = CookBook.query.filter_by(id=cookbook_id).first()
-                cookbook.name = name
-                if status == 'Private':
-                    cookbook.status = False
-                else:
-                    cookbook.status = True
-                for removedID in removedRecipes:
-                    db.session.execute(
-                        cookbook_recipes.delete().where(
-                            and_(
-                                cookbook_recipes.c.recipe_id == removedID,
-                                cookbook_recipes.c.cookbook_id == cookbook.id
+                try:
+                    cover_img_file = request.files['cover_img']
+                    if cover_img_file: 
+                        file_name = IMAGE_PROCESSOR.download_userIMG(file=cover_img_file)
+                        cover_img = IMAGE_PROCESSOR.upload_file(file_name)
+                        cookbook.cover_img = cover_img
+                finally:
+                    removedRecipes = request.form.get('removedRecipes', []) 
+                    cookbook = CookBook.query.filter_by(id=cookbook_id).first()
+                    cookbook.name = name
+                    if status == 'Private':
+                        cookbook.status = False
+                    else:
+                        cookbook.status = True
+                    for removedID in removedRecipes:
+                        db.session.execute(
+                            cookbook_recipes.delete().where(
+                                and_(
+                                    cookbook_recipes.c.recipe_id == removedID,
+                                    cookbook_recipes.c.cookbook_id == cookbook.id
+                                )
                             )
                         )
-                    )
-                cookbook.last_modified = datetime.now()
-                db.session.commit()
-                return jsonify({'success': True}), 200
+                    cookbook.last_modified = datetime.now()
+                    db.session.commit()
+                    return jsonify({'success': True}), 200
             except:
                 db.session.rollback()
                 traceback.print_exc()

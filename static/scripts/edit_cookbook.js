@@ -214,8 +214,9 @@ save_button.addEventListener('click', function() {
     formData.append('name', name);
     formData.append('status', status);
     formData.append('removedRecipes', JSON.stringify(removedIDs));
-    formData.append('cover_img', file);
-    
+    if (file != null) {
+        formData.append('cover_img', file);
+    }
     fetch(`/edit_cookbook/${cookbook_id}`, {
         method: 'POST',
         body: formData
