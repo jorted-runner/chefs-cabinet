@@ -21,6 +21,15 @@
 <body>
     {% include "header.html" %}
     <main>
+        <div class="profile-header">
+            <div class="user-intro">
+                <img class="user-profile-pic" src="{{ recipe.user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                <div>
+                    <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><h1>{{ recipe.user.username }}</h1></a>
+                    <a href="{{ url_for('user_profile', userID = recipe.user.id)}}"><h3>{{ recipe.user.fname }} {{ recipe.user.lname }}</h3></a>
+                </div>
+            </div>           
+        </div>
         <h1>Edit Recipe:</h1>
         {% include "messages.html" %}
 

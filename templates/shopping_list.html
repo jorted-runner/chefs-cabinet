@@ -21,6 +21,15 @@
     {% include 'header.html' %}
     <main>
         {% include "messages.html" %}
+        <div class="profile-header">
+            <div class="user-intro">
+                <img class="user-profile-pic" src="{{ current_user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                <div>
+                    <a href="{{ url_for('user_profile', userID = current_user.id)}}"><h1>{{ current_user.username }}</h1></a>
+                    <a href="{{ url_for('user_profile', userID = current_user.id)}}"><h3>{{ current_user.fname }} {{ current_user.lname }}</h3></a>
+                </div>
+            </div>           
+        </div>
         <div class="list">
             <h1>Shopping List</h1>
         </div>

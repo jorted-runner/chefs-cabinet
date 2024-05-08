@@ -20,6 +20,24 @@
 <body>
     {% include "header.html" %}
     <main>
+        <div class="profile-header">
+            <div class="user-intro">
+                <img class="user-profile-pic" src="{{ cookbook.user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                <div>
+                    <a href="{{ url_for('user_profile', userID = cookbook.user.id)}}"><h1>{{ cookbook.user.username }}</h1></a>
+                    <a href="{{ url_for('user_profile', userID = cookbook.user.id)}}"><h3>{{ cookbook.user.fname }} {{ cookbook.user.lname }}</h3></a>
+                </div>
+                <form>
+                    <input type="hidden" value="{{cookbook.user.id}}" id="userID">
+                    <input type="hidden" value="{{current_user.id}}" id="currentUserID">
+                </form>
+                {% if current_user.id in cookbook.user.followers | followers_ids %}
+                    <button class="un-follow">Un-Follow</button>
+                {% elif current_user.id != cookbook.user.id %}
+                    <button class="follow">Follow</button>
+                {% endif %}
+            </div>           
+        </div>
         <h1>Edit Cookbook:</h1>
         <p class="hidden user_id">{{current_user.id}}</p>
         {% include "messages.html" %}

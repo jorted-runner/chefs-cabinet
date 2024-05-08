@@ -34,8 +34,8 @@
             <div class="user-intro">
                 <img class="user-profile-pic" src="{{ cookbook.user.profile_pic }}" alt="Profile Pic" loading="lazy">
                 <div>
-                    <h1>{{ cookbook.user.username }}</h1>
-                    <h3>{{ cookbook.user.fname }} {{ cookbook.user.lname }}</h3>
+                    <a href="{{ url_for('user_profile', userID = cookbook.user.id)}}"><h1>{{ cookbook.user.username }}</h1></a>
+                    <a href="{{ url_for('user_profile', userID = cookbook.user.id)}}"><h3>{{ cookbook.user.fname }} {{ cookbook.user.lname }}</h3></a>
                 </div>
                 <form>
                     <input type="hidden" value="{{cookbook.user.id}}" id="userID">
