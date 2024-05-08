@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <!-- <script defer src="/static/scripts/shopping_list.js"></script> -->
+    <script defer src="/static/scripts/shopping_list.js" type="module"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -25,20 +25,28 @@
             <h1>Shopping List</h1>
         </div>
         {% set shopping_data = shopping_list | parse_to_json %}
-        
-            {% for category, details in shopping_data.items() %}
-            <div>
-                <h3>{{ category }}</h3>
-                <ul>
-                {% for item in details %}
-                    <li>{{item.quantity}} - {{item.item | title}} <button type="button" class="edit_btn">Edit</button> <button type="button" class="remove_btn">Remove</button></li>
+            <div class="categories">
+                {% for category, details in shopping_data.items() %}
+                    <div class="category">
+                        <h3>{{ category }}</h3>
+                        <ul>
+                        {% for item in details %}
+                            <li>{{item.quantity}} - {{item.item | title}} <button type="button" class="edit_btn">Edit</button> <button type="button" class="remove_btn">Remove</button></li>
+                        {% endfor %}
+                        </ul>
+                        <div>
+                            <label for="quantity">Quantity: <input type="text" name="quantity" class="quantity"></label>
+                            <label for="new_item">New Item: <input type="textarea" name="new_item" class="new_item"></label>                            
+                            <button type="button" class="addItem_btn">Add Item</button>
+                        </div>
+                    </div>
+                    <hr>
                 {% endfor %}
-                </ul>
-                <button type="button" class="add_btn">Add Item</button>
             </div>
-            <hr>
-            {% endfor %}
-        <button type="button" class="addNewDiv">Add Category</button>
+        <div>
+            <label for="new_cat">New Category: <input type="textarea" name="new_cat" class="new_cat"></label>
+            <button type="button" class="addCat_btn">Add Category</button>
+        </div>
     </main>
     {% include "footer.html" %}
 </body>

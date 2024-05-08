@@ -646,11 +646,13 @@ def generate_list():
             shopping_list = RECIPE_AI.list_generation(ingredients=ingredients)
             return render_template('shopping_list.html', shopping_list=shopping_list, current_user=current_user)
         except Exception as e:
-            traceback.print_exc()
-            return jsonify({'success': False, 'message': str(e)}), 500 
+            flash(f'Server Error: {e}')
+            cookbook_id = request.form.get('id')
+            return redirect(url_for('cookbook', cookbookID=cookbook_id)) 
     else:
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': 'Not an authenticated user'}), 404
+        flash('Not an authenticated user.')
+        cookbook_id = request.form.get('id')
+        return redirect(url_for('cookbook', cookbookID=cookbook_id))
 
 @app.route('/admin')
 @admin_only
