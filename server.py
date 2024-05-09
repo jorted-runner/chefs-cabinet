@@ -651,7 +651,7 @@ def generate_list():
                 for item in custom_split(recipe.ingredients):
                     ingredients.append(item)
             shopping_list = RECIPE_AI.list_generation(ingredients=ingredients)
-            return render_template('shopping_list.html', shopping_list=shopping_list, current_user=current_user)
+            return render_template('new_shoppingList.html', shopping_list=shopping_list, current_user=current_user)
         except Exception as e:
             flash(f'Server Error: {e}')
             cookbook_id = request.form.get('id')
@@ -660,6 +660,39 @@ def generate_list():
         flash('Not an authenticated user.')
         cookbook_id = request.form.get('id')
         return redirect(url_for('cookbook', cookbookID=cookbook_id))
+
+@app.route('/shopping_list/<list_id>', methods=['GET', 'POST'])
+def display_shoppingList(list_id):
+    shopping_list = ShoppingList.query.filter_by(id=list_id)
+    return render_template('viewShoppingList.html', shopping_list=shopping_list, current_user=current_user)
+
+
+@app.route('/save_list', methods=['POST'])
+def save_list():
+    if current_user.is_authenticated:
+        form_shoppingList = request.form.get('shopping_list')
+        shoppingList = ShoppingList.query.filter_by(user_id = current_user.id).first()
+        if not shoppingList:
+            try:
+                newShoppingList = ShoppingList(user_id=current_user.id, shopping_list=form_shoppingList)
+                db.session.add(newShoppingList)
+                db.session.commit()
+                return redirect(url_for('shopping_list', list_id=newShoppingList.id))
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': str(e)}), 500
+        else:
+            try:
+                shoppingList.shopping_list = form_shoppingList
+                shoppingList.date_created = datetime.now()
+                db.session.commit()
+                return redirect(url_for('shopping_list', list_id=shoppingList.id))
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': str(e)}), 500
+    else:
+        flash('Not an authenticated user. Cannot save list.')
+        return redirect(url_for('home'))
 
 @app.route('/admin')
 @admin_only

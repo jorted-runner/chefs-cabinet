@@ -4,6 +4,7 @@ const edit_buttons = document.querySelectorAll('.edit_btn');
 const remove_buttons = document.querySelectorAll('.remove_btn');
 const addItem_buttons = document.querySelectorAll('.addItem_btn');
 const addCat_button = document.querySelector('.addCat_btn');
+const saveList_button = document.querySelector('.saveList_btn');
 
 function createListItem(newQuantity, newItem) {
     const li = document.createElement("li");
@@ -181,3 +182,38 @@ remove_buttons.forEach((button) => {
     });
 });
 
+saveList_button.addEventListener('click', function() {
+    let groceryList = {};
+    const categories = document.querySelectorAll('.category');
+    categories.forEach((category) => {
+        const categoryText = category.querySelector('h3').textContent;
+        groceryList[categoryText] = [];
+        const items = category.querySelectorAll('li');
+        items.forEach((item) => {
+            let itemName = getText(item);
+            let itemQuantity = itemName.split(' - ')[0].trim();
+            itemName = itemName.split(' - ')[1].trim();
+            groceryList[categoryText].push({
+            "item": itemName,
+            "quantity": itemQuantity
+            });
+        });
+    });
+    const jsonGroceryList = JSON.stringify(groceryList);
+    const formData = new FormData();
+    formData.append('shopping_list', jsonGroceryList);
+    fetch('/save_list', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to Save Shopping List');
+        }
+    })
+    .then(data => {
+        console.log('data', data);
+    })
+});

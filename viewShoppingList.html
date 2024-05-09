@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chefs Cabinet</title>
+    <meta name="author" content="Danny Ellis">
+    <meta name="description" content="Chefs Cabinet User Profile Home">
+    <meta property="og:title" content="Chefs Cabinet">
+    <link rel="icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/styles/normalize.css">
+    <link rel="stylesheet" href="/static/styles/base.css">
+    <link rel="stylesheet" href="/static/styles/small.css">
+    <link rel="stylesheet" href="/static/styles/medium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <!-- <script defer src="/static/scripts/edit_shoppingList.js" type="module"></script> -->
+</head>
+<body>
+    {% include 'header.html' %}
+    <main>
+        <h1>BETA - DOES NOT SAVE</h1>
+        {% include "messages.html" %}
+        <div class="profile-header">
+            <div class="user-intro">
+                <img class="user-profile-pic" src="{{ current_user.profile_pic }}" alt="Profile Pic" loading="lazy">
+                <div>
+                    <a href="{{ url_for('user_profile', userID = current_user.id)}}"><h1>{{ current_user.username }}</h1></a>
+                    <a href="{{ url_for('user_profile', userID = current_user.id)}}"><h3>{{ current_user.fname }} {{ current_user.lname }}</h3></a>
+                </div>
+            </div>           
+        </div>
+        <div class="list">
+            <h1>Shopping List</h1>
+        </div>
+        {% set shopping_data = shopping_list | parse_to_json %}
+            <div class="categories">
+                {% for category, details in shopping_data.items() %}
+                    {% if details %}
+                    <div class="category">
+                        <h3>{{ category }}</h3>
+                        <ul>
+                        {% for item in details %}
+                            <li>{{item.quantity}} - {{item.item | title}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    <hr>
+                    {% endif %}
+                {% endfor %}
+            </div>
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>

@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Montserrat&family=Poppins:ital,wght@1,500&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <script defer src="/static/scripts/shopping_list.js" type="module"></script>
+    <script defer src="/static/scripts/edit_shoppingList.js" type="module"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -59,6 +59,7 @@
             <label for="new_cat">New Category: <input type="textarea" name="new_cat" class="new_cat"></label>
             <button type="button" class="addCat_btn">Add Category</button>
         </div>
+        <button type="button" class="saveList_btn">Save Shopping List</button>
     </main>
     {% include "footer.html" %}
 </body>
