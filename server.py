@@ -43,7 +43,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_cabinet.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
@@ -61,6 +61,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=False)
     sign_up_date = db.Column(db.DateTime, default=datetime.now)
     profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
+    shopping_list = db.relationship("ShoppingList", uselist=False, backref='user')
     recipes = db.relationship("Recipe", backref='user')
     cookbooks = db.relationship("CookBook", backref='user')
     comments = db.relationship("Comment", backref='user')
@@ -99,6 +100,12 @@ class CookBook(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.now)
     recipes = db.relationship("Recipe", secondary=cookbook_recipes, backref='cookbooks')
+
+class ShoppingList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, default=datetime.now)
+    shopping_list = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
 
 class RecipeMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)

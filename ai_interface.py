@@ -34,7 +34,7 @@ class AI_tool():
     return recipe
 
   def list_generation(self, ingredients):
-    prompt = f"I'm planning to cook several recipes and need to create a shopping list based on their ingredients. Please provide the items needed along with their quantities, categorized into Protein, Produce, Dairy, and Pantry. In the JSON, ensure to use the keys 'item' and 'quantity'. 'item' should only include the item name without its state (e.g., chopped, diced, minced, cooked, etc). 'quantity' should indicate the quantity with the unit (e.g., lbs, cans, bundles, etc). Round the quantities up to the nearest whole number. Combine similar ingredients and sum their quantities accordingly. Here are the ingredients: {ingredients}"
+    prompt = f"I'm planning to cook several recipes and need to create a shopping list based on their ingredients. Please provide the items needed along with their quantities, categorized into Protein, Produce, Dairy, Spices, and Pantry. In the JSON, ensure to use the keys 'item' and 'quantity'. 'item' should only include the item name without its state (e.g., chopped, diced, minced, cooked, etc). 'quantity' should indicate the quantity with the unit (e.g., lbs, cans, bundles, etc). Round the quantities up to the nearest whole number. Combine similar ingredients and sum their quantities accordingly. Here are the ingredients: {ingredients}"
     response = self.client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
         response_format={"type":"json_object"},

@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime
 
 # Connect to the database
-old_DB = sqlite3.connect('instance/chefscabinet.sqlite3')
-new_DB = sqlite3.connect('instance/chefs_cabinet.sqlite3')
+old_DB = sqlite3.connect('instance/chefs_cabinet.sqlite3')
+new_DB = sqlite3.connect('instance/chefs_db.sqlite3')
 
 old_cursor = old_DB.cursor()
 new_cursor = new_DB.cursor()
@@ -18,7 +18,7 @@ for user in old_users:
 old_cursor.execute("SELECT * FROM recipe")
 old_recipes = old_cursor.fetchall()
 for recipe in old_recipes:
-    new_cursor.execute(f"INSERT INTO recipe (id, title, description, ingredients, instructions, posted, user_id) VALUES ({recipe[0]}, '{recipe[1]}', '{recipe[2]}', '{recipe[3]}', '{recipe[4]}', '{datetime.now()}', {recipe[6]})")
+    new_cursor.execute(f"INSERT INTO recipe (id, title, description, ingredients, instructions, posted, user_id) VALUES ({recipe[0]}, '{recipe[1]}', '{recipe[2]}', '{recipe[3]}', '{recipe[4]}', '{recipe[5]}', {recipe[6]})")
     old_cursor.execute(f"SELECT * FROM recipe_media where recipe_id == {recipe[0]}")
     recipe_media = old_cursor.fetchall()
     for media in recipe_media:
@@ -34,7 +34,7 @@ for recipe in old_recipes:
 old_cursor.execute(f"SELECT * FROM cook_book")
 old_cookbooks = old_cursor.fetchall()
 for cookbook in old_cookbooks:
-    new_cursor.execute(f"INSERT INTO cook_book (id, name, status, cover_img, user_id, last_modified) VALUES ('{cookbook[0]}', '{cookbook[1]}', '{cookbook[2]}', '{cookbook[3]}', '{cookbook[4]}', '{datetime.now()}')")
+    new_cursor.execute(f"INSERT INTO cook_book (id, name, status, cover_img, user_id, last_modified) VALUES ('{cookbook[0]}', '{cookbook[1]}', '{cookbook[2]}', '{cookbook[3]}', '{cookbook[4]}', '{cookbook[5]}')")
 old_cursor.execute(f"SELECT * FROM cookbook_recipes")
 old_cookbook_recipes = old_cursor.fetchall()
 for recipe in old_cookbook_recipes:
