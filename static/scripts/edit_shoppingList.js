@@ -194,8 +194,8 @@ saveList_button.addEventListener('click', function() {
             let itemQuantity = itemName.split(' - ')[0].trim();
             itemName = itemName.split(' - ')[1].trim();
             groceryList[categoryText].push({
-            "item": itemName,
-            "quantity": itemQuantity
+                "item": itemName,
+                "quantity": itemQuantity
             });
         });
     });
@@ -205,5 +205,18 @@ saveList_button.addEventListener('click', function() {
     fetch('/save_list', {
         method: 'POST',
         body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/shopping_list';
+        } else {
+            return response.json().then(errorData => {
+                const errorMessage = errorData.error;
+                const p = document.createElement('p');
+                p.textContent = errorMessage;
+                document.querySelector('.messages').appendChild(p);
+                document.querySelector('.messages').classList.remove('hidden');
+            });
+        }
     })
 });

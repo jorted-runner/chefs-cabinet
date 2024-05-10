@@ -1,11 +1,9 @@
-# TODO - Generate Shopping list
+# TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Allow user to reorder recipe images
 # TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
 # TODO - fix search page so that when you follow someone hou still see something
 # TODO - Figure out 'add to cookbook' iphone/ipad glitch
-# TODO - When add to recipe jump back to same page position
 # TODO - Recipe idea/inspiration tile
-# TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Form Styling
 # TODO - Change Colors?
 # TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
@@ -661,10 +659,23 @@ def generate_list():
         cookbook_id = request.form.get('id')
         return redirect(url_for('cookbook', cookbookID=cookbook_id))
 
-@app.route('/shopping_list/<list_id>', methods=['GET', 'POST'])
-def display_shoppingList(list_id):
-    shopping_list = ShoppingList.query.filter_by(id=list_id).first()
-    return render_template('viewShoppingList.html', shopping_list=shopping_list.shopping_list, current_user=current_user)
+@app.route('/shopping_list', methods=['GET', 'POST'])
+def display_shoppingList():
+    if current_user.is_authenticated:
+        shopping_list = ShoppingList.query.filter_by(user_id=current_user.id).first()
+        return render_template('viewShoppingList.html', shopping_list=shopping_list.shopping_list, current_user=current_user)
+    else:
+        flash('Not an authenticated user Please Register.')
+        return redirect(url_for('home'))
+
+@app.route('/edit_list', methods=['POST', 'GET'])
+def edit_list():
+    if current_user.is_authenticated:
+        shopping_list = ShoppingList.query.filter_by(user_id=current_user.id).first()
+        return render_template('new_shoppingList.html', shopping_list=shopping_list.shopping_list, current_user=current_user)
+    else:
+        flash('Not an authenticated user Please Register.')
+        return redirect(url_for('home'))
 
 @app.route('/save_list', methods=['POST'])
 def save_list():
@@ -676,7 +687,7 @@ def save_list():
                 newShoppingList = ShoppingList(user_id=current_user.id, shopping_list=form_shoppingList)
                 db.session.add(newShoppingList)
                 db.session.commit()
-                return redirect(url_for('display_shoppingList', list_id=newShoppingList.id))
+                return jsonify({'success': True}), 200
             except Exception as e:
                 db.session.rollback()
                 traceback.print_exc()
@@ -686,7 +697,7 @@ def save_list():
                 shoppingList.shopping_list = form_shoppingList
                 shoppingList.date_created = datetime.now()
                 db.session.commit()
-                return redirect(url_for('display_shoppingList', list_id=shoppingList.id))
+                return jsonify({'success': True}), 200
             except Exception as e:
                 db.session.rollback()
                 traceback.print_exc()

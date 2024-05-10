@@ -64,6 +64,9 @@
                 {% if user.cookbooks %}
                     <button id="recipes">Recipes</button>
                     <button id="cookbooks">Cookbooks</button>
+                    {% if user.shopping_list and current_user.id == user.id %}
+                    <button id="shopping_list">Shopping List</button>
+                    {% endif %}
             {% endif %}  
             </div>
         </div>

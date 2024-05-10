@@ -1,5 +1,7 @@
 const recipe_btn = document.querySelector('#recipes');
 const cookbooks_btn = document.querySelector('#cookbooks');
+const shopping_list = document.querySelector('#shopping_list');
+const edit_button = document.querySelector('#edit_list');
 
 if (cookbooks_btn) {
     cookbooks_btn.addEventListener('click', function() {
@@ -15,4 +17,15 @@ if (recipe_btn) {
     });
 }
 
+if (shopping_list) {
+    shopping_list.addEventListener('click', function() {
+        window.location.href = '/shopping_list';
+    });
+}
+
+if (edit_button) {
+    edit_button.addEventListener('click', function() {
+        window.location.href = '/edit_list';
+    });
+}
 
