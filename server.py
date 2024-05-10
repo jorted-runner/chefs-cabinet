@@ -1,4 +1,5 @@
 # TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
+# TODO - Notifications for followers, comments, reviews
 # TODO - Allow user to reorder recipe images
 # TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
 # TODO - fix search page so that when you follow someone hou still see something
