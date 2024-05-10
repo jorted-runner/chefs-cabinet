@@ -206,14 +206,4 @@ saveList_button.addEventListener('click', function() {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Failed to Save Shopping List');
-        }
-    })
-    .then(data => {
-        console.log('data', data);
-    })
 });

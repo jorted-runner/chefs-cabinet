@@ -663,9 +663,8 @@ def generate_list():
 
 @app.route('/shopping_list/<list_id>', methods=['GET', 'POST'])
 def display_shoppingList(list_id):
-    shopping_list = ShoppingList.query.filter_by(id=list_id)
-    return render_template('viewShoppingList.html', shopping_list=shopping_list, current_user=current_user)
-
+    shopping_list = ShoppingList.query.filter_by(id=list_id).first()
+    return render_template('viewShoppingList.html', shopping_list=shopping_list.shopping_list, current_user=current_user)
 
 @app.route('/save_list', methods=['POST'])
 def save_list():
@@ -677,18 +676,20 @@ def save_list():
                 newShoppingList = ShoppingList(user_id=current_user.id, shopping_list=form_shoppingList)
                 db.session.add(newShoppingList)
                 db.session.commit()
-                return redirect(url_for('shopping_list', list_id=newShoppingList.id))
+                return redirect(url_for('display_shoppingList', list_id=newShoppingList.id))
             except Exception as e:
                 db.session.rollback()
+                traceback.print_exc()
                 return jsonify({'error': str(e)}), 500
         else:
             try:
                 shoppingList.shopping_list = form_shoppingList
                 shoppingList.date_created = datetime.now()
                 db.session.commit()
-                return redirect(url_for('shopping_list', list_id=shoppingList.id))
+                return redirect(url_for('display_shoppingList', list_id=shoppingList.id))
             except Exception as e:
                 db.session.rollback()
+                traceback.print_exc()
                 return jsonify({'error': str(e)}), 500
     else:
         flash('Not an authenticated user. Cannot save list.')
