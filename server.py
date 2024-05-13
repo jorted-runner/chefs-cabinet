@@ -36,7 +36,6 @@ from sqlalchemy import and_
 import json
 import os
 import traceback
-import pathlib
 import requests
 
 from ai_interface import AI_tool
@@ -59,7 +58,7 @@ RECIPE_AI = AI_tool()
 IMAGE_PROCESSOR = ImageProcessing()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 
-client_secrets_file = os.path.join(pathlib.Path(__file__).parent, 'client_secret.json')
+client_secrets_file = os.environ.get('SECRET_FILE_PATH')
 if os.environ.get('PROD') == 'False':
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
     flow = Flow.from_client_secrets_file(
