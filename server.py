@@ -58,10 +58,10 @@ Bootstrap(app)
 RECIPE_AI = AI_tool()
 IMAGE_PROCESSOR = ImageProcessing()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, 'client_secret.json')
 if os.environ.get('PROD') == 'False':
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
     flow = Flow.from_client_secrets_file(
         client_secrets_file=client_secrets_file,
         scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
