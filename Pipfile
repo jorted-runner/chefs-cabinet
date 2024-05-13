@@ -22,5 +22,6 @@ oauthlib = "*"
 pathlib = "*"
 vendor = "*"
 requests-oauthlib = "*"
+google-auth-oauthlib = "*"
 
 [requires]
