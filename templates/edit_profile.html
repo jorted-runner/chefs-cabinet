@@ -31,7 +31,9 @@
                 <legend>Profile Information</legend>
                 <label>First Name* <input type="text" name="fname" required autocomplete="given-name" value="{{ user.fname }}"></label>
                 <label>Last Name* <input type="text" name="lname" required autocomplete="family-name" value="{{ user.lname }}"></label>
-                <label>Email Address* <input type="email" name="email" required placeholder="chef@chefscabinet.com" value="{{ user.email }}"></label>
+                {% if not user.google_id %}
+                    <label>Email Address* <input type="email" name="email" required placeholder="chef@chefscabinet.com" value="{{ user.email }}"></label>
+                {% endif %}
                 <label>Username* <input type="text" name="username" required value="{{ user.username }}"></label>
             </fieldset>
             <input type="submit" value="Save Changes">

@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime
 
 # Connect to the database
-old_DB = sqlite3.connect('instance/chefs_cabinet.sqlite3')
-new_DB = sqlite3.connect('instance/chefs_db.sqlite3')
+old_DB = sqlite3.connect('instance/chefs_db.sqlite3')
+new_DB = sqlite3.connect('instance/chefs_db_2.sqlite3')
 
 old_cursor = old_DB.cursor()
 new_cursor = new_DB.cursor()

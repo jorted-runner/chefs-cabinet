@@ -17,5 +17,10 @@ requests = "*"
 boto3 = "*"
 Pillow = "*"
 openai = "*"
+google-auth = "*"
+oauthlib = "*"
+pathlib = "*"
+vendor = "*"
+requests-oauthlib = "*"
 
 [requires]

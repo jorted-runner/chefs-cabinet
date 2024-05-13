@@ -10,7 +10,7 @@
 # TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
 # Nav HTML for Notifications <li><a href="#"><img src="/static/images/notification-icon.svg" alt="Notification Icon" class="nav-icon"></a></li>
 
-from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash
+from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from flask_bootstrap import Bootstrap
@@ -21,6 +21,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
+from google.oauth2 import id_token
+from google_auth_oauthlib.flow import Flow
+from pip._vendor import cachecontrol
+import google.auth.transport.requests
+
 from dotenv import load_dotenv
 from datetime import date
 from functools import wraps
@@ -30,7 +35,9 @@ from sqlalchemy import and_
 
 import json
 import os
-import traceback 
+import traceback
+import pathlib
+import requests
 
 from ai_interface import AI_tool
 from image_processing import ImageProcessing
@@ -42,7 +49,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db_2.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
@@ -50,6 +57,23 @@ Bootstrap(app)
 
 RECIPE_AI = AI_tool()
 IMAGE_PROCESSOR = ImageProcessing()
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, 'client_secret.json')
+if os.environ.get('PROD') == 'False':
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file=client_secrets_file,
+        scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
+        redirect_uri='http://127.0.0.1:5000/callback'
+    )
+else:
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file=client_secrets_file,
+        scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
+        redirect_uri='https://www.chefs-cabinet.com/callback'
+    )
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,7 +81,8 @@ class User(UserMixin, db.Model):
     lname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
-    password = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=True)
+    google_id = db.Column(db.String(250), unique=True, nullable=True)
     sign_up_date = db.Column(db.DateTime, default=datetime.now)
     profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
     shopping_list = db.relationship("ShoppingList", uselist=False, backref='user')
@@ -204,21 +229,50 @@ def login():
     if request.method == "POST":
         email_or_username = request.form.get('email')
         password = request.form.get('password')
-        user = User.query.filter((User.email == email_or_username) | (User.username == email_or_username)).first()
-        if not user:
+        user = User.query.filter(or_(User.email == email_or_username, User.username == email_or_username)).first()
+        if user:
+            if user.google_id:
+                flash("You have registered with Google. Please log in using Google.")
+                return redirect(url_for('login'))
+            else:
+                if check_password_hash(user.password, password):
+                    login_user(user)
+                    return redirect(url_for('home'))
+                else:
+                    flash("Incorrect Password, try again!")
+                    return render_template("login.html", current_user=current_user)
+        else:
             flash("No user associated with that email or username, try <a href='" + url_for('register') + "'>registering</a>!")
             return redirect(url_for('login'))
-        else:
-            password = request.form.get('password')
-            if check_password_hash(user.password, password):
-                login_user(user)
-                return redirect(url_for('home'))
-            else:
-                flash("Incorrect Password, try again!")
-                return render_template("login.html", current_user=current_user)
     else:
         return render_template("login.html", current_user=current_user)
-    
+
+@app.route('/google-login')
+def google_login():
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    return redirect(authorization_url)
+
+@app.route('/callback')
+def google_auth_callback():
+    if "state" not in session or session["state"] != request.args.get("state"):
+        abort(500)
+    flow.fetch_token(authorization_response=request.url)
+    try:
+        resp = requests.get('https://www.googleapis.com/oauth2/v3/userinfo', headers={'Authorization': f'Bearer {flow.credentials.token}'})
+        resp.raise_for_status()
+        user_info = resp.json()
+    except requests.RequestException as e:
+        flash("Failed to authenticate with Google. Please try again later.")
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(google_id=user_info['sub']).first()
+    if user:
+        login_user(user)
+        return redirect(url_for('home'))
+    else:
+        return handle_new_google_user(user_info)
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -235,15 +289,34 @@ def register():
         new_user_lName = request.form.get('lname')
         new_user_email = request.form.get('email')
         new_user_username = request.form.get('username')
-        new_user_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
-        new_user = User(email = new_user_email, username = new_user_username, password = new_user_password, fname = new_user_fName, lname = new_user_lName)
+        new_user = User(email = new_user_email, username = new_user_username, fname = new_user_fName, lname = new_user_lName)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
         return redirect(url_for("home"))
     else:
         return render_template("register.html", current_user=current_user)
-    
+
+def handle_new_google_user(user_info):
+    try:
+        new_user_fName = user_info.get("name").split(" ")[0]
+        new_user_lName = user_info.get("name").split(" ")[1]
+    except:
+        new_user_fName = user_info.get("name").split(" ")[0]
+        new_user_lName = " "
+    new_user_email = user_info.get('email')
+    new_user_username = user_info.get('email').split('@')[0]
+    new_user_google_id = user_info.get("sub")
+    profile_picture_url = user_info.get("picture")
+    temp = IMAGE_PROCESSOR.download_image(profile_picture_url)
+    temp_profile_pic_file = IMAGE_PROCESSOR.upload_profile(temp)
+    new_user_profile_pic = temp_profile_pic_file
+    new_user = User(email = new_user_email, username = new_user_username, fname = new_user_fName, lname = new_user_lName, profile_pic = new_user_profile_pic, google_id = new_user_google_id)
+    db.session.add(new_user)
+    db.session.commit()
+    login_user(new_user)
+    return redirect(url_for("home"))
+
 @app.route("/new-recipe")
 @login_required
 def new_recipe():
@@ -327,20 +400,30 @@ def edit_profile(userID):
         if request.method == "POST":
             updated_Fname = request.form.get('fname')
             updated_lName = request.form.get('lname')
-            updated_email = request.form.get('email')
+            if user.password:
+                updated_email = request.form.get('email')
+                updated_username = request.form.get('username')
+                if user.username != updated_username:
+                    if User.query.filter_by(username=updated_username).first():
+                        flash("User with username " + updated_username + " already exists. Try again.")
+                        return render_template("edit_profile.html", user=user, current_user=current_user)
+                if updated_email == updated_username:
+                    flash('Username and Email cannot match. Please choose a unique username.')
+                    return render_template("edit_profile.html", user=user, current_user=current_user)
+                user.email = updated_email
+                user.username = updated_username
+            user.fname = updated_Fname
+            user.lname = updated_lName
             updated_username = request.form.get('username')
-            updated_profile = request.files['file_input']
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
                     return render_template("edit_profile.html", user=user, current_user=current_user)
-            if updated_email == updated_username:
+            if user.email == updated_username:
                 flash('Username and Email cannot match. Please choose a unique username.')
                 return render_template("edit_profile.html", user=user, current_user=current_user)
-            user.fname = updated_Fname
-            user.lname = updated_lName
-            user.email = updated_email
             user.username = updated_username
+            updated_profile = request.files.get('file_input')
             if updated_profile:
                 file_name = IMAGE_PROCESSOR.download_userIMG(file=updated_profile)
                 updated_profile_url = IMAGE_PROCESSOR.upload_profile(file_name)
@@ -360,7 +443,6 @@ def edit_recipe(recipeID, userID):
         return redirect(url_for('home'))
     else:
         return render_template('edit_recipe.html', recipe=recipe, current_user=current_user)
-
 
 @app.route('/search', methods=['POST', 'GET'])
 @login_required
