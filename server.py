@@ -1,4 +1,3 @@
-# TODO - Authlib https://docs.authlib.org/en/latest/client/flask.html
 # TODO - Notifications for followers, comments, reviews
 # TODO - Allow user to reorder recipe images
 # TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
@@ -447,22 +446,22 @@ def edit_recipe(recipeID, userID):
 @login_required
 def search():
     if request.method == 'POST':
-        searchTerm = request.form.get('searchTerm')
+        searchTerm = request.form.get('searchTerm').strip()
         searchwords = searchTerm.split(' ')
         users_results = []
         recipes_results = []
         cookbook_results = []
         for word in searchwords:
             users = User.query.filter(
-                User.username.like(f"%{word}%") | 
-                User.fname.like(f"%{word}%") | 
-                User.lname.like(f"%{word}%")
+                User.username.like(f"%{word.strip()}%") | 
+                User.fname.like(f"%{word.strip()}%") | 
+                User.lname.like(f"%{word.strip()}%")
             ).all()
             users_results.extend(users)
             recipes = Recipe.query.filter(
-                Recipe.title.like(f"%{word}%") | 
-                Recipe.description.like(f"%{word}%") | 
-                Recipe.ingredients.like(f"%{word}%")
+                Recipe.title.like(f"%{word.strip()}%") | 
+                Recipe.description.like(f"%{word.strip()}%") | 
+                Recipe.ingredients.like(f"%{word.strip()}%")
             ).all()
             recipes_results.extend(recipes)
             if word.lower() == "cookbook" or word.lower() == "books" or word.lower() == 'cook' or word.lower() == 'book':
