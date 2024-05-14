@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime
 
 # Connect to the database
-old_DB = sqlite3.connect('instance/chefs_db.sqlite3')
-new_DB = sqlite3.connect('instance/chefs_db_2.sqlite3')
+old_DB = sqlite3.connect('instance/chefs_db_2.sqlite3')
+new_DB = sqlite3.connect('instance/chefs_db_3.sqlite3')
 
 old_cursor = old_DB.cursor()
 new_cursor = new_DB.cursor()
@@ -12,7 +12,12 @@ new_cursor = new_DB.cursor()
 old_cursor.execute("SELECT * FROM user")
 old_users = old_cursor.fetchall()
 for user in old_users:
-    new_cursor.execute(f"INSERT INTO user (id, fname, lname, email, username, password, profile_pic, sign_up_date) VALUES ({user[0]}, '{user[1]}', '{user[2]}', '{user[3]}', '{user[4]}', '{user[5]}', '{user[7]}', '{user[6]}')")
+    print(user[6])
+    if user[6] == None:
+        print('it worked')
+        new_cursor.execute(f"INSERT INTO user (id, fname, lname, email, username, password, profile_pic, sign_up_date, last_login) VALUES ({user[0]}, '{user[1]}', '{user[2]}', '{user[3]}', '{user[4]}', '{user[5]}', '{user[8]}', '{user[7]}', '{datetime.now()}')")
+    else:
+        new_cursor.execute(f"INSERT INTO user (id, fname, lname, email, username, password, google_id, profile_pic, sign_up_date, last_login) VALUES ({user[0]}, '{user[1]}', '{user[2]}', '{user[3]}', '{user[4]}', '{user[5]}', '{user[6]}', '{user[8]}', '{user[7]}', '{datetime.now()}')")
 
 ## Move Recipes ##
 old_cursor.execute("SELECT * FROM recipe")

@@ -47,7 +47,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db_2.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db_3.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '.\\static\\images'
 db = SQLAlchemy(app)
@@ -72,6 +72,14 @@ else:
         redirect_uri='https://www.chefs-cabinet.com/callback'
     )
 
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # e.g., 'follow', 'comment', 'review'
+    related_id = db.Column(db.Integer, nullable=False)  # ID of the related entity (Follower, Comment, Review)
+    timestamp = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    user = db.relationship('User', backref='notifications')
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -82,6 +90,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=True)
     google_id = db.Column(db.String(250), unique=True, nullable=True)
     sign_up_date = db.Column(db.DateTime, default=datetime.now)
+    last_login = db.Column(db.DateTime, default=datetime.now, nullable=True)
     profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
     shopping_list = db.relationship("ShoppingList", uselist=False, backref='user')
     recipes = db.relationship("Recipe", backref='user')
@@ -210,9 +219,30 @@ def date_sort(cookbooks):
     sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
     return sorted_cookbooks
 
+def get_notifications_since_last_login(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        ## This will get all notifications
+        notifications = Notification.query.filter(
+            Notification.user_id == user.id
+        ).order_by(Notification.timestamp.desc()).all()
+        ## This will get only new notifications
+        # notifications = Notification.query.filter(
+        #     Notification.user_id == user.id,
+        #     Notification.timestamp > user.last_login
+        # ).order_by(Notification.timestamp.desc()).all()
+        update_last_login(user)
+        return notifications
+    return []
+
+def update_last_login(user):
+    user.last_login = datetime.now()
+    db.session.commit()
+
 @app.route("/")
 def home():
     if current_user.is_authenticated:
+        notifications = get_notifications_since_last_login(current_user.id)
         if current_user.following:
             following_ids = [follower.following_id for follower in current_user.following]
             all_recipes = Recipe.query.filter(or_(Recipe.user_id == current_user.id, Recipe.user_id.in_(following_ids))).all()
@@ -220,7 +250,8 @@ def home():
             all_recipes = Recipe.query.all()
     else:
         all_recipes = Recipe.query.all()
-    return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user)
+        notifications = []
+    return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user, notifications=notifications)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -495,6 +526,14 @@ def comment(userID, recipeID):
                           recipe_id = int(recipeID))
     db.session.add(new_comment)
     db.session.commit()
+    recipe = Recipe.query.filter_by(id = recipeID).first()
+    notification = Notification(
+        user_id=recipe.user_id,
+        type='comment',
+        related_id=comment.id
+    )
+    db.session.add(notification)
+    db.session.commit()
     return redirect(url_for('view_recipe', recipeID=recipeID) + '#commentDiv')
 
 @app.route('/review/<userID>/<recipeID>', methods=['POST'])
@@ -502,11 +541,19 @@ def comment(userID, recipeID):
 def review(userID, recipeID):
     review = request.form.get('review')
     rating = request.form.get('rating')
-    new_recipe = Review(review=review,
+    new_review = Review(review=review,
                         rating=rating,
                         user_id=int(userID),
                         recipe_id=int(recipeID))
-    db.session.add(new_recipe)
+    db.session.add(new_review)
+    db.session.commit()
+    recipe = Recipe.query.filter_by(id = recipeID).first()
+    notification = Notification(
+        user_id=recipe.user_id,
+        type='review',
+        related_id=new_review.id
+    )
+    db.session.add(notification)
     db.session.commit()
     return redirect(url_for('view_recipe', recipeID=recipeID)+ '#reviewDiv')
 
@@ -573,6 +620,13 @@ def follow():
             return jsonify({'error': 'Missing userID or currentUserID'}), 400
         new_following = Follower(follower_id=currentUserID, following_id=userID)
         db.session.add(new_following)
+        db.session.commit()
+        notification = Notification(
+            user_id=userID,
+            type='follow',
+            related_id=new_following.id
+        )
+        db.session.add(notification)
         db.session.commit()
         return jsonify({'success': True}), 200
     except Exception as e:

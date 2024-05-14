@@ -711,7 +711,20 @@ table {
     background-color: #303030;
     opacity: 8%;
 }
-
+.notifications {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 300px;
+    color: black;
+}
+.notifications p {
+    margin: 0;
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+.notifications p:last-child {
+    border-bottom: none;
+}
   
 .hidden {
     display: none;
