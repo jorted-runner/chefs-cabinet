@@ -7,6 +7,7 @@ class AI_tool():
   def __init__(self):
     self.client = OpenAI()
     gpt_url = "https://api.openai.com/v1/chat/completions"
+    self.seed = 51773
 
   def image_generation(self, prompt):
     response = self.client.images.generate(
@@ -14,7 +15,7 @@ class AI_tool():
       prompt = prompt,
       size="1024x1024",
       quality='hd',
-      n=1,
+      n=1
     )
     urls = []
     urls.append(response.data[0].url)
@@ -28,7 +29,8 @@ class AI_tool():
       messages=[
         {"role":"system","content":"You are a helpful assistant trained as a chef designed to output JSON."},
         {"role": "user", "content": f"{prompt}"}
-      ]
+      ],
+      seed=self.seed
     )
     recipe = response.choices[0].message.content
     return recipe
@@ -41,7 +43,8 @@ class AI_tool():
         messages=[
           {"role":"system","content":"You're a helpful assistant trained as a personal shopper, ready to output JSON."},
           {"role": "user", "content": f"{prompt}"}
-        ]
+        ],
+        seed = (self.seed - 1)
       )
     shopping_list = response.choices[0].message.content
     return shopping_list
