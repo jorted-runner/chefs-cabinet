@@ -50,6 +50,11 @@ old_followers = old_cursor.fetchall()
 for follower in old_followers:
     new_cursor.execute("INSERT into follower (id, follower_id, following_id) values (?, ?, ?)", (follower[0], follower[1], follower[2]))
 
+old_cursor.execute('SELECT * FROM shopping_list')
+old_shoppingLists = old_cursor.fetchall()
+for list in old_shoppingLists:
+    new_cursor.execute('INSERT into shopping_list (id, date_created, shopping_list, user_id) VALUES (?, ?, ?, ?)', (list[0], list[1], list[2], list[3]))
+
 new_DB.commit()
 new_DB.close()
 old_DB.close()

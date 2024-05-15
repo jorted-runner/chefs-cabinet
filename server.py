@@ -223,7 +223,8 @@ def get_notifications_since_last_login(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
         ## This will get all notifications
-        notifications = Notification.query.filter(
+        notifications = []
+        notification_DATA = Notification.query.filter(
             Notification.user_id == user.id
         ).order_by(Notification.timestamp.desc()).all()
         ## This will get only new notifications
@@ -232,6 +233,17 @@ def get_notifications_since_last_login(user_id):
         #     Notification.timestamp > user.last_login
         # ).order_by(Notification.timestamp.desc()).all()
         update_last_login(user)
+        for notification in notification_DATA:
+            if notification.type == 'follow':
+                follower = User.query.filter_by(id=notification.related_id).first()
+                notifications.append(f'<div><a href="../profile/{follower.id}"><img src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username} followed you.</p></a></div>')
+            elif notification.type == 'comment':
+                comment = Comment.query.filter_by(id=notification.related_id).first()
+                commentor = User.query.filter_by(id=comment.user_id).first()
+                notifications.append(f'<div><a href="../profile/{commentor.id}"><img src="{commentor.profile_pic}" alt="User Profile Pic">{commentor.username}</a><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{comment.comment}</a></p>')
+            elif notification.type == 'review':
+                review = Review.query.filter_by(id=notification.related_id).first()
+                notifications.append(f'{review.user.username} reviewed your recipe.')
         return notifications
     return []
 
@@ -318,7 +330,8 @@ def register():
         new_user_lName = request.form.get('lname')
         new_user_email = request.form.get('email')
         new_user_username = request.form.get('username')
-        new_user = User(email = new_user_email, username = new_user_username, fname = new_user_fName, lname = new_user_lName)
+        new_user_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
+        new_user = User(email = new_user_email, username = new_user_username, password = new_user_password, fname = new_user_fName, lname = new_user_lName)        
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -530,7 +543,7 @@ def comment(userID, recipeID):
     notification = Notification(
         user_id=recipe.user_id,
         type='comment',
-        related_id=comment.id
+        related_id=new_comment.id
     )
     db.session.add(notification)
     db.session.commit()

@@ -52,20 +52,6 @@
         
         {% include "messages.html" %}
         <div class="recipe_feed">
-            <div class="notifications hidden">
-                {% for notification in notifications %}
-                    <p>{{ notification.type }}</p>
-                {% endfor %}  
-            </div>
-            <script>
-                const notificationButton = document.getElementById('notification-icon');
-                if (notificationButton) {
-                    notificationButton.addEventListener('click', function() {
-                        var notifications = document.querySelector('.notifications');
-                        notifications.classList.toggle('hidden');
-                    });
-                }
-            </script>
             {% for recipe in all_recipes %}
                 {% include 'recipe_card.html' %}
             {% endfor %}
