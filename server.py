@@ -225,7 +225,8 @@ def get_notifications_since_last_login(user_id):
     if user:
         ## This will get all notifications
         # notification_DATA = Notification.query.filter(
-        #     Notification.user_id == user.id
+        #     Notification.user_id == user.id,
+        #     Notification.is_read != True
         # ).order_by(Notification.timestamp.desc()).all()
         # This will get only new notifications
         notification_DATA = Notification.query.filter(
@@ -234,28 +235,30 @@ def get_notifications_since_last_login(user_id):
             Notification.is_read != True
         ).order_by(Notification.timestamp.desc()).all()
         if notification_DATA:
-            return process_notifications(notification_DATA)
+            notifications = []
+            for notification in notification_DATA:
+                if notification.type == 'follow':
+                    follower = User.query.filter_by(id=notification.related_id).first()
+                    if follower:
+                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{follower.id}"><img class="notification-profile-pic" src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username}</p></div><p>Followed you.</p></a></div>')
+                    else:
+                        notifications.append('<div><p>Error with displaying new follower</p></div>')
+                elif notification.type == 'comment':
+                    comment = Comment.query.filter_by(id=notification.related_id).first()
+                    if comment:
+                        commentor = User.query.filter_by(id=comment.user_id).first()
+                        commentText = comment.comment
+                        if len(commentText) > 50:
+                            commentText = commentText[:47] + '... <u>See More</u>'
+                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{commentor.id}"><img class="notification-profile-pic" src="{commentor.profile_pic}" alt="User Profile Pic"><p>{commentor.username}</p></a></div><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{commentText}</a></p></div>')
+                elif notification.type == 'review':
+                    review = Review.query.filter_by(id=notification.related_id).first()
+                    if review:
+                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{review.user.id}"><img class="notification-profile-pic" src="{review.user.profile_pic}" alt="User Profile Pic"><p>{review.user.username}</p></a></div><p><a href="../view_recipe/{review.recipe_id}">Gave your recipe a {review.rating} rating... <u>See More</u></p></a></div>')
+            return notifications
         else:
             return ['<div><p>No new notifications</p></div>']
     return ['<div><p>No new notifications</p></div>']
-
-def process_notifications(notification_DATA):
-    notifications = []
-    for notification in notification_DATA:
-        if notification.type == 'follow':
-            follower = User.query.filter_by(id=notification.related_id).first()
-            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{follower.id}"><img class="notification-profile-pic" src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username}</p></div><p>Followed you.</p></a></div>')
-        elif notification.type == 'comment':
-            comment = Comment.query.filter_by(id=notification.related_id).first()
-            commentor = User.query.filter_by(id=comment.user_id).first()
-            commentText = comment.comment
-            if len(commentText) > 50:
-                commentText = commentText[:47] + '... <u>See More</u>'
-            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{commentor.id}"><img class="notification-profile-pic" src="{commentor.profile_pic}" alt="User Profile Pic"><p>{commentor.username}</p></a></div><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{commentText}</a></p></div>')
-        elif notification.type == 'review':
-            review = Review.query.filter_by(id=notification.related_id).first()
-            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{review.user.id}"><img class="notification-profile-pic" src="{review.user.profile_pic}" alt="User Profile Pic"><p>{review.user.username}</p></a></div><p><a href="../view_recipe/{review.recipe_id}">Gave your recipe a {review.rating} rating... <u>See More</u></p></a></div>')
-    return notifications
 
 @app.route('/mark_read', methods=['POST'])
 def mark_as_read():
@@ -906,7 +909,33 @@ def admin_delete_user(userID):
             db.session.delete(comment)
     if user_to_delete.recipes:
         for recipe in user_to_delete.recipes:
-            admin_delete_recipe(recipe.id)
+            media = RecipeMedia.query.filter_by(recipe_id = recipe.id).all()
+            for pic in media:
+                db.session.delete(pic)
+            db.session.delete(recipe)
+            db.session.commit()
+    notifications = Notification.query.filter(
+    or_(
+        Notification.user_id == userID,
+        and_(
+            Notification.type == 'follow',
+            Notification.related_id == userID
+        )
+    )).all()
+    for notification in notifications:
+        db.session.delete(notification)
+        db.session.commit()
+    cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(user_id=userID).all()
+    for book in cookbook:
+        db.session.delete(book)
+        db.session.commit()
+    followers = Follower.query.filter(or_(
+        Follower.follower_id == userID,
+        Follower.following_id == userID
+    ))
+    for follow in followers:
+        db.session.delete(follow)
+        db.session.commit()
     db.session.delete(user_to_delete)
     db.session.commit()
     return redirect(url_for('admin'))
