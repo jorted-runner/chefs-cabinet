@@ -260,13 +260,17 @@ def process_notifications(notification_DATA):
 @app.route('/mark_read', methods=['POST'])
 def mark_as_read():
     user = User.query.filter_by(id=current_user.id).first()
-    for notification in Notification.query.filter(
-            Notification.user_id == user.id,
-            Notification.timestamp > user.last_login,
-            Notification.is_read != True
-        ).order_by(Notification.timestamp.desc()).all():
-        notification.is_read = True
-        db.session.commit()
+    try:
+        for notification in Notification.query.filter(
+                Notification.user_id == user.id,
+                Notification.timestamp > user.last_login,
+                Notification.is_read != True
+            ).order_by(Notification.timestamp.desc()).all():
+            notification.is_read = True
+            db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 400
 
 def update_last_login(user):
     user.last_login = datetime.now()
