@@ -34,6 +34,10 @@
         display: grid;
         grid-template-columns: 1fr;
     }
+    .notifications {
+        right: 33vw;
+        top: 23vh;
+    }
     .hidden {
         display: none;
     }

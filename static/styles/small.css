@@ -42,4 +42,8 @@
     .behind-overlay {
         z-index: 1;
     }
+    .notifications {
+        left: 12vw;
+        top: 20vh;
+    }
 }

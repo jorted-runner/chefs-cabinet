@@ -219,33 +219,54 @@ def date_sort(cookbooks):
     sorted_cookbooks = sorted(cookbooks, key=lambda x: x.last_modified, reverse=True)
     return sorted_cookbooks
 
+@app.template_filter('get_notifications_since_last_login')
 def get_notifications_since_last_login(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
         ## This will get all notifications
-        notifications = []
-        notification_DATA = Notification.query.filter(
-            Notification.user_id == user.id
-        ).order_by(Notification.timestamp.desc()).all()
-        ## This will get only new notifications
-        # notifications = Notification.query.filter(
-        #     Notification.user_id == user.id,
-        #     Notification.timestamp > user.last_login
+        # notification_DATA = Notification.query.filter(
+        #     Notification.user_id == user.id
         # ).order_by(Notification.timestamp.desc()).all()
-        update_last_login(user)
-        for notification in notification_DATA:
-            if notification.type == 'follow':
-                follower = User.query.filter_by(id=notification.related_id).first()
-                notifications.append(f'<div><a href="../profile/{follower.id}"><img src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username} followed you.</p></a></div>')
-            elif notification.type == 'comment':
-                comment = Comment.query.filter_by(id=notification.related_id).first()
-                commentor = User.query.filter_by(id=comment.user_id).first()
-                notifications.append(f'<div><a href="../profile/{commentor.id}"><img src="{commentor.profile_pic}" alt="User Profile Pic">{commentor.username}</a><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{comment.comment}</a></p>')
-            elif notification.type == 'review':
-                review = Review.query.filter_by(id=notification.related_id).first()
-                notifications.append(f'{review.user.username} reviewed your recipe.')
-        return notifications
-    return []
+        # This will get only new notifications
+        notification_DATA = Notification.query.filter(
+            Notification.user_id == user.id,
+            Notification.timestamp > user.last_login,
+            Notification.is_read != True
+        ).order_by(Notification.timestamp.desc()).all()
+        if notification_DATA:
+            return process_notifications(notification_DATA)
+        else:
+            return ['<div><p>No new notifications</p></div>']
+    return ['<div><p>No new notifications</p></div>']
+
+def process_notifications(notification_DATA):
+    notifications = []
+    for notification in notification_DATA:
+        if notification.type == 'follow':
+            follower = User.query.filter_by(id=notification.related_id).first()
+            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{follower.id}"><img class="notification-profile-pic" src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username}</p></div><p>Followed you.</p></a></div>')
+        elif notification.type == 'comment':
+            comment = Comment.query.filter_by(id=notification.related_id).first()
+            commentor = User.query.filter_by(id=comment.user_id).first()
+            commentText = comment.comment
+            if len(commentText) > 50:
+                commentText = commentText[:47] + '... <u>See More</u>'
+            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{commentor.id}"><img class="notification-profile-pic" src="{commentor.profile_pic}" alt="User Profile Pic"><p>{commentor.username}</p></a></div><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{commentText}</a></p></div>')
+        elif notification.type == 'review':
+            review = Review.query.filter_by(id=notification.related_id).first()
+            notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{review.user.id}"><img class="notification-profile-pic" src="{review.user.profile_pic}" alt="User Profile Pic"><p>{review.user.username}</p></a></div><p><a href="../view_recipe/{review.recipe_id}">Gave your recipe a {review.rating} rating... <u>See More</u></p></a></div>')
+    return notifications
+
+@app.route('/mark_read', methods=['POST'])
+def mark_as_read():
+    user = User.query.filter_by(id=current_user.id).first()
+    for notification in Notification.query.filter(
+            Notification.user_id == user.id,
+            Notification.timestamp > user.last_login,
+            Notification.is_read != True
+        ).order_by(Notification.timestamp.desc()).all():
+        notification.is_read = True
+        db.session.commit()
 
 def update_last_login(user):
     user.last_login = datetime.now()
@@ -254,7 +275,6 @@ def update_last_login(user):
 @app.route("/")
 def home():
     if current_user.is_authenticated:
-        notifications = get_notifications_since_last_login(current_user.id)
         if current_user.following:
             following_ids = [follower.following_id for follower in current_user.following]
             all_recipes = Recipe.query.filter(or_(Recipe.user_id == current_user.id, Recipe.user_id.in_(following_ids))).all()
@@ -262,8 +282,7 @@ def home():
             all_recipes = Recipe.query.all()
     else:
         all_recipes = Recipe.query.all()
-        notifications = []
-    return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user, notifications=notifications)
+    return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():

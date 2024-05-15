@@ -26,7 +26,7 @@ h1 {
 }
 .header-h1 {
     font-family: 'Caveat', cursive;
-    font-size: 4rem;
+    font-size: 3rem;
     text-align: center;
     color: #F06060;
     text-decoration: none;
@@ -712,20 +712,45 @@ table {
     opacity: 8%;
 }
 .notifications {
+    position: fixed;
+    right: 28%;
+    top: 12vh;
     border: 1px solid #ccc;
     padding: 10px;
     width: 300px;
+    max-height: 400px;
+    overflow: scroll;
     color: black;
+    background-color: #fbf8ea;
+    z-index: 1000;
 }
-.notifications p {
+
+.notification-user a {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-content: center;
+}
+.notification-user a p {
     margin: 0;
-    padding: 5px;
-    border-bottom: 1px solid #eee;
 }
-.notifications p:last-child {
-    border-bottom: none;
+.notification-profile-pic {
+    width: auto;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
-  
+.subscript {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #F06060;
+    color: black;
+    text-align: center;
+    line-height: 20px;
+    margin-left: -.75rem;
+  }
 .hidden {
     display: none;
 }

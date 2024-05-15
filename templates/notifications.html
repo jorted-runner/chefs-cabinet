@@ -1,16 +1,10 @@
-<div class="notifications hidden">
-    {% for notification in notifications %}
-    {{ notification | safe}}
-    <hr>
-    {% endfor %}
-</div>
-
-<script>
-    const notificationButton = document.getElementById('notification-icon');
-    if (notificationButton) {
-        notificationButton.addEventListener('click', function() {
-            var notifications = document.querySelector('.notifications');
-            notifications.classList.toggle('hidden');
-        });
-    }
-</script>
+{% if current_user.is_authenticated: %}
+    <div class="notifications hidden">
+        <div class="notification-close-icon close-icon">&times;</div>
+        {% set notifications = current_user.id | get_notifications_since_last_login %}
+        {% for notification in notifications %}
+        {{ notification | safe}}
+        <hr>
+        {% endfor %}
+    </div>
+{% endif %}
