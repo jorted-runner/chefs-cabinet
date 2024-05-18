@@ -12,4 +12,5 @@ Chefs Cabinet is a recipe-sharing website. It harnesses AI to help users generat
 - **Comments and Discussions**: Comment on and discuss recipes that catch your eye.
 - **AI-Generated Images**: Enjoy AI-generated images for each recipe added to the site, making your recipes visually appealing.
 
-
+## See how it works
+ ![Recipe Sharing Feature](images/Chefs Recording/recipe-sharing.gif)
