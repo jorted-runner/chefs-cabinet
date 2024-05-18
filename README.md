@@ -13,16 +13,33 @@ Chefs Cabinet is a recipe-sharing website. It harnesses AI to help users generat
 - **AI-Generated Images**: Enjoy AI-generated images for each recipe added to the site, making your recipes visually appealing.
 
 ## See how it works
-Main Feed:
+### Main Feed:
 
- ![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Recipe%20Feed.gif)
+ ![Main Social Feed](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Recipe%20Feed.gif)
 
+### Notifications 
+![Notifications](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Notifications.gif)
+
+### Search
+![Search](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Search.gif)
  
-New Recipe:
+### New Recipe:
+ ![Create New Recipe](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/New%20Recipe.gif)
 
- ![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/New%20Recipe.gif)
+### Edit Recipe:
+![Edit Recipe](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Edit%20Recipe.gif)
 
- 
-Edit Recipe:
+### Comment and Rate and Review
+![Rate and Review](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Comment%20Rate%20and%20Review.gif)
 
-![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Edit%20Recipe.gif)
+### Add Recipe to Cookbook
+![Add Recipe to Cookbook](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Add%20to%20Cookbook.gif)
+
+### Generate Shopping List
+![Generate Shopping list](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Cookbook%20and%20Shopping%20List.gif)
+
+### Profile Home
+![Profile Home](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Profile%20Page.gif)
+
+### Edit Profile
+![Edit Profile](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Edit%20Profile.gif)
