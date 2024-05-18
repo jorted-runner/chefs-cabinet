@@ -12,3 +12,5 @@ chefs_db.sqlite3
 chefs_db_2.sqlite3
 chefs_db_3.sqlite3
 client_secret.json
+.vscode/
+__pycache__/
