@@ -14,10 +14,15 @@ Chefs Cabinet is a recipe-sharing website. It harnesses AI to help users generat
 
 ## See how it works
 Main Feed:
+
  ![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Recipe%20Feed.gif)
+
  
 New Recipe:
+
  ![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/New%20Recipe.gif)
+
  
 Edit Recipe:
+
 ![Recipe Sharing Feature](https://github.com/jorted-runner/chefs-cabinet/blob/main/static/images/Edit%20Recipe.gif)
