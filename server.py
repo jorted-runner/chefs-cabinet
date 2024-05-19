@@ -1,14 +1,3 @@
-# TODO - Fix new follower notification
-# TODO - Error screens. I don't want the user to see Internal server error. I want to handle the error better.
-# TODO - Allow user to reorder recipe images
-# TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
-# TODO - fix search page so that when you follow someone hou still see something
-# TODO - Figure out 'add to cookbook' iphone/ipad glitch
-# TODO - Recipe idea/inspiration tile
-# TODO - Form Styling
-# TODO - Change Colors?
-# TODO - Update queries current method is deprecated - https://docs.sqlalchemy.org/en/20/tutorial/index.html
-
 from flask import Flask, render_template, redirect, url_for, request, jsonify, abort, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
