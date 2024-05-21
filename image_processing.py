@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from PIL import Image
 from werkzeug.utils import secure_filename
 
-class ImageProcessing:
+class Image_Processing:
     def __init__(self):
         load_dotenv()
         self.aws_bucket = os.environ.get("AWS_BUCKET")

@@ -22,5 +22,6 @@ oauthlib = "*"
 vendor = "*"
 requests-oauthlib = "*"
 google-auth-oauthlib = "*"
+bleach = "*"
 
 [requires]

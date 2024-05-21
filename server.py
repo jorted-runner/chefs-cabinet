@@ -27,7 +27,8 @@ import traceback
 import requests
 
 from ai_interface import AI_tool
-from image_processing import ImageProcessing
+from image_processing import Image_Processing
+from data_validation import Data_Validation
 
 from config import Config
 configCLASS = Config()
@@ -43,7 +44,8 @@ db = SQLAlchemy(app)
 Bootstrap(app)
 
 RECIPE_AI = AI_tool()
-IMAGE_PROCESSOR = ImageProcessing()
+IMAGE_PROCESSOR = Image_Processing()
+VALIDATOR = Data_Validation()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 
 client_secrets_file = os.environ.get('SECRET_FILE_PATH')
@@ -283,8 +285,8 @@ def home():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email_or_username = request.form.get('email')
-        password = request.form.get('password')
+        email_or_username = VALIDATOR.clean_input(request.form.get('email'))
+        password = VALIDATOR.clean_input(request.form.get('password'))
         user = User.query.filter(or_(User.email == email_or_username, User.username == email_or_username)).first()
         if user:
             if user.google_id:
@@ -341,10 +343,10 @@ def register():
         elif request.form.get('username') == request.form.get('email'):
             flash('Username and Email cannot match. Please choose a unique username.')
             return redirect(url_for('register'))
-        new_user_fName = request.form.get('fname')
-        new_user_lName = request.form.get('lname')
-        new_user_email = request.form.get('email')
-        new_user_username = request.form.get('username')
+        new_user_fName = VALIDATOR.clean_input(request.form.get('fname'))
+        new_user_lName = VALIDATOR.clean_input(request.form.get('lname'))
+        new_user_email = VALIDATOR.clean_input(request.form.get('email'))
+        new_user_username = VALIDATOR.clean_input(request.form.get('username'))
         new_user_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
         new_user = User(email = new_user_email, username = new_user_username, password = new_user_password, fname = new_user_fName, lname = new_user_lName)        
         db.session.add(new_user)
@@ -383,11 +385,11 @@ def new_recipe():
 @login_required
 def save_recipe():
     if request.method == "POST":
-        recipe_title = request.form.get("title")
-        recipe_images = request.form.getlist("image_url")
-        recipe_desc = request.form.get("desc")
-        ingredients = request.form.get("ingredients")
-        instructions = request.form.get("instructions")
+        recipe_title = VALIDATOR.clean_input(request.form.get("title"))
+        recipe_images = VALIDATOR.clean_input(request.form.getlist("image_url"))
+        recipe_desc = VALIDATOR.clean_input(request.form.get("desc"))
+        ingredients = VALIDATOR.clean_input(request.form.get("ingredients"))
+        instructions = VALIDATOR.clean_input(request.form.get("instructions"))
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
@@ -410,9 +412,9 @@ def save_recipe():
 def generate_images():
     try:
         data = request.get_json()
-        title = data['title']
-        description = data['description']
-        ingredients = data['ingredients']
+        title = VALIDATOR.clean_input(data['title'])
+        description = VALIDATOR.clean_input(data['description'])
+        ingredients = VALIDATOR.clean_input(data['ingredients'])
         prompt = f"{title}. {description}. {ingredients}"
         image_urls = RECIPE_AI.image_generation(prompt)
         return jsonify(images=image_urls)
@@ -425,8 +427,8 @@ def generate_images():
 def generate_recipe():
     try:
         data = request.get_json()
-        includeIngredients = data['includeIngredients']
-        excludeIngredients = data['excludeIngredients']
+        includeIngredients = VALIDATOR.clean_input(data['includeIngredients'])
+        excludeIngredients = VALIDATOR.clean_input(data['excludeIngredients'])
         recipe = RECIPE_AI.recipe_generation(includeIngredients, excludeIngredients)
         return jsonify(recipe=recipe)
     except Exception as e:
@@ -455,11 +457,11 @@ def edit_profile(userID):
     if current_user.id == int(userID):
         user = User.query.filter_by(id=userID).first()
         if request.method == "POST":
-            updated_Fname = request.form.get('fname')
-            updated_lName = request.form.get('lname')
+            updated_Fname = VALIDATOR.clean_input(request.form.get('fname'))
+            updated_lName = VALIDATOR.clean_input(request.form.get('lname'))
             if user.password:
-                updated_email = request.form.get('email')
-                updated_username = request.form.get('username')
+                updated_email = VALIDATOR.clean_input(request.form.get('email'))
+                updated_username = VALIDATOR.clean_input(request.form.get('username'))
                 if user.username != updated_username:
                     if User.query.filter_by(username=updated_username).first():
                         flash("User with username " + updated_username + " already exists. Try again.")
@@ -471,7 +473,7 @@ def edit_profile(userID):
                 user.username = updated_username
             user.fname = updated_Fname
             user.lname = updated_lName
-            updated_username = request.form.get('username')
+            updated_username = VALIDATOR.clean_input(request.form.get('username'))
             if user.username != updated_username:
                 if User.query.filter_by(username=updated_username).first():
                     flash("User with username " + updated_username + " already exists. Try again.")
@@ -505,7 +507,7 @@ def edit_recipe(recipeID, userID):
 @login_required
 def search():
     if request.method == 'POST':
-        searchTerm = request.form.get('searchTerm').strip()
+        searchTerm = VALIDATOR.clean_input(request.form.get('searchTerm')).strip()
         searchwords = searchTerm.split(' ')
         users_results = []
         recipes_results = []
@@ -548,7 +550,7 @@ def search():
 @app.route('/comment/<userID>/<recipeID>', methods=['POST'])
 @login_required
 def comment(userID, recipeID):
-    comment = request.form.get('comment')
+    comment = VALIDATOR.clean_input(request.form.get('comment'))
     new_comment = Comment(comment=comment,
                           user_id=int(userID),
                           recipe_id = int(recipeID))
@@ -567,7 +569,7 @@ def comment(userID, recipeID):
 @app.route('/review/<userID>/<recipeID>', methods=['POST'])
 @login_required
 def review(userID, recipeID):
-    review = request.form.get('review')
+    review = VALIDATOR.clean_input(request.form.get('review'))
     rating = request.form.get('rating')
     new_review = Review(review=review,
                         rating=rating,
@@ -594,11 +596,11 @@ def view_recipe(recipeID):
 def update_recipe():
     if request.method == "POST":
         try:
-            recipe_id = request.form.get("id")
-            recipe_title = request.form.get("title")
-            recipe_desc = request.form.get("desc")
-            instructions = request.form.get("instructions")
-            ingredients = request.form.get("ingredients")
+            recipe_id = VALIDATOR.clean_input(request.form.get("id"))
+            recipe_title = VALIDATOR.clean_input(request.form.get("title"))
+            recipe_desc = VALIDATOR.clean_input(request.form.get("desc"))
+            instructions = VALIDATOR.clean_input(request.form.get("instructions"))
+            ingredients = VALIDATOR.clean_input(request.form.get("ingredients"))
             removedRecipe_URLs = custom_split(request.form.get('removed_images'))
             user_uploads = ''
             try:
@@ -719,7 +721,7 @@ def add_cookbook():
         return jsonify({'error': 'An error occurred while adding the cookbook: {}'.format(str(e))}), 500
 
     return jsonify({'success': True}), 200
-
+# Made it to here
 @app.route('/edit_cookbook/<cookbookID>', methods=['GET', 'POST'])
 @login_required
 def edit_cookbook(cookbookID):
