@@ -38,6 +38,13 @@
         right: 33vw;
         top: 23vh;
     }
+    .training {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    .training h2 {
+        grid-column: 1;
+    }
     .hidden {
         display: none;
     }
