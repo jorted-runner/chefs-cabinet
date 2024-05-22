@@ -386,10 +386,10 @@ def new_recipe():
 def save_recipe():
     if request.method == "POST":
         recipe_title = VALIDATOR.clean_input(request.form.get("title"))
-        recipe_images = VALIDATOR.clean_input(request.form.getlist("image_url"))
+        recipe_images = request.form.getlist("image_url")
         recipe_desc = VALIDATOR.clean_input(request.form.get("desc"))
-        ingredients = VALIDATOR.clean_input(request.form.get("ingredients"))
-        instructions = VALIDATOR.clean_input(request.form.get("instructions"))
+        ingredients = json.dumps([VALIDATOR.clean_input(item) for item in custom_split(request.form.get("ingredients"))])
+        instructions = json.dumps([VALIDATOR.clean_input(item) for item in custom_split(request.form.get("instructions"))])
         new_recipe = Recipe(
             title=recipe_title,
             description=recipe_desc,
@@ -413,8 +413,8 @@ def generate_images():
     try:
         data = request.get_json()
         title = VALIDATOR.clean_input(data['title'])
-        description = VALIDATOR.clean_input(data['description'])
-        ingredients = VALIDATOR.clean_input(data['ingredients'])
+        description = data['description']
+        ingredients = data['ingredients']
         prompt = f"{title}. {description}. {ingredients}"
         image_urls = RECIPE_AI.image_generation(prompt)
         return jsonify(images=image_urls)
