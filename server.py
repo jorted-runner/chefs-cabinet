@@ -688,7 +688,7 @@ def unfollow():
 def add_cookbook():
     try:
         data = request.get_json()
-        cookbook_name = data.get('cookbook')
+        cookbook_name = VALIDATOR.clean_input(data.get('cookbook'))
         user_id = data.get('userID')
         recipe_id = data.get('recipeID')
         status = data.get('status')
@@ -730,7 +730,7 @@ def edit_cookbook(cookbookID):
         if cookbook.user_id == current_user.id:
             try:
                 cookbook_id = request.form.get('id')
-                name = request.form.get('name')
+                name = VALIDATOR.clean_input(request.form.get('name'))
                 status = request.form.get('status')
                 try:
                     cover_img_file = request.files['cover_img']
@@ -845,7 +845,7 @@ def edit_list():
 @app.route('/save_list', methods=['POST'])
 def save_list():
     if current_user.is_authenticated:
-        form_shoppingList = request.form.get('shopping_list')
+        form_shoppingList = VALIDATOR.clean_input(request.form.get('shopping_list'))
         shoppingList = ShoppingList.query.filter_by(user_id = current_user.id).first()
         if not shoppingList:
             try:
