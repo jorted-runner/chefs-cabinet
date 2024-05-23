@@ -29,6 +29,8 @@ import requests
 from ai_interface import AI_tool
 from image_processing import Image_Processing
 from data_validation import Data_Validation
+from constants import constants
+from notification import NotificationHandler
 
 from config import Config
 configCLASS = Config()
@@ -47,20 +49,22 @@ RECIPE_AI = AI_tool()
 IMAGE_PROCESSOR = Image_Processing()
 VALIDATOR = Data_Validation()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+CONSTANTS = constants()
+NOTIFICATION = NotificationHandler()
 
 client_secrets_file = os.environ.get('SECRET_FILE_PATH')
 if os.environ.get('PROD') == 'False':
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
     flow = Flow.from_client_secrets_file(
         client_secrets_file=client_secrets_file,
-        scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
-        redirect_uri='http://127.0.0.1:5000/callback'
+        scopes=CONSTANTS.googleScopes,
+        redirect_uri=CONSTANTS.dev_googleRedirectUri
     )
 else:
     flow = Flow.from_client_secrets_file(
         client_secrets_file=client_secrets_file,
-        scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
-        redirect_uri='https://www.chefs-cabinet.com/callback'
+        scopes=CONSTANTS.googleScopes,
+        redirect_uri=CONSTANTS.prod_googleRedirectUri
     )
 
 class Notification(db.Model):
@@ -82,7 +86,7 @@ class User(UserMixin, db.Model):
     google_id = db.Column(db.String(250), unique=True, nullable=True)
     sign_up_date = db.Column(db.DateTime, default=datetime.now)
     last_login = db.Column(db.DateTime, default=datetime.now, nullable=True)
-    profile_pic = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png')
+    profile_pic = db.Column(db.Text, nullable=True, default=CONSTANTS.userDefaultProfilePic)
     shopping_list = db.relationship("ShoppingList", uselist=False, backref='user')
     recipes = db.relationship("Recipe", backref='user')
     cookbooks = db.relationship("CookBook", backref='user')
@@ -118,7 +122,7 @@ class CookBook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
     status = db.Column(db.Boolean, nullable=False, default=True)
-    cover_img = db.Column(db.Text, nullable=True, default='https://chefs-cabinet.s3.amazonaws.com/book_image.webp')
+    cover_img = db.Column(db.Text, nullable=True, default=CONSTANTS.cookbookDefaultCover)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     last_modified = db.Column(db.DateTime, default=datetime.now)
     recipes = db.relationship("Recipe", secondary=cookbook_recipes, backref='cookbooks')
@@ -214,57 +218,20 @@ def date_sort(cookbooks):
 def get_notifications_since_last_login(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
-        ## This will get all notifications
-        # notification_DATA = Notification.query.filter(
-        #     Notification.user_id == user.id,
-        #     Notification.is_read != True
-        # ).order_by(Notification.timestamp.desc()).all()
-        # This will get only new notifications
         notification_DATA = Notification.query.filter(
             Notification.user_id == user.id,
             Notification.timestamp > user.last_login,
             Notification.is_read != True
         ).order_by(Notification.timestamp.desc()).all()
         if notification_DATA:
-            notifications = []
-            for notification in notification_DATA:
-                if notification.type == 'follow':
-                    follower = User.query.filter_by(id=notification.related_id).first()
-                    if follower:
-                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{follower.id}"><img class="notification-profile-pic" src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username}</p></div><p>Followed you.</p></a></div>')
-                    else:
-                        notifications.append('<div><p>Error with displaying new follower</p></div>')
-                elif notification.type == 'comment':
-                    comment = Comment.query.filter_by(id=notification.related_id).first()
-                    if comment:
-                        commentor = User.query.filter_by(id=comment.user_id).first()
-                        commentText = comment.comment
-                        if len(commentText) > 50:
-                            commentText = commentText[:47] + '... <u>See More</u>'
-                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{commentor.id}"><img class="notification-profile-pic" src="{commentor.profile_pic}" alt="User Profile Pic"><p>{commentor.username}</p></a></div><p>Commented: <a href="../view_recipe/{comment.recipe_id}">{commentText}</a></p></div>')
-                elif notification.type == 'review':
-                    review = Review.query.filter_by(id=notification.related_id).first()
-                    if review:
-                        notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{review.user.id}"><img class="notification-profile-pic" src="{review.user.profile_pic}" alt="User Profile Pic"><p>{review.user.username}</p></a></div><p><a href="../view_recipe/{review.recipe_id}">Gave your recipe a {review.rating} rating... <u>See More</u></p></a></div>')
-            return notifications
+            return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
         else:
             return ['<div><p>No new notifications</p></div>']
     return ['<div><p>No new notifications</p></div>']
 
 @app.route('/mark_read', methods=['POST'])
 def mark_as_read():
-    user = User.query.filter_by(id=current_user.id).first()
-    try:
-        for notification in Notification.query.filter(
-                Notification.user_id == user.id,
-                Notification.timestamp > user.last_login,
-                Notification.is_read != True
-            ).order_by(Notification.timestamp.desc()).all():
-            notification.is_read = True
-            db.session.commit()
-        return jsonify({'success': True}), 200
-    except Exception as e:
-        return jsonify(error=str(e)), 400
+    return NOTIFICATION.markRead(current_user, db, User, Notification)
 
 def update_last_login(user):
     user.last_login = datetime.now()
@@ -599,8 +566,8 @@ def update_recipe():
             recipe_id = VALIDATOR.clean_input(request.form.get("id"))
             recipe_title = VALIDATOR.clean_input(request.form.get("title"))
             recipe_desc = VALIDATOR.clean_input(request.form.get("desc"))
-            instructions = VALIDATOR.clean_input(request.form.get("instructions"))
-            ingredients = VALIDATOR.clean_input(request.form.get("ingredients"))
+            ingredients = json.dumps([VALIDATOR.clean_input(item) for item in custom_split(request.form.get("ingredients"))])
+            instructions = json.dumps([VALIDATOR.clean_input(item) for item in custom_split(request.form.get("instructions"))])
             removedRecipe_URLs = custom_split(request.form.get('removed_images'))
             user_uploads = ''
             try:
@@ -654,7 +621,7 @@ def follow():
         notification = Notification(
             user_id=userID,
             type='follow',
-            related_id=new_following.id
+            related_id=current_user.id
         )
         db.session.add(notification)
         db.session.commit()
