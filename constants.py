@@ -5,3 +5,5 @@ class constants:
         self.googleScopes = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid']
         self.userDefaultProfilePic = 'https://chefs-cabinet.s3.amazonaws.com/profile-placeholder.png'
         self.cookbookDefaultCover = 'https://chefs-cabinet.s3.amazonaws.com/book_image.webp'
+        self.dataBaseUri = 'sqlite:///chefs_db_3.sqlite3'
+        self.uploadFolder = '.\\static\\images'

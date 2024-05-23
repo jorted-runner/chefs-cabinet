@@ -30,12 +30,12 @@ from config import Config
 configCLASS = Config()
 
 load_dotenv()
-
+CONSTANTS = constants()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chefs_db_3.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = CONSTANTS.dataBaseUri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = '.\\static\\images'
+app.config['UPLOAD_FOLDER'] = CONSTANTS.uploadFolder
 db = SQLAlchemy(app)
 Bootstrap(app)
 
@@ -43,7 +43,7 @@ RECIPE_AI = AI_tool()
 IMAGE_PROCESSOR = Image_Processing()
 VALIDATOR = Data_Validation()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-CONSTANTS = constants()
+
 NOTIFICATION = NotificationHandler()
 
 client_secrets_file = os.environ.get('SECRET_FILE_PATH')
