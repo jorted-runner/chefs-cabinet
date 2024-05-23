@@ -231,12 +231,9 @@ def update_last_login(user):
 
 @app.route("/")
 def home():
-    if current_user.is_authenticated:
-        if current_user.following:
-            following_ids = [follower.following_id for follower in current_user.following]
-            all_recipes = Recipe.query.filter(or_(Recipe.user_id == current_user.id, Recipe.user_id.in_(following_ids))).all()
-        else:
-            all_recipes = Recipe.query.all()
+    if current_user.is_authenticated and current_user.following:
+        following_ids = [follower.following_id for follower in current_user.following]
+        all_recipes = Recipe.query.filter(or_(Recipe.user_id == current_user.id, Recipe.user_id.in_(following_ids))).all()
     else:
         all_recipes = Recipe.query.all()
     return render_template('index.html', all_recipes=reversed(all_recipes), current_user=current_user)
@@ -629,56 +626,53 @@ def add_cookbook():
             cookbook.last_modified = datetime.now()
             db.session.commit()
         else:
-            return jsonify({'error': 'Recipe already exists in the cookbook or cookbook not found.'}), 400
+            return jsonify({'error': 'Recipe already exists in the cookbook.'}), 400
+        return jsonify({'success': True}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An error occurred while adding the cookbook: {}'.format(str(e))}), 500
 
-    return jsonify({'success': True}), 200
+    
 
 @app.route('/edit_cookbook/<cookbookID>', methods=['GET', 'POST'])
 @login_required
 def edit_cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
-    if request.method == 'POST':
-        if cookbook.user_id == current_user.id:
+    if request.method == 'POST' and cookbook.user_id == current_user.id:
+        try:
+            cookbook_id = request.form.get('id')
+            name = VALIDATOR.clean_input(request.form.get('name'))
+            status = request.form.get('status')
             try:
-                cookbook_id = request.form.get('id')
-                name = VALIDATOR.clean_input(request.form.get('name'))
-                status = request.form.get('status')
-                try:
-                    cover_img_file = request.files['cover_img']
-                    if cover_img_file: 
-                        file_name = IMAGE_PROCESSOR.download_userIMG(file=cover_img_file)
-                        cover_img = IMAGE_PROCESSOR.upload_file(file_name)
-                        cookbook.cover_img = cover_img
-                finally:
-                    removedRecipes = request.form.get('removedRecipes', []) 
-                    cookbook = CookBook.query.filter_by(id=cookbook_id).first()
-                    cookbook.name = name
-                    if status == 'Private':
-                        cookbook.status = False
-                    else:
-                        cookbook.status = True
-                    for removedID in removedRecipes:
-                        db.session.execute(
-                            cookbook_recipes.delete().where(
-                                and_(
-                                    cookbook_recipes.c.recipe_id == removedID,
-                                    cookbook_recipes.c.cookbook_id == cookbook.id
-                                )
+                cover_img_file = request.files['cover_img']
+                if cover_img_file: 
+                    file_name = IMAGE_PROCESSOR.download_userIMG(file=cover_img_file)
+                    cover_img = IMAGE_PROCESSOR.upload_file(file_name)
+                    cookbook.cover_img = cover_img
+            finally:
+                removedRecipes = request.form.get('removedRecipes', []) 
+                cookbook = CookBook.query.filter_by(id=cookbook_id).first()
+                cookbook.name = name
+                if status == 'Private':
+                    cookbook.status = False
+                else:
+                    cookbook.status = True
+                for removedID in removedRecipes:
+                    db.session.execute(
+                        cookbook_recipes.delete().where(
+                            and_(
+                                cookbook_recipes.c.recipe_id == removedID,
+                                cookbook_recipes.c.cookbook_id == cookbook.id
                             )
                         )
-                    cookbook.last_modified = datetime.now()
-                    db.session.commit()
-                    return jsonify({'success': True}), 200
-            except:
-                db.session.rollback()
-                traceback.print_exc()
-                return jsonify({'success': False, 'message': 'Internal server error'}), 500
-        else:
-            flash('You do not have permission to edit this cookbook')
-            return redirect(url_for("home")) 
+                    )
+                cookbook.last_modified = datetime.now()
+                db.session.commit()
+                return jsonify({'success': True}), 200
+        except:
+            db.session.rollback()
+            traceback.print_exc()
+            return jsonify({'success': False, 'message': 'Internal server error'}), 500
     else:
         if cookbook.user_id == current_user.id:
             return render_template('edit_cookbook.html', cookbook=cookbook, current_user=current_user)
@@ -816,14 +810,13 @@ def admin_delete_user(userID):
                 db.session.delete(pic)
             db.session.delete(recipe)
             db.session.commit()
-    notifications = Notification.query.filter(
-    or_(
+    notifications = Notification.query.filter(or_(
         Notification.user_id == userID,
         and_(
             Notification.type == 'follow',
             Notification.related_id == userID
-        )
-    )).all()
+        ))
+    ).all()
     for notification in notifications:
         db.session.delete(notification)
         db.session.commit()
@@ -851,15 +844,12 @@ def admin_edit_profile(userID):
         updated_lName = request.form.get('lname')
         updated_email = request.form.get('email')
         updated_username = request.form.get('username')
-        
-        if user.username != updated_username:
-            if User.query.filter_by(username=updated_username).first():
-                flash("User with username " + updated_username + " already exists. Try again.")
-                return render_template("edit_profile.html", user = user, current_user=current_user)
-        if user.email != updated_email:
-            if User.query.filter_by(email=updated_email).first():
-                flash("User with that email address already exists. Try again.")
-                return render_template("edit_profile.html", user = user, current_user=current_user)
+        if user.username != updated_username and User.query.filter_by(username=updated_username).first():
+            flash("User with username " + updated_username + " already exists. Try again.")
+            return render_template("edit_profile.html", user = user, current_user=current_user)
+        if user.email != updated_email and User.query.filter_by(email=updated_email).first():
+            flash("User with that email address already exists. Try again.")
+            return render_template("edit_profile.html", user = user, current_user=current_user)
         if updated_email == updated_username:
             flash('Username and Email cannot match. Please choose a unique username.')
             return render_template("edit_profile.html", user = user, current_user=current_user)
