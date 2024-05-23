@@ -4,18 +4,12 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from flask_bootstrap import Bootstrap
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
-from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
-from pip._vendor import cachecontrol
-import google.auth.transport.requests
 
 from dotenv import load_dotenv
-from datetime import date
 from functools import wraps
 from sqlalchemy import func
 from datetime import datetime
@@ -217,17 +211,15 @@ def date_sort(cookbooks):
 @app.template_filter('get_notifications_since_last_login')
 def get_notifications_since_last_login(user_id):
     user = User.query.filter_by(id=user_id).first()
-    if user:
-        notification_DATA = Notification.query.filter(
-            Notification.user_id == user.id,
-            Notification.timestamp > user.last_login,
-            Notification.is_read != True
-        ).order_by(Notification.timestamp.desc()).all()
-        if notification_DATA:
-            return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
-        else:
-            return ['<div><p>No new notifications</p></div>']
-    return ['<div><p>No new notifications</p></div>']
+    notification_DATA = Notification.query.filter(
+        Notification.user_id == user.id,
+        Notification.timestamp > user.last_login,
+        Notification.is_read != True
+    ).order_by(Notification.timestamp.desc()).all()
+    if notification_DATA:
+        return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
+    else:
+        return ['<div><p>No new notifications</p></div>']
 
 @app.route('/mark_read', methods=['POST'])
 def mark_as_read():
@@ -426,29 +418,16 @@ def edit_profile(userID):
         if request.method == "POST":
             updated_Fname = VALIDATOR.clean_input(request.form.get('fname'))
             updated_lName = VALIDATOR.clean_input(request.form.get('lname'))
-            if user.password:
-                updated_email = VALIDATOR.clean_input(request.form.get('email'))
-                updated_username = VALIDATOR.clean_input(request.form.get('username'))
-                if user.username != updated_username:
-                    if User.query.filter_by(username=updated_username).first():
-                        flash("User with username " + updated_username + " already exists. Try again.")
-                        return render_template("edit_profile.html", user=user, current_user=current_user)
-                if updated_email == updated_username:
-                    flash('Username and Email cannot match. Please choose a unique username.')
-                    return render_template("edit_profile.html", user=user, current_user=current_user)
-                user.email = updated_email
-                user.username = updated_username
-            user.fname = updated_Fname
-            user.lname = updated_lName
             updated_username = VALIDATOR.clean_input(request.form.get('username'))
-            if user.username != updated_username:
-                if User.query.filter_by(username=updated_username).first():
-                    flash("User with username " + updated_username + " already exists. Try again.")
-                    return render_template("edit_profile.html", user=user, current_user=current_user)
+            if user.username != updated_username and User.query.filter_by(username=updated_username).first():
+                flash("User with username " + updated_username + " already exists. Try again.")
+                return render_template("edit_profile.html", user=user, current_user=current_user)
             if user.email == updated_username:
                 flash('Username and Email cannot match. Please choose a unique username.')
                 return render_template("edit_profile.html", user=user, current_user=current_user)
             user.username = updated_username
+            user.fname = updated_Fname
+            user.lname = updated_lName
             updated_profile = request.files.get('file_input')
             if updated_profile:
                 file_name = IMAGE_PROCESSOR.download_userIMG(file=updated_profile)
@@ -524,13 +503,8 @@ def comment(userID, recipeID):
     db.session.add(new_comment)
     db.session.commit()
     recipe = Recipe.query.filter_by(id = recipeID).first()
-    notification = Notification(
-        user_id=recipe.user_id,
-        type='comment',
-        related_id=new_comment.id
-    )
-    db.session.add(notification)
-    db.session.commit()
+    NOTIFICATION.createNotification(db, Notification, recipe.user_id, 'comment', new_comment.id)
+    
     return redirect(url_for('view_recipe', recipeID=recipeID) + '#commentDiv')
 
 @app.route('/review/<userID>/<recipeID>', methods=['POST'])
@@ -545,13 +519,7 @@ def review(userID, recipeID):
     db.session.add(new_review)
     db.session.commit()
     recipe = Recipe.query.filter_by(id = recipeID).first()
-    notification = Notification(
-        user_id=recipe.user_id,
-        type='review',
-        related_id=new_review.id
-    )
-    db.session.add(notification)
-    db.session.commit()
+    NOTIFICATION.createNotification(db, Notification, recipe.user_id, 'review', new_review.id)
     return redirect(url_for('view_recipe', recipeID=recipeID)+ '#reviewDiv')
 
 @app.route('/view_recipe/<recipeID>', methods=['GET', 'POST'])
@@ -574,31 +542,25 @@ def update_recipe():
                 user_uploads = request.files.getlist('userUploads')
             finally:
                 recipe = Recipe.query.filter_by(id=recipe_id).first()
-                if recipe:
-                    if user_uploads:
-                        for user_file in user_uploads:
-                            file_name = IMAGE_PROCESSOR.download_userIMG(file=user_file)
-                            recipe_img = IMAGE_PROCESSOR.upload_file(file_name)
-                            new_image = RecipeMedia(img_url=recipe_img, recipe_id=recipe.id, user_upload=True)
-                            db.session.add(new_image)
-                    if removedRecipe_URLs:
-                        for url in removedRecipe_URLs:
-                            image = RecipeMedia.query.filter_by(img_url=url, recipe_id=recipe_id).first()
-                            if image:
-                                db.session.delete(image)
-                                db.session.commit()
-                    if recipe_title != '':
-                        recipe.title = recipe_title
-                    if recipe_desc != '':
-                        recipe.description = recipe_desc
-                    recipe.ingredients = ingredients
-                    recipe.instructions = instructions
-                    db.session.commit()
-                    return jsonify({'success': True}), 200
-                else:
-                    db.session.rollback()
-                    traceback.print_exc()
-                    return jsonify({'success': False, 'message': 'Recipe not found'}), 404
+                if user_uploads:
+                    for user_file in user_uploads:
+                        file_name = IMAGE_PROCESSOR.download_userIMG(file=user_file)
+                        recipe_img = IMAGE_PROCESSOR.upload_file(file_name)
+                        new_image = RecipeMedia(img_url=recipe_img, recipe_id=recipe.id, user_upload=True)
+                        db.session.add(new_image)
+                if removedRecipe_URLs:
+                    for url in removedRecipe_URLs:
+                        image = RecipeMedia.query.filter_by(img_url=url, recipe_id=recipe_id).first()
+                        db.session.delete(image)
+                        db.session.commit()
+                if recipe_title != '':
+                    recipe.title = recipe_title
+                if recipe_desc != '':
+                    recipe.description = recipe_desc
+                recipe.ingredients = ingredients
+                recipe.instructions = instructions
+                db.session.commit()
+                return jsonify({'success': True}), 200
         except Exception as e:
             db.session.rollback()
             traceback.print_exc()
@@ -618,13 +580,7 @@ def follow():
         new_following = Follower(follower_id=currentUserID, following_id=userID)
         db.session.add(new_following)
         db.session.commit()
-        notification = Notification(
-            user_id=userID,
-            type='follow',
-            related_id=current_user.id
-        )
-        db.session.add(notification)
-        db.session.commit()
+        NOTIFICATION.createNotification(db, Notification, userID, 'follow', current_user.id)
         return jsonify({'success': True}), 200
     except Exception as e:
         db.session.rollback()
@@ -646,7 +602,6 @@ def unfollow():
         db.session.commit()
         return jsonify({'success': True}), 200
     except Exception as e:
-        # Handle any unexpected errors
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
@@ -659,36 +614,28 @@ def add_cookbook():
         user_id = data.get('userID')
         recipe_id = data.get('recipeID')
         status = data.get('status')
-
         if status == 'private':
             status = False
         else:
             status = True
-
         cookbook = CookBook.query.filter_by(id=cookbook_name, user_id=user_id).first()
-        
         if not cookbook:
             cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status, last_modified=datetime.now())
             db.session.add(cookbook)
             db.session.commit()
-        
         recipe = Recipe.query.get(recipe_id)
-        
-        if recipe:
-            if recipe not in cookbook.recipes:
-                cookbook.recipes.append(recipe)
-                cookbook.last_modified = datetime.now()
-                db.session.commit()
-            else:
-                return jsonify({'error': 'Recipe already exists in the cookbook.'}), 400
+        if recipe and recipe not in cookbook.recipes:
+            cookbook.recipes.append(recipe)
+            cookbook.last_modified = datetime.now()
+            db.session.commit()
         else:
-            return jsonify({'error': 'Invalid recipe ID.'}), 400
+            return jsonify({'error': 'Recipe already exists in the cookbook or cookbook not found.'}), 400
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An error occurred while adding the cookbook: {}'.format(str(e))}), 500
 
     return jsonify({'success': True}), 200
-# Made it to here
+
 @app.route('/edit_cookbook/<cookbookID>', methods=['GET', 'POST'])
 @login_required
 def edit_cookbook(cookbookID):
@@ -743,14 +690,11 @@ def edit_cookbook(cookbookID):
 def cookbook(cookbookID):
     cookbook = CookBook.query.options(joinedload(CookBook.recipes)).filter_by(id=cookbookID).first()
     if cookbook:
-        if cookbook.status:
+        if cookbook.status or (current_user.is_authenticated and cookbook.user_id == current_user.id):
             return render_template('cookbook.html', cookbook=cookbook, current_user=current_user)
         else:
-            if current_user.is_authenticated and cookbook.user_id == current_user.id:
-                return render_template('cookbook.html', cookbook=cookbook, current_user=current_user)
-            else:
-                flash('This cookbook is private and cannot be accessed by other users.', 'error')
-                return redirect(url_for("home"))
+            flash('This cookbook is private and cannot be accessed by other users.', 'error')
+            return redirect(url_for("home"))
     else:
         flash('Cookbook not found.', 'error')
         return redirect(url_for("home"))
