@@ -1,4 +1,3 @@
-TODO - Fix new follower notification
 TODO - Error screens. I don't want the user to see Internal server error. I want to handle the error better.
 TODO - Allow user to reorder recipe images
 TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
