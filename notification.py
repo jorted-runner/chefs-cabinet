@@ -1,6 +1,13 @@
 from flask import jsonify
 
 class NotificationHandler:
+    def getNewNotifications(self, user, Notification):
+        return Notification.query.filter(
+            Notification.user_id == user.id,
+            Notification.timestamp > user.last_login,
+            Notification.is_read != True
+        ).order_by(Notification.timestamp.desc()).all()
+
     def buildNotifications(self, notification_DATA, User, Comment, Review):
         notifications = []
         for notification in notification_DATA:
@@ -24,11 +31,7 @@ class NotificationHandler:
     def markRead(self, current_user, db, User, Notification):
         user = User.query.filter_by(id=current_user.id).first()
         try:
-            for notification in Notification.query.filter(
-                    Notification.user_id == user.id,
-                    Notification.timestamp > user.last_login,
-                    Notification.is_read != True
-                ).order_by(Notification.timestamp.desc()).all():
+            for notification in self.getNewNotifications(user, Notification):
                 notification.is_read = True
                 db.session.commit()
             return jsonify({'success': True}), 200

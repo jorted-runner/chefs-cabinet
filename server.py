@@ -211,11 +211,7 @@ def date_sort(cookbooks):
 @app.template_filter('get_notifications_since_last_login')
 def get_notifications_since_last_login(user_id):
     user = User.query.filter_by(id=user_id).first()
-    notification_DATA = Notification.query.filter(
-        Notification.user_id == user.id,
-        Notification.timestamp > user.last_login,
-        Notification.is_read != True
-    ).order_by(Notification.timestamp.desc()).all()
+    notification_DATA = NOTIFICATION.getNewNotifications(user, Notification)
     if notification_DATA:
         return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
     else:
