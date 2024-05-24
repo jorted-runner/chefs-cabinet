@@ -1,4 +1,4 @@
-TODO - Error screens. I don't want the user to see Internal server error. I want to handle the error better.
+TODO - Integrate Walmart PickUp and Delivery to Shopping List: https://www.walmart.io/docs/opd/catalog-service/grocery-introduction
 TODO - Allow user to reorder recipe images
 TODO - Fix edit recipe add step. I want the default drop down option to be the highest number
 TODO - fix search page so that when you follow someone hou still see something
