@@ -332,6 +332,9 @@ def handle_new_google_user(user_info):
         new_user_fName = user_info.get("name").split(" ")[0]
         new_user_lName = " "
     new_user_email = user_info.get('email')
+    if User.query.filter_by(email=new_user_email).first():
+        flash("User with that email already exists, try logging in with your password!")
+        return redirect(url_for('login'))
     new_user_username = user_info.get('email').split('@')[0]
     new_user_google_id = user_info.get("sub")
     profile_picture_url = user_info.get("picture")
