@@ -52,7 +52,7 @@
         {% if cookbook.recipes %}
             <form action="{{ url_for('generate_list') }}" method="POST" name="generate_list">
                 <input type="hidden" value="{{ cookbook.id }}" name="id">
-                <input type="submit" id="generate_shopping" value="Generate Shopping List (BETA)">
+                <input type="submit" id="generate_shopping" value="Generate Shopping List">
             </form>
         {% endif %}
         
