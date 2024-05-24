@@ -229,6 +229,18 @@ def update_last_login(user):
     user.last_login = datetime.now()
     db.session.commit()
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404.html', e=e)
+
+@app.errorhandler(403)
+def not_found(e):
+    return render_template('403.html', e=e)
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return render_template('error.html', e=e), 500
+
 @app.route("/")
 def home():
     if current_user.is_authenticated and current_user.following:
