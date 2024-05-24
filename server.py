@@ -25,6 +25,7 @@ from image_processing import Image_Processing
 from data_validation import Data_Validation
 from constants import constants
 from notification import NotificationHandler
+from retrieval import Retrieval
 
 from config import Config
 configCLASS = Config()
@@ -45,6 +46,7 @@ VALIDATOR = Data_Validation()
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 
 NOTIFICATION = NotificationHandler()
+RETRIEVER = Retrieval()
 
 client_secrets_file = os.environ.get('SECRET_FILE_PATH')
 if os.environ.get('PROD') == 'False':
@@ -210,7 +212,7 @@ def date_sort(cookbooks):
 
 @app.template_filter('get_notifications_since_last_login')
 def get_notifications_since_last_login(user_id):
-    user = User.query.filter_by(id=user_id).first()
+    user = VALIDATOR.get_user(User, user_id, 'id')
     notification_DATA = NOTIFICATION.getNewNotifications(user, Notification)
     if notification_DATA:
         return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
@@ -298,13 +300,15 @@ def google_auth_callback():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        if User.query.filter_by(email=request.form.get('email')).first():
+        email = request.form.get('email')
+        username = request.form.get('username')
+        if RETRIEVER.get_user(User, email, 'email'):
             flash("You've already signed up with that email, <a href='" + url_for('login') + "'>log in</a> instead!")
             return redirect(url_for('register'))
-        elif User.query.filter_by(username=request.form.get('username')).first():
+        elif RETRIEVER.get_user(User, username, 'username'):
             flash("User with username " + request.form.get('username') + " already exists. Try again.")
             return redirect(url_for('register'))
-        elif request.form.get('username') == request.form.get('email'):
+        elif VALIDATOR.check_match(email, username):
             flash('Username and Email cannot match. Please choose a unique username.')
             return redirect(url_for('register'))
         new_user_fName = VALIDATOR.clean_input(request.form.get('fname'))
@@ -328,7 +332,7 @@ def handle_new_google_user(user_info):
         new_user_fName = user_info.get("name").split(" ")[0]
         new_user_lName = " "
     new_user_email = user_info.get('email')
-    if User.query.filter_by(email=new_user_email).first():
+    if RETRIEVER.get_user(User, new_user_email, 'email'):
         flash("User with that email already exists, try logging in with your password!")
         return redirect(url_for('login'))
     new_user_username = user_info.get('email').split('@')[0]
@@ -405,7 +409,7 @@ def generate_recipe():
 @app.route("/delete-recipe/<recipe_id>/<int:userID>", methods=["GET", "POST"])
 @login_required
 def delete_recipe(recipe_id, userID):
-    recipe_to_delete = Recipe.query.filter_by(id=recipe_id).first()
+    recipe_to_delete = RETRIEVER.get_recipe(Recipe, recipe_id, 'id')
     if userID == recipe_to_delete.user.id:
         db.session.delete(recipe_to_delete)
         db.session.commit()
@@ -414,23 +418,23 @@ def delete_recipe(recipe_id, userID):
 @app.route('/profile/<userID>', methods=['GET'])
 @login_required
 def user_profile(userID):
-    user = User.query.filter_by(id=userID).first()
-    user_recipes = Recipe.query.filter_by(user_id=userID).all()
+    user = RETRIEVER.get_user(User, userID, 'id')
+    user_recipes = RETRIEVER.get_recipe(Recipe, userID, 'user_recipes')
     return render_template('profileHome.html', all_recipes=reversed(user_recipes), user=user, current_user=current_user)
 
 @app.route('/edit_profile/<userID>', methods=['POST', 'GET'])
 @login_required
 def edit_profile(userID):
     if current_user.id == int(userID):
-        user = User.query.filter_by(id=userID).first()
+        user = RETRIEVER.get_user(User, userID, 'id')
         if request.method == "POST":
             updated_Fname = VALIDATOR.clean_input(request.form.get('fname'))
             updated_lName = VALIDATOR.clean_input(request.form.get('lname'))
             updated_username = VALIDATOR.clean_input(request.form.get('username'))
-            if user.username != updated_username and User.query.filter_by(username=updated_username).first():
+            if not VALIDATOR.check_match(user.username, updated_username) and RETRIEVER.get_user(User, updated_username, 'username'):
                 flash("User with username " + updated_username + " already exists. Try again.")
                 return render_template("edit_profile.html", user=user, current_user=current_user)
-            if user.email == updated_username:
+            if VALIDATOR.check_match(user.email == updated_username):
                 flash('Username and Email cannot match. Please choose a unique username.')
                 return render_template("edit_profile.html", user=user, current_user=current_user)
             user.username = updated_username
@@ -450,8 +454,8 @@ def edit_profile(userID):
 @app.route('/edit_recipe/<recipeID>/<int:userID>', methods=['POST', 'GET'])
 @login_required
 def edit_recipe(recipeID, userID):
-    recipe = Recipe.query.filter_by(id=recipeID).first()
-    if userID != recipe.user.id:
+    recipe = RETRIEVER.get_recipe(Recipe, recipeID, 'id')
+    if not VALIDATOR.check_match(userID, recipe.user.id):
         flash('You do not own that recipe. You cannot edit it.')
         return redirect(url_for('home'))
     else:
@@ -510,9 +514,8 @@ def comment(userID, recipeID):
                           recipe_id = int(recipeID))
     db.session.add(new_comment)
     db.session.commit()
-    recipe = Recipe.query.filter_by(id = recipeID).first()
+    recipe = RETRIEVER.get_recipe(Recipe, recipeID, 'id')
     NOTIFICATION.createNotification(db, Notification, recipe.user_id, 'comment', new_comment.id)
-    
     return redirect(url_for('view_recipe', recipeID=recipeID) + '#commentDiv')
 
 @app.route('/review/<userID>/<recipeID>', methods=['POST'])
@@ -526,13 +529,13 @@ def review(userID, recipeID):
                         recipe_id=int(recipeID))
     db.session.add(new_review)
     db.session.commit()
-    recipe = Recipe.query.filter_by(id = recipeID).first()
+    recipe = RETRIEVER.get_recipe(Recipe, recipeID, 'id')
     NOTIFICATION.createNotification(db, Notification, recipe.user_id, 'review', new_review.id)
     return redirect(url_for('view_recipe', recipeID=recipeID)+ '#reviewDiv')
 
 @app.route('/view_recipe/<recipeID>', methods=['GET', 'POST'])
 def view_recipe(recipeID):
-    recipe = Recipe.query.filter_by(id=recipeID).first()
+    recipe = RETRIEVER.get_recipe(Recipe, recipeID, 'id')
     return render_template('viewRecipe.html', recipe=recipe, current_user = current_user)
 
 @app.route('/update_recipe', methods=['POST'])
@@ -549,7 +552,7 @@ def update_recipe():
             try:
                 user_uploads = request.files.getlist('userUploads')
             finally:
-                recipe = Recipe.query.filter_by(id=recipe_id).first()
+                recipe = RETRIEVER.get_recipe(Recipe, recipe_id, 'id')
                 if user_uploads:
                     for user_file in user_uploads:
                         file_name = IMAGE_PROCESSOR.download_userIMG(file=user_file)
@@ -631,7 +634,7 @@ def add_cookbook():
             cookbook = CookBook(name=cookbook_name, user_id=user_id, status=status, last_modified=datetime.now())
             db.session.add(cookbook)
             db.session.commit()
-        recipe = Recipe.query.get(recipe_id)
+        recipe = RETRIEVER.get_recipe(Recipe, recipe_id, 'id')
         if recipe and recipe not in cookbook.recipes:
             cookbook.recipes.append(recipe)
             cookbook.last_modified = datetime.now()
@@ -805,7 +808,7 @@ def admin_delete_recipe(recipeID):
 @app.route('/admin_delete_user/<userID>', methods=['POST'])
 @admin_only
 def admin_delete_user(userID):
-    user_to_delete = User.query.filter_by(id=userID).first()
+    user_to_delete = RETRIEVER.get_user(User, userID, 'id')
     if user_to_delete.reviews:
         reviews = Review.query.filter_by(user_id=userID).all()
         for review in reviews:
@@ -849,20 +852,20 @@ def admin_delete_user(userID):
 @app.route('/admin_edit_profile/<userID>', methods=['POST', 'GET'])
 @admin_only
 def admin_edit_profile(userID):
-    user = User.query.filter_by(id=userID).first()
+    user = RETRIEVER.get_user(User, userID, 'id')
     if request.method == "POST":
         updated_Fname = request.form.get('fname')
         updated_lName = request.form.get('lname')
         updated_email = request.form.get('email')
         updated_username = request.form.get('username')
-        if user.username != updated_username and User.query.filter_by(username=updated_username).first():
+        if not VALIDATOR.check_match(user.username, updated_username) and RETRIEVER.get_user(User, updated_username, 'username'):
             flash("User with username " + updated_username + " already exists. Try again.")
-            return render_template("edit_profile.html", user = user, current_user=current_user)
-        if user.email != updated_email and User.query.filter_by(email=updated_email).first():
-            flash("User with that email address already exists. Try again.")
-            return render_template("edit_profile.html", user = user, current_user=current_user)
-        if updated_email == updated_username:
+            return render_template("edit_profile.html", user=user, current_user=current_user)
+        if VALIDATOR.check_match(user.email == updated_username):
             flash('Username and Email cannot match. Please choose a unique username.')
+            return render_template("edit_profile.html", user=user, current_user=current_user)
+        if not VALIDATOR.check_match(user.email, updated_email) and RETRIEVER.get_user(User, updated_email, 'email'):
+            flash("User with that email address already exists. Try again.")
             return render_template("edit_profile.html", user = user, current_user=current_user)
         user.fname = updated_Fname
         user.lname = updated_lName

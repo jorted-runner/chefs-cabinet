@@ -1,6 +1,10 @@
 from flask import jsonify
+from retrieval import Retrieval
 
 class NotificationHandler:
+    def __init__(self):
+        self.RETRIEVER = Retrieval()
+
     def getNewNotifications(self, user, Notification):
         return Notification.query.filter(
             Notification.user_id == user.id,
@@ -14,11 +18,11 @@ class NotificationHandler:
             notification_type = notification.type
             match notification_type:
                 case 'follow':
-                    follower = User.query.filter_by(id=notification.related_id).first()
+                    follower = self.RETRIEVER.get_user(User, notification.related_id, 'id')
                     notifications.append(f'<div class="notification"><div class="notification-user"><a href="../profile/{follower.id}"><img class="notification-profile-pic" src="{follower.profile_pic}" alt="User Profile Pic"><p>{follower.username}</p></div><p>Followed you.</p></a></div>')
                 case 'comment':
                     comment = Comment.query.filter_by(id=notification.related_id).first()
-                    commentor = User.query.filter_by(id=comment.user_id).first()
+                    commentor = self.RETRIEVER.get_user(User, comment.user_id, 'id')
                     commentText = comment.comment
                     if len(commentText) > 50:
                         commentText = commentText[:47] + '... <u>See More</u>'
