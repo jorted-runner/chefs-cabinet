@@ -212,7 +212,7 @@ def date_sort(cookbooks):
 
 @app.template_filter('get_notifications_since_last_login')
 def get_notifications_since_last_login(user_id):
-    user = VALIDATOR.get_user(User, user_id, 'id')
+    user = RETRIEVER.get_user(User, user_id, 'id')
     notification_DATA = NOTIFICATION.getNewNotifications(user, Notification)
     if notification_DATA:
         return NOTIFICATION.buildNotifications(notification_DATA, User, Comment, Review)
