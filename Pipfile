@@ -23,5 +23,6 @@ vendor = "*"
 requests-oauthlib = "*"
 google-auth-oauthlib = "*"
 bleach = "*"
+pycryptodome = "*"
 
 [requires]
