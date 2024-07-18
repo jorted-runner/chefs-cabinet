@@ -3,10 +3,9 @@ from openai import OpenAI
 
 load_dotenv()
 
-class AI_tool():
+class AI_tool:
   def __init__(self):
     self.client = OpenAI()
-    gpt_url = "https://api.openai.com/v1/chat/completions"
     self.seed = 51773
 
   def image_generation(self, prompt):
